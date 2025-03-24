@@ -1,0 +1,82 @@
+apiVersion: kuma.io/v1alpha1
+kind: MeshGateway
+mesh: default
+metadata:
+  name: otel-demo
+  namespace: otel-demo
+spec:
+  conf:
+    listeners:
+      - port: 80
+        protocol: HTTP
+  selectors:
+    - match:
+        kuma.io/service: edge-gateway
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshGatewayRoute
+mesh: default
+metadata:
+  name: oteldemo
+  namesapce: otel-demo
+spec:
+  conf:
+    http:
+      rules:
+        - matches:
+            - path:
+                match: PREFIX
+                value: /
+          backends:
+            - destination:
+                kuma.io/service: opentelemetry-demo-frontendproxy_otel-demo_svc_8080
+              weight: 1
+      #    filter:
+       #   - requestHeader:
+        #      set:
+         ##        value: oteldemo.IP_TO_REPLACE.nip.io
+  selectors:
+    - match:
+        kuma.io/service: edge-gateway
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshGateway
+mesh: default
+metadata:
+  name: hipster-shop
+  namespace: hipster-shop
+spec:
+  conf:
+    listeners:
+      - port: 80
+        protocol: HTTP
+  selectors:
+    - match:
+        kuma.io/service: edge-gateway
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshGatewayRoute
+mesh: default
+metadata:
+  name: hipster-shop
+  namesapce: hipster-shop
+spec:
+  conf:
+    http:
+      rules:
+        - matches:
+            - path:
+                match: PREFIX
+                value: /
+          backends:
+            - destination:
+                kuma.io/service: frontend_hipster-shop_svc_80
+              weight: 1
+ #         filter:
+  #          - requestHeader:
+   #             set:
+    #              - name: Host
+     #               value: hipstershop.IP_TO_REPLACE.nip.io
+  selectors:
+    - match:
+        kuma.io/service: edge-gateway

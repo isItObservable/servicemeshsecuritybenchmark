@@ -1,0 +1,39 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: HTTPLocalRateLimitPolicy
+metadata:
+  namespace: otel-demo
+  name: frontend
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: frontend
+  total:
+    requestsPerSecond: 200
+  identity:
+    requestsPerSecond: 100
+  overrides:
+    - requestsPerSecond: 100
+      clientRefs:
+        - kind: ServiceAccount
+          name: opentelemetry-demo
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: HTTPLocalRateLimitPolicy
+metadata:
+  namespace: otel-demo
+  name: checkoutservice
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: checkoutservice
+  total:
+    requestsPerSecond: 200
+  identity:
+    requestsPerSecond: 100
+  overrides:
+    - requestsPerSecond: 100
+      clientRefs:
+        - kind: ServiceAccount
+          name: opentelemetry-demo

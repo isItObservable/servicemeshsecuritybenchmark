@@ -1,0 +1,19 @@
+apiVersion: kuma.io/v1alpha1
+kind: Mesh
+metadata:
+  annotations:
+    k8s.kuma.io/mesh-defaults-generated: "true"
+  name: default
+spec:
+
+  metrics:
+    backends:
+      - conf:
+          path: /metrics
+          port: 5670
+          tags:
+            kuma.io/service: dataplane-metrics
+          tls: {}
+        name: prometheus-1
+        type: prometheus
+    enabledBackend: prometheus-1

@@ -1,0 +1,49 @@
+apiVersion: kuma.io/v1alpha1
+kind: MeshRateLimit
+metadata:
+  name: checkout-rate-limit
+  namespace: kuma-system
+spec:
+  targetRef:
+    kind: MeshService
+    name: opentelemetry-demo-checkoutservice_otel-demo_svc_8080
+  from:
+    - targetRef:
+        kind: Mesh
+      default:
+        local:
+          http:
+            requestRate:
+              num: 100
+              interval: 10s
+            onRateLimit:
+              status: 423
+              headers:
+                set:
+                  - name: "x-kuma-rate-limited"
+                    value: "true"
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshRateLimit
+metadata:
+  name: frontend-rate-limit
+  namespace: kuma-system
+spec:
+  targetRef:
+    kind: MeshService
+    name: opentelemetry-demo-frontend_otel-demo_svc_8080
+  from:
+    - targetRef:
+        kind: Mesh
+      default:
+        local:
+          http:
+            requestRate:
+              num: 100
+              interval: 5s
+            onRateLimit:
+              status: 423
+              headers:
+                set:
+                  - name: "x-kuma-rate-limited"
+                    value: "true"

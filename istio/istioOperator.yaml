@@ -1,0 +1,31 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  profile: demo
+  meshConfig:
+    accessLogFile: /dev/stdout
+    defaultConfig:
+      tracing:
+        sampling: 100
+    defaultProviders:
+      tracing:
+        - "otelp"
+      accessLogging:
+        - "envoylogs"
+    enablePrometheusMerge: true
+    enableTracing: true
+    extensionProviders:
+      - envoyOtelAls:
+          port: 4317
+          service: "otel-collector.default.svc.cluster.local"
+          logFormat:
+            labels:
+              source: "ENVOY"
+              mesh: "%ENVIRONMENT(ISTIO_META_MESH_ID)%"
+        name: "envoylogs"
+      - name: "otelp"
+        opentelemetry:
+          service: "otel-collector.default.svc.cluster.local"
+          port: 4317
+          resource_detectors:
+            environment: { }

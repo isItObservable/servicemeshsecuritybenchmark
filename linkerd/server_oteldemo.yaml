@@ -1,0 +1,169 @@
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: adservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-adservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: cartservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-cartservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: checkoutservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-checkoutservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: currencyservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-currencyservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: emailservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-emailservice
+  port: service
+  proxyProtocol: "HTTP/1"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: frontend
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-frontend
+  port: service
+  proxyProtocol: "HTTP/1"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: frontendproxy
+spec:
+  accessPolicy: "cluster-unauthenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-frontendproxy
+  port: service
+  proxyProtocol: "HTTP/1"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: imageprovider
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-imageprovider
+  port: service
+  proxyProtocol: "HTTP/1"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: paymentservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-paymentservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: productcatalogservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-productcatalogservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: quoteservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-quoteservice
+  port: service
+  proxyProtocol: "HTTP/1"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: recommendationservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-recommendationservice
+  port: service
+  proxyProtocol: "gRPC"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  namespace: otel-demo
+  name: shippingservice
+spec:
+  accessPolicy: "cluster-authenticated"
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: opentelemetry-demo-shippingservice
+  port: service
+  proxyProtocol: "gRPC"
+

@@ -1,0 +1,31 @@
+apiVersion: kuma.io/v1alpha1
+kind: MeshTrafficPermission
+metadata:
+  namespace: kuma-system
+  name: allow-featuresql
+spec:
+  targetRef: # 1
+    kind: MeshService
+    name: opentelemetry-demo-ffspostgres_otel-demo_svc_5432
+  from:
+    - targetRef: # 2
+        kind: MeshService
+        name: opentelemetry-demo-featureflagservice_otel-demo_svc_5053
+      default: # 3
+        action: Allow
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshTrafficPermission
+metadata:
+  namespace: kuma-system
+  name: allow-redis
+spec:
+  targetRef: # 1
+    kind: MeshService
+    name: opentelemetry-demo-redis_otel-demo_svc_6379
+  from:
+    - targetRef: # 2
+        kind: MeshService
+        name: opentelemetry-demo-cartservice_otel-demo_svc_8080
+      default: # 3
+        action: Allow

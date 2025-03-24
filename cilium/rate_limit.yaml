@@ -1,0 +1,81 @@
+apiVersion: cilium.io/v2
+kind: CiliumEnvoyConfig
+metadata:
+  name: envoy-filter-frontend
+  namespace: otel-demo
+spec:
+  resources:
+    - '@type': type.googleapis.com/envoy.config.listener.v3.Listener
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                '@type': type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+                value:
+                  stat_prefix: istio_rate
+                  token_bucket:
+                    max_tokens: 100
+                    tokens_per_fill: 100
+                    fill_interval: 60s
+                  filter_enabled:
+                    runtime_key: local_rate_limit_enabled
+                    default_value:
+                      numerator: 100
+                      denominator: HUNDRED
+                  filter_enforced:
+                    runtime_key: local_rate_limit_enforced
+                    default_value:
+                      numerator: 100
+                      denominator: HUNDRED
+                  response_headers_to_add:
+                    - append_action: APPEND_IF_EXISTS_OR_ADD
+                      header:
+                        key: x-rate-limited
+                        value: TOO_MANY_REQUESTS
+                  status:
+                    code: BadRequest
+
+  services:
+    - name: opentelemetry-demo-frontend
+      namespace: otel-demo
+---
+apiVersion: cilium.io/v2
+kind: CiliumEnvoyConfig
+metadata:
+  name: envoy-filter-checkout
+  namespace: otel-demo
+spec:
+  resources:
+    - '@type': type.googleapis.com/envoy.config.listener.v3.Listener
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                '@type': type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+                value:
+                  stat_prefix: istio_rate
+                  token_bucket:
+                    max_tokens: 100
+                    tokens_per_fill: 100
+                    fill_interval: 60s
+                  filter_enabled:
+                    runtime_key: local_rate_limit_enabled
+                    default_value:
+                      numerator: 100
+                      denominator: HUNDRED
+                  filter_enforced:
+                    runtime_key: local_rate_limit_enforced
+                    default_value:
+                      numerator: 100
+                      denominator: HUNDRED
+                  response_headers_to_add:
+                    - append_action: APPEND_IF_EXISTS_OR_ADD
+                      header:
+                        key: x-rate-limited
+                        value: TOO_MANY_REQUESTS
+                  status:
+                    code: BadRequest
+
+  services:
+    - name: opentelemetry-demo-checkoutservice
+      namespace: otel-demo

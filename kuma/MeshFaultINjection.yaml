@@ -1,0 +1,71 @@
+apiVersion: kuma.io/v1alpha1
+kind: MeshFaultInjection
+metadata:
+  name: fault-product
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default # optional, defaults to `default` if it isn't configured
+spec:
+  targetRef:
+    kind: MeshService
+    name: opentelemetry-demo-productcatalogservice_otel-demo_svc_8080
+  from:
+    - targetRef:
+        kind: MeshService
+        name: opentelemetry-demo-frontend_otel-demo_svc_8080
+      default:
+        http:
+          - delay:
+              value: 500ms
+              percentage: 90
+          - abort:
+              httpStatus: 500
+              percentage: 50
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshFaultInjection
+metadata:
+  name: fault-checkout
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default # optional, defaults to `default` if it isn't configured
+spec:
+  targetRef:
+    kind: MeshService
+    name: opentelemetry-demo-checkoutservice_otel-demo_svc_8080
+  from:
+    - targetRef:
+        kind: MeshService
+        name: opentelemetry-demo-frontend_otel-demo_svc_8080
+      default:
+        http:
+          - delay:
+              value: 600ms
+              percentage: 90
+          - abort:
+              httpStatus: 500
+              percentage: 50
+---
+apiVersion: kuma.io/v1alpha1
+kind: MeshFaultInjection
+metadata:
+  name: fault-frontend
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default # optional, defaults to `default` if it isn't configured
+spec:
+  targetRef:
+    kind: MeshService
+    name: opentelemetry-demo-frontend_otel-demo_svc_8080
+  from:
+    - targetRef:
+        kind: MeshService
+        name: oteldemo_gateway
+      default:
+        http:
+          - delay:
+              value: 600ms
+              percentage: 90
+          - abort:
+              httpStatus: 500
+              percentage: 50
