@@ -12,5 +12,5 @@ spec:
     backends:
       - type: OpenTelemetry
         openTelemetry:
-          endpoint: otel-collector.observability.svc:4317
+          endpoint: otel-collector.default.svc.cluster.local:4317
           refreshInterval: 60s

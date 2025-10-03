@@ -84,6 +84,7 @@ echo "Checking arguments"
    exit 1
  fi
 
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0-rc.2/experimental-install.yaml
 
 #-----Installing mesh-----------------
 if [  "$TYPE" = 'kuma' ]; then
@@ -91,65 +92,98 @@ if [  "$TYPE" = 'kuma' ]; then
   helm repo add kuma https://kumahq.github.io/charts
   helm repo update
   helm install --create-namespace --namespace kuma-system kuma kuma/kuma
+  kubectl apply -f kuma/gatewayclass.yaml
+  kubectl apply -f kuma/MeshMetric.yaml
+  kubectl apply -f kuma/meshtrace.yaml
+  kubectl apply -f kuma/MeshAccesslog.yaml
 
 
 
-  GATEWAYNAME="kuma"
+
 else
   if [  "$TYPE" = 'linkerd' ]; then
 
     echo "installing linkerd"
-    linkerd install --crds | kubectl apply -f -
-    linkerd install | kubectl apply -f -
-    linkerd jaeger install --set webhook.collectorTraceProtocol=opentelemetry | kubectl apply -f
-    linkerd viz install | kubectl apply -f -
-    kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="$DTURL" --from-literal=dt_api_token="$DTTOKEN" -n linkerd-jaeger
-    kubectl apply -f linkerd/linkerd-collector.yaml
-    kubectl apply -f linkerd/collector_deployment.yaml
-    GATEWAYNAME="linkerd"
+    step certificate create root.linkerd.cluster.local ca.crt ca.key \
+    --profile root-ca --no-password --insecure
+    step certificate create identity.linkerd.cluster.local issuer.crt issuer.key \
+    --profile intermediate-ca --not-after 8760h --no-password --insecure \
+    --ca ca.crt --ca-key ca.key
+
+    # add the repo for edge releases:
+    helm repo add linkerd-edge https://helm.linkerd.io/edge
+
+    helm install linkerd-crds linkerd-edge/linkerd-crds \
+      -n linkerd --create-namespace --set installGatewayAPI=false
+
+    helm install linkerd-control-plane \
+      -n linkerd \
+      --devel \
+      --set-file identityTrustAnchorsPEM=ca.crt \
+      --set-file identity.issuer.tls.crtPEM=issuer.crt \
+      --set-file identity.issuer.tls.keyPEM=issuer.key \
+      linkerd-edge/linkerd-control-plane
+
+
+    helm install linkerd-jaeger \
+      -n linkerd \
+      -f linkerd/jaeger-value.yaml \
+      linkerd-edge/linkerd-jaeger
+
+     # Install kgateway
+     helm upgrade -i --create-namespace --namespace kgateway-system --version v2.1.0-main \
+     kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
+     --set controller.image.pullPolicy=Always
+
+     helm upgrade -i --namespace kgateway-system --version v2.1.0-main \
+     kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+     --set controller.image.pullPolicy=Always --set agentgateway.enabled=true --set waypoint.enabled=true
+
   else
-     if [  "$TYPE" = 'traefik' ]; then
-       echo "installing TraefikMesh"
-       helm repo add traefik https://traefik.github.io/charts
-       helm repo update
-       helm install traefik-mesh traefik/traefik-mesh --set kubedns=false --set controller.image.pullPolicy=IfNotPresent --set controller.image.tag=latest
-       GATEWAYNAME="traefik"
+     if [  "$TYPE" = 'ambient-kgateway' ]; then
+         echo "installing ambient"
+         helm repo add istio https://istio-release.storage.googleapis.com/charts
+         helm repo update istio
+         helm install istio-base istio/base -n istio-system --create-namespace --wait
+         helm install istiod istio/istiod --namespace istio-system --set profile=ambient -f istio/ambientmesh/values.yaml --wait
+         helm install istio-cni istio/cni -n istio-system --set profile=ambient --wait
+         helm install ztunnel istio/ztunnel -n istio-system  --wait
+
+
+         # Install kgateway
+         helm upgrade -i --create-namespace --namespace kgateway-system --version v2.1.0-main \
+         kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
+         --set controller.image.pullPolicy=Always
+
+         helm upgrade -i --namespace kgateway-system --version v2.1.0-main \
+         kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+         --set controller.image.pullPolicy=Always --set agentgateway.enabled=true --set waypoint.enabled=true
+
+
+
      else
-        if [  "$TYPE" = 'cilium' ]; then
-          echo "installing Cilium"
 
-          kubectl apply -f cilium/agentsvc.yaml
-          helm repo add gadget https://inspektor-gadget.github.io/charts
-          helm install gadget gadget/gadget --namespace=gadget --create-namespace -f inspecktor-gadget/values.yaml
-          kubectl apply -f inspecktor-gadget/configmap.yaml -n gadget
-          kubectl rollout restart ds gadget -n gadget
-          kubectl apply -f inspecktor-gadget/gadget_top.yaml -n gadget
-          GATEWAYNAME="cilium"
-        else
-           if [  "$TYPE" = 'ambient' ]; then
-             echo "installing ambient"
-             helm repo add istio https://istio-release.storage.googleapis.com/charts
-             helm repo update istio
-             helm install istio-base istio/base -n istio-system --create-namespace --wait
-             helm install istiod istio/istiod --namespace istio-system --set profile=ambient-f istio/values.yaml --wait
-             helm install istio-cni istio/cni -n istio-system --set profile=ambient --wait
-             helm install ztunnel istio/ztunnel -n istio-system --wait
+         if [  "$TYPE" = 'ambient' ]; then
+           echo "installing ambient"
+           helm repo add istio https://istio-release.storage.googleapis.com/charts
+           helm repo update istio
+           helm install istio-base istio/base -n istio-system --create-namespace --wait
+           helm install istiod istio/istiod --namespace istio-system --set profile=ambient -f istio/ambientmesh/values.yaml --wait
+           helm install istio-cni istio/cni -n istio-system --set profile=ambient --wait
+           helm install ztunnel istio/ztunnel -n istio-system  --wait
 
-           else
+         else
             if [  "$TYPE" = 'istio' ]; then
               echo "installing istio"
               helm repo add istio https://istio-release.storage.googleapis.com/charts
               helm repo update
               helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
               helm install istiod istio/istiod -n istio-system  -f istio/values.yaml --wait
-              GATEWAYNAME="istio"
-            else
-              #no mesh
-              echo "no Mesh deployed"
+
+
             fi
 
-           fi
-        fi
+         fi
      fi
   fi
 fi
@@ -169,15 +203,16 @@ kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releas
 
 
 
-### Deploy the Dynatrace Operator
-kubectl create namespace dynatrace
-kubectl apply -f https://github.com/Dynatrace/dynatrace-operator/releases/download/v1.4.0/kubernetes.yaml
-kubectl apply -f https://github.com/Dynatrace/dynatrace-operator/releases/download/v1.4.0/kubernetes.yaml
+helm upgrade dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
+  --version 1.7.0 \
+  --create-namespace --namespace dynatrace \
+  --install \
+  --atomic
 kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
 kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DTOPERATORTOKEN" --from-literal="dataIngestToken=$DTTOKEN"
 sed -i  '' "s,TENANTURL_TOREPLACE,$DTURL," dynatrace/dynakube.yaml
 sed -i  '' "s,CLUSTER_NAME_TO_REPLACE,$CLUSTERNAME,"  dynatrace/dynakube.yaml
-sed -i  '' "s,CLASSNAME_REPLACE,$GATEWAYNAME,"  gateway_api/gateway.yaml
+
 
 ### Update the ip of the ip adress for the ingres
 #TODO to update this part to create the various Gateway rules
@@ -193,77 +228,71 @@ kubectl apply -f dynatrace/dynakube.yaml -n dynatrace
 kubectl create ns otel-demo
 kubectl label namespace  otel-demo oneagent=false
 
-#deploy demo application
-echo "Deploying hipster-shop"
-kubectl create ns hipster-shop
-kubectl label namespace hipster-shop oneagent=true
-kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="$DTURL" --from-literal=dt_api_token="$DTTOKEN" -n hipster-shop
 
 #---label namespace-----
 echo "labeling demo namespace"
 if [  "$TYPE" = 'kuma' ]; then
   echo " kuma"
-   kubectl apply -f kuma/Mesh.yaml
-   kubect apply -f  kuma/gatewayclass.yaml
-   kubectl apply -f kuma/MeshMetric.yaml
-   kubectl apply -f kuma/MeshAccesslog.yaml
-   kubectl apply -f kuma/meshtrace.yaml
+   kubectl apply -f kuma/kuma_gateway.yaml
    kubectl label namespace otel-demo kuma.io/sidecar-injection=enabled
-   kubectl label ns hipster-shop kuma.io/sidecar-injection=enabled
+   kubectl apply -f openTelemetry-manifest_statefulset.yaml
+   kubectl apply -f kuma/referencegrant.yaml
+   kubectl apply -f opentelemetry/simpleroute.yaml
 
 else
   if [  "$TYPE" = 'linkerd' ]; then
-    echo " linkerd"
-
-
-    echo " no ns labelling required"
-  elsekubrec
-     if [  "$TYPE" = 'traefik' ]; then
-       echo " TraefikMesh"
+    kubectl apply -f linkerd/gateway.yaml
+    kubectl annotate ns otel-demo linkerd.io/inject=enabled
+    kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_linkerd.yaml
+    kubedtl apply -f linkerd/referencegrant.yaml
+  else
+     if [  "$TYPE" = 'ambient' ]; then
+       echo " ambient"
+       kubectl apply -f istio/gateway.yaml
+       kubectl label namespace otel-demo istio.io/dataplane-mode=ambient
+       kubectl apply -f istio/ambientmesh/waypoint.yaml
+       kubectl label namespace otel-demo istio.io/use-waypoint=otel-demo-waypoint
+       kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
+       kubectl apply -f istio/referencegrant.yaml
      else
-        if [  "$TYPE" = 'cilium' ]; then
-          echo " Cilium"
+        if [  "$TYPE" = 'istio' ]; then
+          echo " istio"
+          kubectl apply -f istio/gateway.yaml
+          kubectl label namespace otel-demo istio-injection=enabled
+          kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
+          kubectl apply -f istio/referencegrant.yaml
         else
-           if [  "$TYPE" = 'ambient' ]; then
-             echo " ambient"
-             kubectl label namespace otel-demo istio.io/dataplane-mode=ambient
-             kubectl label namespace hipster-shop istio.io/dataplane-mode=ambient
-             kubectl apply -f istio/ambientmesh/waypoint.yaml
-             kubectl label namespace otel-demo istio.io/use-waypoint=otel-demo-waypoint
-             kubectl label namespace hipster-shop istio.io/use-waypoint=hipstershop-waypoint
-           else
-              if [  "$TYPE" = 'istio' ]; then
-                echo " istio"
-                kubectl label namespace otel-demo istio-injection=enabled
-                kubectl label namespace hipster-shop istio-injection=enabled
-              else
-                echo "no mesh- no annotation"
-              fi
-           fi
+          if [  "$TYPE" = 'ambient-kgateway' ]; then
+               echo " ambient-kgateway"
+               kubectl apply -f kgateway-ambient/gateway.yaml
+               kubectl label namespace otel-demo istio.io/dataplane-mode=ambient
+               kubectl apply -f kgateway-ambient/waypoint.yaml
+               kubectl label namespace otel-demo istio.io/use-waypoint=kgateway-waypoint
+               kubectl apply -f kgateway-ambient/observability.yaml
+               kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_kgateway.yaml
+               kubectl apply -f kgateway-ambient/referencegrant.yaml
+
+          else
+            echo "no mesh- no annotation"
+            kubectl apply -f openTelemetry-manifest_statefulset.yaml
+          fi
         fi
      fi
   fi
 fi
 
-if [  "$TYPE" = 'linkerd' ]; then
-  linkerd inject opentelemetry/deploy_1_12.yaml  | kubectl apply -n otel-demp -f -
-  linkerd inject hipstershop/k8s-manifest.yaml | kubectl apply -n hipster-shop -f -
-  kubectl apply -f opentelemetry/openTelemetry-manifest_ds.yaml
-  kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_linkerd.yaml
-else
-  if [  "$TYPE" = 'cilium' ]; then
-    kubectl apply -f openTelemetry-manifest_ds_cilium.yaml
-    kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_cilium.yaml
-  else
-    kubectl apply -f opentelemetry/openTelemetry-manifest_ds.yaml
-    kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset.yaml
-  fi
 
-  kubectl apply -f opentelemetry/deploy_1_12.yaml -n otel-demo
-  kubectl apply -f hipstershop/k8s-manifest.yaml -n hipster-shop
+kubectl apply -f opentelemetry/openTelemetry-manifest_ds.yaml
+kubectl apply -f opentelemetry/deploy_1_12.yaml -n otel-demo
+
+if [  "$TYPE" != 'none' ]; then
+    if [  "$TYPE" != 'ambient-kgateway' ]; then
+       kubectl apply -f kgateway-ambient/simpleroute.yaml
+    else
+      kubectl apply -f opentelemetry/simpleroute.yaml
+    fi
+#  kubectl apply -f opentelemetry/policy.yaml
 fi
-
-
 #Deploy the ingress rules
 echo "--------------Demo--------------------"
 echo "Installation finished "

@@ -1,0 +1,57 @@
+
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: HTTPListenerPolicy
+metadata:
+  name: logging-policy
+  namespace: kgateway-system
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http
+  accessLog:
+    - openTelemetry:
+        grpcService:
+          backendRef:
+            name: otel-collector
+            namespace: default
+            port: 4317
+          logName: "http-gateway-access-logs"
+        body: >-
+          "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %RESPONSE_CODE% "%REQ(:AUTHORITY)%" "%UPSTREAM_CLUSTER%"'        
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-otel-collector-logs-access
+  namespace: default
+spec:
+  from:
+    - group: gateway.kgateway.dev
+      kind: HTTPListenerPolicy
+      namespace: kgateway-system
+  to:
+    - group: ""
+      kind: Service
+      name: otel-collector
+---
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: HTTPListenerPolicy
+metadata:
+  name: tracing-policy
+  namespace: kgateway-system
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http
+  tracing:
+    provider:
+      openTelemetry:
+        serviceName: http
+        grpcService:
+          backendRef:
+            name: otel-collector
+            namespace: default
+            port: 4317
+    spawnUpstreamSpan: true

@@ -1,0 +1,105 @@
+# File: linkerd-policies.yaml
+# Corrected Linkerd policies matching actual v1alpha2 API
+
+---
+# ServiceProfile for Product Catalog
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: product-catalog.otel-demo.svc.cluster.local
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  # RetryBudget is at ServiceProfile level, NOT per-route
+  retryBudget:
+    retryRatio: 0.2
+    minRetriesPerSecond: 10
+    ttl: 10s
+  routes:
+    - name: ListProducts
+      condition:
+        method: POST
+        pathRegex: /oteldemo.ProductCatalogService/ListProducts
+      timeout: 5000ms
+      isRetryable: true
+      responseClasses:
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+
+    - name: GetProduct
+      condition:
+        method: POST
+        pathRegex: /oteldemo.ProductCatalogService/GetProduct
+      timeout: 5000ms
+      isRetryable: true
+      responseClasses:
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+
+
+---
+# ServiceProfile for Checkout Service
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: checkout.otel-demo.svc.cluster.local
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  retryBudget:
+    retryRatio: 0.1
+    minRetriesPerSecond: 5
+    ttl: 10s
+  routes:
+    - name: PlaceOrder
+      condition:
+        method: POST
+        pathRegex: /oteldemo.CheckoutService/PlaceOrder
+      timeout: 10000ms
+      isRetryable: true
+      responseClasses:
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+
+---
+# Server for Product Catalog - Connection Limits
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  name: product-catalog-server
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: product-catalog
+  port: grpc
+  proxyProtocol: gRPC
+
+---
+# Server for Checkout Service - Connection Limits
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  name: checkout-server
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  podSelector:
+    matchLabels:
+      opentelemetry.io/name: checkout
+  port: grpc
+  proxyProtocol: gRPC

@@ -1,0 +1,34 @@
+apiVersion:  gateway.kgateway.dev/v1alpha1
+kind: TrafficPolicy
+metadata:
+  name: checkout-policy
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+
+  
+  # Rate Limiting (lower for checkout)
+  rateLimit:
+    local:
+      tokenBucket:
+        maxTokens: 500
+        tokensPerFill: 500
+        fillInterval: 60s        # 500 req/min
+
+  
+
+---
+apiVersion:  gateway.kgateway.dev/v1alpha1
+kind: TrafficPolicy
+metadata:
+  name: product-catalog-policy-alt
+  namespace: otel-demo
+spec:
+  rateLimit:
+    local:
+      tokenBucket:
+        maxTokens: 1000
+        tokensPerFill: 1000
+        fillInterval: 60s
+

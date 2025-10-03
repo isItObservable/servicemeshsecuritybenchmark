@@ -34,7 +34,7 @@ spec:
           serviceAccountName: opentelemetry-demo
           containers:
             - name: loadgenerator
-              image: 'ghcr.io/open-telemetry/demo:1.6.0-loadgenerator'
+              image: 'ghcr.io/open-telemetry/demo:2.0.2-load-generator'
               imagePullPolicy: IfNotPresent
               ports:
 
@@ -79,7 +79,7 @@ spec:
                 - name: LOCUST_SPAWN_RATE
                   value: "1"
                 - name: LOCUST_HOST
-                  value: http://opentelemetry-demo-frontendproxy.otel-demo.svc.cluster.local:8080
+                  value: http://frontend-proxy:8080
                 - name: LOCUST_HEADLESS
                   value: "false"
                 - name: LOCUST_AUTOSTART
@@ -127,7 +127,7 @@ spec:
           serviceAccountName: opentelemetry-demo
           containers:
             - name: loadgenerator
-              image: 'ghcr.io/open-telemetry/demo:1.6.0-loadgenerator'
+              image: 'ghcr.io/open-telemetry/demo:2.0.2-load-generator'
               imagePullPolicy: IfNotPresent
               ports:
 
@@ -172,7 +172,7 @@ spec:
                 - name: LOCUST_SPAWN_RATE
                   value: "1"
                 - name: LOCUST_HOST
-                  value: http://opentelemetry-demo-frontendproxy.otel-demo.svc.cluster.local:8080
+                  value: http://frontend-proxy:8080
                 - name: LOCUST_HEADLESS
                   value: "false"
                 - name: LOCUST_AUTOSTART

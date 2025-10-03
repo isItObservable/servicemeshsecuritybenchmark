@@ -1,0 +1,8 @@
+jaeger:
+  enabled: false
+collector:
+  enabled: false
+webhook:
+  collectorTraceProtocol: opentelemetry
+  collectorSvcAddr: otel-collector.default.svc.cluster.local:4317
+  collectorSvcAccount: otelcontribcol

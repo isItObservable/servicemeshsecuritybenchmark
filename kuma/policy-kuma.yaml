@@ -1,0 +1,259 @@
+# File: otel-demo-kuma-policies.yaml
+# Kuma policies for OpenTelemetry Demo - Product Catalog and Checkout only
+# Based on official architecture: https://opentelemetry.io/docs/demo/architecture/
+# Fixed for Kuma v1alpha1 API compatibility
+
+---
+# ============================================================================
+# PRODUCT CATALOG SERVICE POLICIES (gRPC on port 3550)
+# ============================================================================
+
+---
+# MeshTimeout - Applied to all services when calling Product Catalog
+apiVersion: kuma.io/v1alpha1
+kind: MeshTimeout
+metadata:
+  name: product-catalog-timeout
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: timeout
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: productcatalogservice_otel-demo_svc_3550
+      default:
+        connectionTimeout: 30s
+        idleTimeout: 300s
+        http:
+          requestTimeout: 30s
+          streamIdleTimeout: 300s
+
+---
+# MeshRetry - Applied to all services when calling Product Catalog
+apiVersion: kuma.io/v1alpha1
+kind: MeshRetry
+metadata:
+  name: product-catalog-retry
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: retry
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: productcatalogservice_otel-demo_svc_3550
+      default:
+        grpc:
+          numRetries: 3
+          perTryTimeout: 10s
+          backOff:
+            baseInterval: 500ms
+            maxInterval: 5s
+          retryOn:
+            - "Unavailable"
+            - "DeadlineExceeded"
+            - "ResourceExhausted"
+
+---
+# MeshCircuitBreaker - Applied to all services when calling Product Catalog
+apiVersion: kuma.io/v1alpha1
+kind: MeshCircuitBreaker
+metadata:
+  name: product-catalog-circuit-breaker
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: circuit-breaker
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: productcatalogservice_otel-demo_svc_3550
+      default:
+        connectionLimits:
+          maxConnections: 2048
+          maxPendingRequests: 2048
+          maxRequests: 2048
+          maxRetries: 20
+        outlierDetection:
+          interval: 120s
+          baseEjectionTime: 120s
+          maxEjectionPercent: 10
+          splitExternalAndLocalErrors: false
+          detectors:
+            totalFailures:
+              consecutive: 15
+            gatewayFailures:
+              consecutive: 15
+            localOriginFailures:
+              consecutive: 15
+
+---
+# MeshRateLimit - Applied TO Product Catalog FROM all services
+apiVersion: kuma.io/v1alpha1
+kind: MeshRateLimit
+metadata:
+  name: product-catalog-rate-limit
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: rate-limit
+spec:
+  targetRef:
+    kind: MeshService
+    name: productcatalogservice_otel-demo_svc_3550
+  from:
+    - targetRef:
+        kind: Mesh
+      default:
+        local:
+          http:
+            requestRate:
+              num: 5000
+              interval: 60s
+            onRateLimit:
+              status: 429
+              headers:
+                set:
+                  - name: x-kuma-rate-limited
+                    value: "true"
+
+---
+# ============================================================================
+# CHECKOUT SERVICE POLICIES (gRPC on port 5050)
+# ============================================================================
+
+---
+# MeshTimeout - Applied to all services when calling Checkout
+apiVersion: kuma.io/v1alpha1
+kind: MeshTimeout
+metadata:
+  name: checkout-timeout
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: timeout
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: checkoutservice_otel-demo_svc_5050
+      default:
+        connectionTimeout: 45s
+        idleTimeout: 300s
+        http:
+          requestTimeout: 45s
+          streamIdleTimeout: 300s
+
+---
+# MeshRetry - Applied to all services when calling Checkout
+apiVersion: kuma.io/v1alpha1
+kind: MeshRetry
+metadata:
+  name: checkout-retry
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: retry
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: checkoutservice_otel-demo_svc_5050
+      default:
+        grpc:
+          numRetries: 2
+          perTryTimeout: 15s
+          backOff:
+            baseInterval: 1s
+            maxInterval: 10s
+          retryOn:
+            - "Unavailable"
+            - "DeadlineExceeded"
+
+---
+# MeshCircuitBreaker - Applied to all services when calling Checkout
+apiVersion: kuma.io/v1alpha1
+kind: MeshCircuitBreaker
+metadata:
+  name: checkout-circuit-breaker
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: circuit-breaker
+spec:
+  targetRef:
+    kind: Mesh
+  to:
+    - targetRef:
+        kind: MeshService
+        name: checkoutservice_otel-demo_svc_5050
+      default:
+        connectionLimits:
+          maxConnections: 1024
+          maxPendingRequests: 1024
+          maxRequests: 1024
+          maxRetries: 10
+        outlierDetection:
+          interval: 120s
+          baseEjectionTime: 120s
+          maxEjectionPercent: 10
+          splitExternalAndLocalErrors: false
+          detectors:
+            totalFailures:
+              consecutive: 10
+            gatewayFailures:
+              consecutive: 10
+            localOriginFailures:
+              consecutive: 10
+
+---
+# MeshRateLimit - Applied TO Checkout FROM all services
+apiVersion: kuma.io/v1alpha1
+kind: MeshRateLimit
+metadata:
+  name: checkout-rate-limit
+  namespace: kuma-system
+  labels:
+    kuma.io/mesh: default
+    app.kubernetes.io/part-of: opentelemetry-demo
+    policy-type: rate-limit
+spec:
+  targetRef:
+    kind: MeshService
+    name: checkoutservice_otel-demo_svc_5050
+  from:
+    - targetRef:
+        kind: Mesh
+      default:
+        local:
+          http:
+            requestRate:
+              num: 1000
+              interval: 60s
+            onRateLimit:
+              status: 429
+              headers:
+                set:
+                  - name: x-kuma-rate-limited
+                    value: "true"

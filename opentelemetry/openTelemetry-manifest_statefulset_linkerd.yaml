@@ -4,7 +4,7 @@ metadata:
   name: otel
   labels:
     app: opentelemetry
-    app.kubernetes.io/component: oteld-statefullset
+    app.kubernetes.io/component: otel-statefullset
 spec:
   mode: statefulset
   replicas: 1
@@ -49,7 +49,14 @@ spec:
     receivers:
 
 
-
+      k8sobjects:
+        auth_type: serviceAccount
+        objects:
+          - name: pods
+            mode: pull
+            interval: 10m
+          - name: events
+            mode: watch
       prometheus:
         config:
           scrape_configs:
@@ -58,7 +65,85 @@ spec:
               static_configs:
                 - targets:
                     - ${MY_POD_IP}:8888
-
+                    -
+            - job_name: 'linkerd-controller'
+              kubernetes_sd_configs:
+                - role: pod
+                  namespaces:
+                    names:
+                      - '{{.Values.linkerdNamespace}}'
+                      - '{{.Values.namespace}}'
+              relabel_configs:
+                - source_labels:
+                    - __meta_kubernetes_pod_container_port_name
+                  action: keep
+                  regex: admin-http
+                - source_labels: [ __meta_kubernetes_pod_container_name ]
+                  action: replace
+                  target_label: component
+            - job_name: 'linkerd-service-mirror'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels:
+                    - __meta_kubernetes_pod_label_linkerd_io_control_plane_component
+                    - __meta_kubernetes_pod_container_port_name
+                  action: keep
+                  regex: linkerd-service-mirror;admin-http$
+                - source_labels: [ __meta_kubernetes_pod_container_name ]
+                  action: replace
+                  target_label: component
+            - job_name: 'linkerd-proxy'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels:
+                    - __meta_kubernetes_pod_container_name
+                    - __meta_kubernetes_pod_container_port_name
+                    - __meta_kubernetes_pod_label_linkerd_io_control_plane_ns
+                  action: keep
+                  regex: ^{{default .Values.proxyContainerName "linkerd-proxy" .Values.proxyContainerName}};linkerd-admin;{{.Values.linkerdNamespace}}$
+                - source_labels: [ __meta_kubernetes_namespace ]
+                  action: replace
+                  target_label: namespace
+                - source_labels: [ __meta_kubernetes_pod_name ]
+                  action: replace
+                  target_label: pod
+                # special case k8s' "job" label, to not interfere with prometheus' "job"
+                # label
+                # __meta_kubernetes_pod_label_linkerd_io_proxy_job=foo =>
+                # k8s_job=foo
+                - source_labels: [ __meta_kubernetes_pod_label_linkerd_io_proxy_job ]
+                  action: replace
+                  target_label: k8s_job
+                # drop __meta_kubernetes_pod_label_linkerd_io_proxy_job
+                - action: labeldrop
+                  regex: __meta_kubernetes_pod_label_linkerd_io_proxy_job
+                # __meta_kubernetes_pod_label_linkerd_io_proxy_deployment=foo =>
+                # deployment=foo
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_linkerd_io_proxy_(.+)
+                # drop all labels that we just made copies of in the previous labelmap
+                - action: labeldrop
+                  regex: __meta_kubernetes_pod_label_linkerd_io_proxy_(.+)
+                # __meta_kubernetes_pod_label_linkerd_io_foo=bar =>
+                # foo=bar
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_linkerd_io_(.+)
+                # Copy all pod labels to tmp labels
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_(.+)
+                  replacement: __tmp_pod_label_$1
+                # Take `linkerd_io_` prefixed labels and copy them without the prefix
+                - action: labelmap
+                  regex: __tmp_pod_label_linkerd_io_(.+)
+                  replacement: __tmp_pod_label_$1
+                # Drop the `linkerd_io_` originals
+                - action: labeldrop
+                  regex: __tmp_pod_label_linkerd_io_(.+)
+                # Copy tmp labels into real labels
+                - action: labelmap
+                  regex: __tmp_pod_label_(.+)
             - job_name: kubernetes-pods
               kubernetes_sd_configs:
                   - role: pod
@@ -99,11 +184,17 @@ spec:
                   source_labels:
                     - __meta_kubernetes_pod_phase
 
-
       otlp:
         protocols:
-          grpc: {}
-          http: {}
+          grpc:
+            endpoint: ${MY_POD_IP}:4317
+          http:
+            cors:
+              allowed_origins:
+                - http://*
+                - https://*
+            endpoint: ${MY_POD_IP}:4318
+
     processors:
       batch:
         send_batch_max_size: 1000
@@ -115,9 +206,16 @@ spec:
         limit_percentage: 70
         spike_limit_percentage: 30
 
+      cumulativetodelta: {}
 
-
-
+      k8sattributes/k8S:
+        extract:
+          metadata:
+            - k8s.cluster.uid
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.namespace.name
       k8sattributes:
         extract:
           metadata:
@@ -128,6 +226,7 @@ spec:
             - k8s.daemonset.name
             - k8s.cronjob.name
             - k8s.namespace.name
+            - k8s.container.name
             - k8s.node.name
             - k8s.cluster.uid
         pod_association:
@@ -149,7 +248,6 @@ spec:
           - key: k8s.cluster.name
             value: ${CLUSTERNAME}
             action: insert
-
 
 
 
@@ -191,18 +289,36 @@ spec:
 
       cumulativetodelta: {}
 
-      filter:
-        error_mode: ignore
-        metrics:
-          metric:
-            - 'IsMatch(name, "kafka.consumer.*")'
-            - 'type == METRIC_DATA_TYPE_SUMMARY'
-
 
 
     exporters:
 
-
+      loadbalancing:
+        routing_key: "service"
+        protocol:
+          otlp:
+            # all options from the OTLP exporter are supported
+            # except the endpoint
+            timeout: 1s
+            tls:
+              insecure: true
+        resolver:
+          # use k8s service resolver, if collector runs in kubernetes environment
+          k8s:
+            service: otelback-collector.default
+      loadbalancing/metrics:
+        routing_key: "metric"
+        protocol:
+          otlp:
+            # all options from the OTLP exporter are supported
+            # except the endpoint
+            timeout: 1s
+            tls:
+              insecure: true
+        resolver:
+          # use k8s service resolver, if collector runs in kubernetes environment
+          k8s:
+            service: otelback-collector.default
       otlphttp:
         endpoint: ${DT_ENDPOINT}/api/v2/otlp
         headers:
@@ -210,29 +326,32 @@ spec:
       debug:
         verbosity: detailed
 
+    connectors:
+      spanmetrics:
+        exemplars:
+          enabled: true
+        aggregation_temporality: "AGGREGATION_TEMPORALITY_DELTA"
+
+
+
     service:
       pipelines:
 
         traces:
           receivers: [otlp]
-          processors: [memory_limiter,k8sattributes,transform, batch ]
-          exporters: [ otlphttp]
-
-
-        metrics/prom:
-          receivers: [prometheus]
-          processors: [memory_limiter,k8sattributes,filter,transform,cumulativetodelta,batch]
-          exporters: [otlphttp]
+          processors: [memory_limiter,k8sattributes,transform,batch]
+          exporters: [spanmetrics,otlphttp]
         metrics:
-          receivers: [ otlp ]
-          processors: [ memory_limiter,k8sattributes,filter,transform,cumulativetodelta,batch ]
+          receivers: [otlp,prometheus]
+          processors: [memory_limiter,k8sattributes,transform,cumulativetodelta,batch]
+          exporters: [otlphttp]
+        metrics/span:
+          receivers: [ spanmetrics ]
           exporters: [ otlphttp ]
-
         logs:
           receivers: [otlp]
-          processors: [memory_limiter,k8sattributes,transform,batch]
+          processors: [memory_limiter,k8sattributes,transform,resource,batch]
           exporters: [otlphttp]
-
 
       telemetry:
         metrics:

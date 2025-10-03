@@ -1,0 +1,143 @@
+# File: grpc-routes-linkerd.yaml
+# GRPCRoutes with ExtensionRef to Linkerd policies
+
+---
+# Frontend → Product Catalog
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: frontend-to-product-catalog
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+    traffic.pattern: frontend-to-product-catalog
+spec:
+  parentRefs:
+    - name: frontend
+      kind: Service
+      group: ""
+  rules:
+    - matches:
+        - method:
+            type: Exact
+            service: oteldemo.ProductCatalogService
+            method: ListProducts
+      backendRefs:
+        - name: product-catalog
+          port: 8080
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: linkerd.io
+            kind: ServiceProfile
+            name: product-catalog.otel-demo.svc.cluster.local
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: HTTPRoute
+            name: product-catalog-retry-policy
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: Server
+            name: product-catalog-server
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: x-traffic-source
+                value: "frontend"
+              - name: x-traffic-destination
+                value: "product-catalog"
+              - name: x-catalog-context
+                value: "product-listing"
+              - name: x-method-type
+                value: "ListProducts"
+
+    - matches:
+        - method:
+            type: Exact
+            service: oteldemo.ProductCatalogService
+            method: GetProduct
+      backendRefs:
+        - name: product-catalog
+          port: 8080
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: linkerd.io
+            kind: ServiceProfile
+            name: product-catalog.otel-demo.svc.cluster.local
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: HTTPRoute
+            name: product-catalog-retry-policy
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: Server
+            name: product-catalog-server
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: x-traffic-source
+                value: "frontend"
+              - name: x-traffic-destination
+                value: "product-catalog"
+              - name: x-catalog-context
+                value: "product-detail"
+              - name: x-method-type
+                value: "GetProduct"
+
+
+
+
+---
+# Frontend → Checkout Service
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: frontend-to-checkout
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+    traffic.pattern: frontend-to-checkout
+spec:
+  parentRefs:
+    - name: frontend
+      kind: Service
+      group: ""
+  rules:
+    - matches:
+        - method:
+            type: Exact
+            service: oteldemo.CheckoutService
+            method: PlaceOrder
+      backendRefs:
+        - name: checkout
+          port: 8080
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: linkerd.io
+            kind: ServiceProfile
+            name: checkout.otel-demo.svc.cluster.local
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: HTTPRoute
+            name: checkout-retry-policy
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: Server
+            name: checkout-server
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: x-traffic-source
+                value: "frontend"
+              - name: x-traffic-destination
+                value: "checkout"
+              - name: x-method-type
+                value: "PlaceOrder"

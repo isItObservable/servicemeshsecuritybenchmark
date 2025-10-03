@@ -8,7 +8,7 @@ metadata:
 spec:
   mode: daemonset
   serviceAccount: otelcontribcol
-  image: otel/opentelemetry-collector-contrib:0.118.0
+  image: otel/opentelemetry-collector-contrib:0.133.0
   ports:
     - name: prometheus
       port: 9090
@@ -277,14 +277,18 @@ spec:
 
 
       telemetry:
-        logs:
-          level: info
         metrics:
-          address: ${MY_POD_IP}:8888
+          readers:
+            - pull:
+                exporter:
+                  prometheus:
+                    host: ${MY_POD_IP}
+                    port: 8888
+                    without_units: true
         traces:
           processors:
             - batch:
                 exporter:
                   otlp:
-                    protocol: grpc/protobuf
+                    protocol: grpc
                     endpoint: http://localhost:4317

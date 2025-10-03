@@ -1,0 +1,53 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: oteldemo-gateway
+  namespace: otel-demo
+spec:
+  gatewayClassName: kgateway
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+---
+# Allow otel-demo namespace routes to reference services in istio-system
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-otel-demo-cross-namespace
+  namespace: linkerd
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: otel-demo
+    - group: gateway.networking.k8s.io
+      kind: GRPCRoute
+      namespace: otel-demo
+    - group: gateway.networking.k8s.io
+      kind: TCPRoute
+      namespace: otel-demo
+  to:
+    - group: ""
+      kind: Service
+---
+# Allow otel-demo namespace routes to reference services in istio-system
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-otel-demo-cross-namespace
+  namespace: kgateway-system
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: otel-demo
+    - group: gateway.networking.k8s.io
+      kind: GRPCRoute
+      namespace: otel-demo
+    - group: gateway.networking.k8s.io
+      kind: TCPRoute
+      namespace: otel-demo
+  to:
+    - group: ""
+      kind: Service
