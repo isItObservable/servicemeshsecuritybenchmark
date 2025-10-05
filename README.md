@@ -27,7 +27,7 @@ The following tools need to be install on your machine :
 - Helm
 - step
 
-## >> [Start the Hands on Tutorial](https://isitobserable.github.io/servicemeshsecuritybenchmark)
+## >> [Start the Hands on Tutorial](https://isitobservable.github.io/servicemeshsecuritybenchmark)
 
 ### 1. Deploy the  environment without any ServiceMesh
 The application will deploy the entire environment:
