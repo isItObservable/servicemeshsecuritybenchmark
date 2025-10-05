@@ -1,13 +1,10 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
-  name: oteldemo-gateway
-  namespace: otel-demo
+  name: bookinfo-gateway
+  namespace: bookinfo
 spec:
   gatewayClassName: istio
-  addresses:
-    - type: IPAddress
-      value: "10.0.0.151"
   listeners:
     - name: http
       port: 80

@@ -1,11 +1,11 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
-  name: oteldemoroute
-  namespace: otel-demo
+  name: bookingroute
+  namespace: booking
 spec:
   parentRefs:
-    - name: oteldemo-gateway
+    - name: bookinfo-gateway
   rules:
     - backendRefs:
         - name: frontend-proxy

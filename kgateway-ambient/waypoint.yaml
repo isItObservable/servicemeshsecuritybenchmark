@@ -2,9 +2,9 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: kgateway-waypoint
-  namespace: otel-demo
+  namespace: bookinfo
   labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/part-of: bookinfo
     istio.io/waypoint-for: all
 spec:
   gatewayClassName: kgateway-waypoint

@@ -2,19 +2,19 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
-  name: allow-otel-demo-cross-namespace
+  name: allow-bookinfo-cross-namespace
   namespace: kuma-system
 spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      namespace: otel-demo
+      namespace: bookinfo
     - group: gateway.networking.k8s.io
       kind: GRPCRoute
-      namespace: otel-demo
+      namespace: bookinfo
     - group: gateway.networking.k8s.io
       kind: TCPRoute
-      namespace: otel-demo
+      namespace: bookinfo
   to:
     - group: ""
       kind: Service

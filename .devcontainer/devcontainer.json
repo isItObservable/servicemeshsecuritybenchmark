@@ -1,0 +1,69 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/kubernetes-helm
+{
+	"name": "ServiceMesh Environment",
+
+	"image": "ubuntu:jammy",
+
+	"hostRequirements": {
+		"cpus": 2
+	},
+
+	// some base images require a specific user name
+	"remoteUser": "vscode",
+
+	// Install extensions
+	"customizations": {
+		"vscode": {	
+			// Set container specific settings
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			},			
+			"extensions": []
+		}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		8080
+	],
+
+	// add labels
+	"portsAttributes": {
+		"8080": { "label": "Booking" }
+	},
+
+	"containerEnv": {
+		"RepositoryName": "demo-opentelemetry-patterns"
+
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	//"postCreateCommand": ".devcontainer/post-create.sh",
+	"postCreateCommand": ".devcontainer/post-create.sh && /workspaces/$RepositoryName/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN}  --type ${localEnv:SM_TYPE}",
+
+	// Add recommended secrets
+	"secrets": {
+		"DT_ENVIRONMENT_ID": {
+			 "description": "eg. abc12345 from https://abc12345.apps.dynatrace.com"
+	 },
+		"DT_ENVIRONMENT_TYPE": {
+			"description": "live, sprint or dev. Leave blank for live. Defaults to live"
+	 },
+	   "DT_API_TOKEN": {
+			 "description": "Dynatrace API token with these permissions: `logs.ingest`, `metrics.ingest`, `openTelemetryTrace.ingest`, `events.ingest`"
+	 },
+		"DT_OPERATOR_TOKEN": {
+			"description": "Dynatrace API token with these permissions: `Installer download`, `DataExport`, `settings.read`, `settings.write`,`entities.read`, `activeGateTokenManagement.create`"
+
+		},
+		"SM_TYPE": {
+			"description": "Type of service to deploy: kuma, istio, linkerd, ambient, or ambient-kgateway"
+		},
+
+		"NAME": {
+			"description": "Name of the environemernt"
+		}
+ 	}
+
+}

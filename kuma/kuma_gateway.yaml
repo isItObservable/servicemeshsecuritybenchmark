@@ -1,11 +1,11 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: oteldemo-gateway
-  namespace: otel-demo
+  name: bookinfo-gateway
+  namespace: bookinfo
 spec:
   gatewayClassName: kuma
   listeners:
     - name: http
-      port: 80
+      port: 8008
       protocol: HTTP

@@ -1,117 +1,158 @@
-# File: ambient-policies.yaml
-# Deploy Ambient Mesh (Istio) policies for rate limiting, circuit breaker, retries, and timeouts
-# Note: Ambient mesh uses waypoint proxies instead of sidecars
-
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: reviews-vs
+  namespace: default
+spec:
+  hosts:
+    - reviews.booking.svc.cluster.local
+  http:
+    # Match traffic from waypoint
+    - match:
+        - sourceLabels:
+            gateway.networking.k8s.io/gateway-name:  kgateway-waypoint
+      # Request timeout
+      timeout: 2s
+      # Retry policy
+      retries:
+        attempts: 3
+        perTryTimeout: 500ms
+        retryOn: 5xx,reset,connect-failure,refused-stream,retriable-4xx
+      # Fault injection for testing (optional)
+      # fault:
+      #   delay:
+      #     percentage:
+      #       value: 0.1
+      #     fixedDelay: 5s
+      route:
+        - destination:
+            host: reviews.booking.svc.cluster.local
+            port:
+              number: 9080
+          weight: 100
 ---
-# DestinationRule for Product Catalog - Circuit Breaker
+# ============================================
+# VirtualService: Request Timeout & Retry for details
+# ============================================
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: details-vs
+  namespace: booking
+spec:
+  hosts:
+    - details.booking.svc.cluster.local
+  http:
+    - match:
+        - sourceLabels:
+            gateway.networking.k8s.io/gateway-name: kgateway-waypoint
+      timeout: 1s
+      retries:
+        attempts: 3
+        perTryTimeout: 300ms
+        retryOn: 5xx,reset,connect-failure,refused-stream
+      route:
+        - destination:
+            host: details.default.svc.cluster.local
+            port:
+              number: 9080
+          weight: 100
+---
+# ============================================
+# DestinationRule: Circuit Breaker for reviews
+# Istio native, works with Ambient waypoint
+# ============================================
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: product-catalog-circuit-breaker
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: circuit-breaker
+  name: reviews-circuit-breaker
+  namespace: booking
 spec:
-  host: product-catalog.otel-demo.svc.cluster.local
+  host: reviews.booking.svc.cluster.local
   trafficPolicy:
+    # Connection pool settings
     connectionPool:
       tcp:
         maxConnections: 100
+        connectTimeout: 30ms
+        tcpKeepalive:
+          time: 7200s
+          interval: 75s
       http:
-        http1MaxPendingRequests: 50
+        http1MaxPendingRequests: 10
         http2MaxRequests: 100
         maxRequestsPerConnection: 2
+        maxRetries: 3
+        idleTimeout: 30s
+        h2UpgradePolicy: UPGRADE
+    # Circuit breaker via outlier detection
     outlierDetection:
+      # Number of errors before ejection
       consecutive5xxErrors: 5
+      consecutiveGatewayErrors: 3
+      consecutiveLocalOriginFailures: 5
+      # Detection interval
       interval: 30s
+      # How long to eject
       baseEjectionTime: 30s
+      # Maximum percentage of hosts that can be ejected
       maxEjectionPercent: 50
+      # Minimum percentage of hosts that must remain healthy
       minHealthPercent: 50
+      # Split external and local origin errors
+      splitExternalLocalOriginErrors: true
+    # Load balancing
     loadBalancer:
       simple: LEAST_REQUEST
-
+      warmupDurationSecs: 10s
+      localityLbSetting:
+        enabled: true
+        distribute:
+          - from: us-east-1
+            to:
+              "us-east-1": 80
+              "us-west-1": 20
+        failover:
+          - from: us-east-1
+            to: us-west-1
+    # Port level settings
+    portLevelSettings:
+      - port:
+          number: 9080
+        connectionPool:
+          http:
+            http1MaxPendingRequests: 10
 ---
-# DestinationRule for Checkout Service - Circuit Breaker
+# ============================================
+# DestinationRule: Circuit Breaker for details
+# ============================================
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: checkout-circuit-breaker
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: circuit-breaker
+  name: details-circuit-breaker
+  namespace: booking
 spec:
-  host: checkout.otel-demo.svc.cluster.local
+  host: details.booking.svc.cluster.local
   trafficPolicy:
     connectionPool:
       tcp:
         maxConnections: 50
+        connectTimeout: 30ms
       http:
-        http1MaxPendingRequests: 25
+        http1MaxPendingRequests: 10
         http2MaxRequests: 50
         maxRequestsPerConnection: 2
+        maxRetries: 3
+        idleTimeout: 30s
     outlierDetection:
-      consecutive5xxErrors: 3
-      interval: 20s
-      baseEjectionTime: 60s
+      consecutive5xxErrors: 5
+      consecutiveGatewayErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
       maxEjectionPercent: 50
       minHealthPercent: 50
+      splitExternalLocalOriginErrors: true
     loadBalancer:
       simple: LEAST_REQUEST
-
----
-# VirtualService for Frontend to Product Catalog - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-product-catalog-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: resiliency
-spec:
-  hosts:
-    - product-catalog.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            opentelemetry.io/name: frontend
-      route:
-        - destination:
-            host: product-catalog.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 5s
-      retries:
-        attempts: 3
-        perTryTimeout: 2s
-        retryOn: 5xx,reset,connect-failure,refused-stream
-
----
-# VirtualService for Frontend to Checkout - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-checkout-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: resiliency
-spec:
-  hosts:
-    - checkout.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            opentelemetry.io/name: frontend
-      route:
-        - destination:
-            host: checkout.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 10s
-      retries:
-        attempts: 2
-        perTryTimeout: 5s
-        retryOn: 5xx,reset,connect-failure,refused-stream
+      localityLbSetting:
+        enabled: true

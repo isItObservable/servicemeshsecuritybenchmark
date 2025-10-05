@@ -3,8 +3,8 @@ kind: Gateway
 metadata:
   labels:
     istio.io/waypoint-for: all
-  name: otel-demo-waypoint
-  namespace: otel-demo
+  name: bookinfo-waypoint
+  namespace: bookinfo
 spec:
   gatewayClassName: istio-waypoint
   listeners:

@@ -1,105 +1,262 @@
-# File: linkerd-policies.yaml
-# Corrected Linkerd policies matching actual v1alpha2 API
+# ============================================
+# Linkerd Server Resources
+# Define the target services
+# ============================================
 
----
-# ServiceProfile for Product Catalog
-apiVersion: linkerd.io/v1alpha2
-kind: ServiceProfile
-metadata:
-  name: product-catalog.otel-demo.svc.cluster.local
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  # RetryBudget is at ServiceProfile level, NOT per-route
-  retryBudget:
-    retryRatio: 0.2
-    minRetriesPerSecond: 10
-    ttl: 10s
-  routes:
-    - name: ListProducts
-      condition:
-        method: POST
-        pathRegex: /oteldemo.ProductCatalogService/ListProducts
-      timeout: 5000ms
-      isRetryable: true
-      responseClasses:
-        - condition:
-            status:
-              min: 500
-              max: 599
-          isFailure: true
-
-    - name: GetProduct
-      condition:
-        method: POST
-        pathRegex: /oteldemo.ProductCatalogService/GetProduct
-      timeout: 5000ms
-      isRetryable: true
-      responseClasses:
-        - condition:
-            status:
-              min: 500
-              max: 599
-          isFailure: true
-
-
----
-# ServiceProfile for Checkout Service
-apiVersion: linkerd.io/v1alpha2
-kind: ServiceProfile
-metadata:
-  name: checkout.otel-demo.svc.cluster.local
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  retryBudget:
-    retryRatio: 0.1
-    minRetriesPerSecond: 5
-    ttl: 10s
-  routes:
-    - name: PlaceOrder
-      condition:
-        method: POST
-        pathRegex: /oteldemo.CheckoutService/PlaceOrder
-      timeout: 10000ms
-      isRetryable: true
-      responseClasses:
-        - condition:
-            status:
-              min: 500
-              max: 599
-          isFailure: true
-
----
-# Server for Product Catalog - Connection Limits
+# Server for reviews service
 apiVersion: policy.linkerd.io/v1beta3
 kind: Server
 metadata:
-  name: product-catalog-server
-  namespace: otel-demo
+  name: reviews-server
+  namespace: booking
   labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+    app: reviews
 spec:
   podSelector:
     matchLabels:
-      opentelemetry.io/name: product-catalog
-  port: grpc
-  proxyProtocol: gRPC
-
+      app: reviews
+  port: 9080
+  proxyProtocol: HTTP/1
 ---
-# Server for Checkout Service - Connection Limits
+# Server for details service
 apiVersion: policy.linkerd.io/v1beta3
 kind: Server
 metadata:
-  name: checkout-server
-  namespace: otel-demo
+  name: details-server
+  namespace: default
   labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+    app: details
 spec:
   podSelector:
     matchLabels:
-      opentelemetry.io/name: checkout
-  port: grpc
-  proxyProtocol: gRPC
+      app: details
+  port: 9080
+  proxyProtocol: HTTP/1
+---
+# ============================================
+# ServiceProfile: Circuit Breaker & Timeout for reviews
+# ============================================
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: reviews-profile
+  namespace: booking
+  labels:
+    app: reviews
+spec:
+  # Target service
+  routes:
+    - name: reviews-route
+      condition:
+        method: GET
+        pathRegex: /.*
+      # Request timeout (circuit breaker component)
+      timeout: 2s
+      # Retry policy (circuit breaker component)
+      isRetryable: true
+      retries:
+        # Max 3 retry attempts
+        limit: 3
+        # Retry budget to prevent retry storms
+        budget:
+          minRetriesPerSecond: 10
+          retryRatio: 0.2  # Max 20% of requests can be retries
+          ttl: 10s
+        # Retry on these conditions
+        conditions:
+          - status5xx
+          - gatewayError
+          - timeout
+      # Response classification for metrics
+      responseClasses:
+        - condition:
+            status:
+              min: 200
+              max: 299
+          isFailure: false
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+---
+# ============================================
+# ServiceProfile: Circuit Breaker & Timeout for details
+# ============================================
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: details-profile
+  namespace: booking
+  labels:
+    app: details
+spec:
+  routes:
+    - name: details-route
+      condition:
+        method: GET
+        pathRegex: /.*
+      # Timeout: 1 second
+      timeout: 1s
+      # Retry policy
+      isRetryable: true
+      retries:
+        limit: 3
+        budget:
+          minRetriesPerSecond: 10
+          retryRatio: 0.2
+          ttl: 10s
+        conditions:
+          - status5xx
+          - gatewayError
+          - timeout
+      responseClasses:
+        - condition:
+            status:
+              min: 200
+              max: 299
+          isFailure: false
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+---
+# ============================================
+# HTTPLocalRateLimitPolicy: Rate limiting for reviews
+# ============================================
+apiVersion: policy.linkerd.io/v1alpha1
+kind: HTTPLocalRateLimitPolicy
+metadata:
+  name: reviews-ratelimit
+  namespace: booking
+spec:
+  # Target the reviews server
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: reviews-server
+  # Rate limit: 100 requests per minute (~1.67 req/s)
+  total:
+    requestsPerSecond: 2
+  # Per-identity rate limits
+  identity:
+    kind: ServiceAccount
+    name: bookinfo-productpage
+  # Override for specific clients
+  overrides:
+    - requestsPerSecond: 2
+      clientRefs:
+        - group: core
+          kind: ServiceAccount
+          name: bookinfo-productpage
+          namespace: default
+---
+# ============================================
+# HTTPLocalRateLimitPolicy: Rate limiting for details
+# ============================================
+apiVersion: policy.linkerd.io/v1alpha1
+kind: HTTPLocalRateLimitPolicy
+metadata:
+  name: details-ratelimit
+  namespace: booking
+spec:
+  # Target the details server
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: details-server
+  # Rate limit: 50 requests per minute (~0.83 req/s)
+  total:
+    requestsPerSecond: 1
+  identity:
+    kind: ServiceAccount
+    name: bookinfo-productpage
+  overrides:
+    - requestsPerSecond: 1
+      clientRefs:
+        - group: core
+          kind: ServiceAccount
+          name: bookinfo-productpage
+          namespace: default
+---
+# ============================================
+# HTTPRoute: productpage -> reviews
+# Using Service as parentRef (GAMMA pattern)
+# With extensionRef to Server and ServiceProfile
+# ============================================
+
+---
+# ============================================
+# Alternative: ServiceProfile with full service FQDN
+# More explicit targeting
+# ============================================
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: reviews.booking.svc.cluster.local
+  namespace: booking
+spec:
+  routes:
+    - name: GET /reviews
+      condition:
+        method: GET
+        pathRegex: /reviews/.*
+      timeout: 2s
+      isRetryable: true
+      retries:
+        limit: 3
+        budget:
+          minRetriesPerSecond: 10
+          retryRatio: 0.2
+          ttl: 10s
+        conditions:
+          - status5xx
+          - gatewayError
+          - timeout
+      responseClasses:
+        - condition:
+            status:
+              min: 200
+              max: 299
+          isFailure: false
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: details.booking.svc.cluster.local
+  namespace: booking
+spec:
+  routes:
+    - name: GET /details
+      condition:
+        method: GET
+        pathRegex: /details/.*
+      timeout: 1s
+      isRetryable: true
+      retries:
+        limit: 3
+        budget:
+          minRetriesPerSecond: 10
+          retryRatio: 0.2
+          ttl: 10s
+        conditions:
+          - status5xx
+          - gatewayError
+          - timeout
+      responseClasses:
+        - condition:
+            status:
+              min: 200
+              max: 299
+          isFailure: false
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true

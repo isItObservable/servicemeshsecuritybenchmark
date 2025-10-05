@@ -1,34 +1,77 @@
-apiVersion:  gateway.kgateway.dev/v1alpha1
+apiVersion: gateway.solo.io/v1
 kind: TrafficPolicy
 metadata:
-  name: checkout-policy
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+  name: reviews-traffic-policy
+  namespace: booking
 spec:
-
-  
-  # Rate Limiting (lower for checkout)
-  rateLimit:
-    local:
-      tokenBucket:
-        maxTokens: 500
-        tokensPerFill: 500
-        fillInterval: 60s        # 500 req/min
-
-  
-
+  # Target the reviews service via waypoint
+  targetRef:
+    group: ""
+    kind: Service
+    name: reviews
+    namespace: booking
+  # Rate limiting configuration
+  policy:
+    # Request rate limiting
+    rateLimit:
+      raw:
+        rateLimits:
+          - actions:
+              - genericKey:
+                  descriptorValue: "reviews-rate-limit"
+            limit:
+              requestsPerUnit: 100
+              unit: MINUTE
+        setActions:
+          - headerValueMatch:
+              descriptorValue: "productpage-source"
+              headers:
+                - name: ":authority"
+                  stringMatch:
+                    exact: "reviews.booking.svc.cluster.local"
+    # Connection limits (part of rate limiting)
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 10
+        http2MaxRequests: 100
+        maxRequestsPerConnection: 2
+      tcp:
+        maxConnections: 100
+    # Request timeout
+    requestTimeout: 2s
+    # Idle timeout
+    idleTimeout: 30s
 ---
-apiVersion:  gateway.kgateway.dev/v1alpha1
+# ============================================
+# TrafficPolicy: Rate Limiting for details
+# ============================================
+apiVersion: gateway.solo.io/v1
 kind: TrafficPolicy
 metadata:
-  name: product-catalog-policy-alt
-  namespace: otel-demo
+  name: details-traffic-policy
+  namespace: booking
 spec:
-  rateLimit:
-    local:
-      tokenBucket:
-        maxTokens: 1000
-        tokensPerFill: 1000
-        fillInterval: 60s
-
+  targetRef:
+    group: ""
+    kind: Service
+    name: details
+    namespace: booking
+  policy:
+    rateLimit:
+      raw:
+        rateLimits:
+          - actions:
+              - genericKey:
+                  descriptorValue: "details-rate-limit"
+            limit:
+              requestsPerUnit: 50
+              unit: MINUTE
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 10
+        http2MaxRequests: 50
+        maxRequestsPerConnection: 2
+      tcp:
+        maxConnections: 50
+    requestTimeout: 1s
+    idleTimeout: 30s

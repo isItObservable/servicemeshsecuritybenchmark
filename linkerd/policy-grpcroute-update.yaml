@@ -1,143 +1,100 @@
-# File: grpc-routes-linkerd.yaml
-# GRPCRoutes with ExtensionRef to Linkerd policies
-
----
-# Frontend → Product Catalog
-apiVersion: gateway.networking.k8s.io/v1
-kind: GRPCRoute
+apiVersion: policy.linkerd.io/v1beta2
+kind: HTTPRoute
 metadata:
-  name: frontend-to-product-catalog
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    traffic.pattern: frontend-to-product-catalog
+  name: productpage-to-reviews
+  namespace: booking
 spec:
+  # ParentRef is the consumer service (productpage)
   parentRefs:
-    - name: frontend
+    - group: core
       kind: Service
-      group: ""
+      name: productpage
+      port: 9080
+  # Rules for routing to reviews
   rules:
     - matches:
-        - method:
-            type: Exact
-            service: oteldemo.ProductCatalogService
-            method: ListProducts
-      backendRefs:
-        - name: product-catalog
-          port: 8080
+        - path:
+            type: PathPrefix
+            value: /
+      # Native timeout
+      timeouts:
+        request: 2s
+        backendRequest: 1500ms
+      # ExtensionRef to Linkerd policies
       filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: linkerd.io
-            kind: ServiceProfile
-            name: product-catalog.otel-demo.svc.cluster.local
-        - type: ExtensionRef
-          extensionRef:
-            group: policy.linkerd.io
-            kind: HTTPRoute
-            name: product-catalog-retry-policy
+        # Reference to Server (defines the target)
         - type: ExtensionRef
           extensionRef:
             group: policy.linkerd.io
             kind: Server
-            name: product-catalog-server
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "product-catalog"
-              - name: x-catalog-context
-                value: "product-listing"
-              - name: x-method-type
-                value: "ListProducts"
-
-    - matches:
-        - method:
-            type: Exact
-            service: oteldemo.ProductCatalogService
-            method: GetProduct
-      backendRefs:
-        - name: product-catalog
-          port: 8080
-      filters:
+            name: reviews-server
+        # Reference to ServiceProfile (circuit breaker & timeout)
         - type: ExtensionRef
           extensionRef:
             group: linkerd.io
             kind: ServiceProfile
-            name: product-catalog.otel-demo.svc.cluster.local
+            name: reviews-profile
+        # Reference to Rate Limit Policy
         - type: ExtensionRef
           extensionRef:
             group: policy.linkerd.io
-            kind: HTTPRoute
-            name: product-catalog-retry-policy
-        - type: ExtensionRef
-          extensionRef:
-            group: policy.linkerd.io
-            kind: Server
-            name: product-catalog-server
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "product-catalog"
-              - name: x-catalog-context
-                value: "product-detail"
-              - name: x-method-type
-                value: "GetProduct"
-
-
-
-
+            kind: HTTPLocalRateLimitPolicy
+            name: reviews-ratelimit
+      backendRefs:
+        - group: core
+          kind: Service
+          name: reviews
+          port: 9080
 ---
-# Frontend → Checkout Service
-apiVersion: gateway.networking.k8s.io/v1
-kind: GRPCRoute
+# ============================================
+# HTTPRoute: productpage -> details
+# Using Service as parentRef (GAMMA pattern)
+# With extensionRef to Server and ServiceProfile
+# ============================================
+apiVersion: policy.linkerd.io/v1beta2
+kind: HTTPRoute
 metadata:
-  name: frontend-to-checkout
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    traffic.pattern: frontend-to-checkout
+  name: productpage-to-details
+  namespace: booking
 spec:
+  # ParentRef is the consumer service (productpage)
   parentRefs:
-    - name: frontend
+    - group: core
       kind: Service
-      group: ""
+      name: productpage
+      port: 9080
+  # Rules for routing to details
   rules:
     - matches:
-        - method:
-            type: Exact
-            service: oteldemo.CheckoutService
-            method: PlaceOrder
-      backendRefs:
-        - name: checkout
-          port: 8080
+        - path:
+            type: PathPrefix
+            value: /
+      # Native timeout
+      timeouts:
+        request: 1s
+        backendRequest: 800ms
+      # ExtensionRef to Linkerd policies
       filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: linkerd.io
-            kind: ServiceProfile
-            name: checkout.otel-demo.svc.cluster.local
-        - type: ExtensionRef
-          extensionRef:
-            group: policy.linkerd.io
-            kind: HTTPRoute
-            name: checkout-retry-policy
+        # Reference to Server
         - type: ExtensionRef
           extensionRef:
             group: policy.linkerd.io
             kind: Server
-            name: checkout-server
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "checkout"
-              - name: x-method-type
-                value: "PlaceOrder"
+            name: details-server
+        # Reference to ServiceProfile
+        - type: ExtensionRef
+          extensionRef:
+            group: linkerd.io
+            kind: ServiceProfile
+            name: details-profile
+        # Reference to Rate Limit Policy
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: HTTPLocalRateLimitPolicy
+            name: details-ratelimit
+      backendRefs:
+        - group: core
+          kind: Service
+          name: details
+          port: 9080

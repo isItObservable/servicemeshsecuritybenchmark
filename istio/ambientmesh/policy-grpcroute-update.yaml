@@ -1,160 +1,92 @@
-# File: grpc-routes-ambient.yaml
-# GRPCRoutes with ExtensionRef to Ambient Mesh (Istio) policies
 
----
-# Frontend → Product Catalog
+# ============================================
+# HTTPRoute: productpage -> reviews
+# Using Service as parentRef (GAMMA pattern)
+# ============================================
 apiVersion: gateway.networking.k8s.io/v1
-kind: GRPCRoute
+kind: HTTPRoute
 metadata:
-  name: frontend-to-product-catalog
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    traffic.pattern: frontend-to-product-catalog
-    istio.io/use-waypoint: otel-demo-waypoint
+  name: productpage-to-reviews
+  namespace: booking
 spec:
+  # ParentRef is the consumer service (productpage)
   parentRefs:
-    - name: otel-demo-waypoint
-      namespace: otel-demo
+    - group: "gateway.networking.k8s.io"
       kind: Gateway
-      group: gateway.networking.k8s.io
+      name: bookinfo-waypoint
+  # Traffic destined for reviews
+  hostnames:
+    - reviews.booking.svc.cluster.local
+    - reviews
   rules:
     - matches:
-        - method:
-            type: Exact
-            service: oteldemo.ProductCatalogService
-            method: ListProducts
-      backendRefs:
-        - name: product-catalog
-          port: 8080
+        - path:
+            type: PathPrefix
+            value: /
+      # Native timeout in HTTPRoute
+      timeouts:
+        request: 2s
+        backendRequest: 1500ms
+      # Retry configuration (native Gateway API)
+      retry:
+        codes:
+          - 500
+          - 502
+          - 503
+        attempts: 3
+      # ExtensionRef to Istio policies (attached via waypoint)
       filters:
         - type: ExtensionRef
           extensionRef:
             group: networking.istio.io
             kind: DestinationRule
-            name: product-catalog-circuit-breaker
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: VirtualService
-            name: frontend-to-product-catalog-vs
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "product-catalog"
-              - name: x-catalog-context
-                value: "product-listing"
-              - name: x-method-type
-                value: "ListProducts"
-
-    - matches:
-        - method:
-            type: Exact
-            service: oteldemo.ProductCatalogService
-            method: GetProduct
+            name: reviews-circuit-breaker
       backendRefs:
-        - name: product-catalog
-          port: 8080
-      filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: DestinationRule
-            name: product-catalog-circuit-breaker
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: VirtualService
-            name: frontend-to-product-catalog-vs
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "product-catalog"
-              - name: x-catalog-context
-                value: "product-detail"
-              - name: x-method-type
-                value: "GetProduct"
-
-    - matches:
-        - method:
-            type: Exact
-            service: oteldemo.ProductCatalogService
-            method: SearchProducts
-      backendRefs:
-        - name: product-catalog
-          port: 8080
-      filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: DestinationRule
-            name: product-catalog-circuit-breaker
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: VirtualService
-            name: frontend-to-product-catalog-vs
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "product-catalog"
-              - name: x-catalog-context
-                value: "product-search"
-              - name: x-method-type
-                value: "SearchProducts"
-
+        - name: reviews
+          port: 9080
 ---
-# Frontend → Checkout Service
+# ============================================
+# HTTPRoute: productpage -> details
+# Using Service as parentRef (GAMMA pattern)
+# ============================================
 apiVersion: gateway.networking.k8s.io/v1
-kind: GRPCRoute
+kind: HTTPRoute
 metadata:
-  name: frontend-to-checkout
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    traffic.pattern: frontend-to-checkout
-    istio.io/use-waypoint: otel-demo-waypoint
+  name: productpage-to-details
+  namespace: booking
 spec:
+  # ParentRef is the consumer service (productpage)
   parentRefs:
-    - name: otel-demo-waypoint
-      namespace: otel-demo
+    - group: "gateway.networking.k8s.io"
       kind: Gateway
-      group: gateway.networking.k8s.io
+      name: bookinfo-waypoint
+  # Traffic destined for details
+  hostnames:
+    - details.booking.svc.cluster.local
+    - details
   rules:
     - matches:
-        - method:
-            type: Exact
-            service: oteldemo.CheckoutService
-            method: PlaceOrder
-      backendRefs:
-        - name: checkout
-          port: 8080
+        - path:
+            type: PathPrefix
+            value: /
+      # Native timeout
+      timeouts:
+        request: 1s
+        backendRequest: 800ms
+      # Retry configuration
+      retry:
+        codes:
+          - 500
+          - 502
+          - 503
+        attempts: 3
+      # ExtensionRef to Istio policies
       filters:
         - type: ExtensionRef
           extensionRef:
             group: networking.istio.io
             kind: DestinationRule
-            name: checkout-circuit-breaker
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: VirtualService
-            name: frontend-to-checkout-vs
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-traffic-source
-                value: "frontend"
-              - name: x-traffic-destination
-                value: "checkout"
-              - name: x-method-type
-                value: "PlaceOrder"
+            name: details-circuit-breaker
+      backendRefs:
+        - name: details
+          port: 9080

@@ -1,14 +1,19 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
-  name: oteldemo-gateway
+  name: bookinfo-gateway
   namespace: kgateway-system
 
 spec:
   gatewayClassName: kgateway
+  infrastructure:
+    parametersRef:
+      name: custom-gw-params
+      group: gateway.kgateway.dev
+      kind: GatewayParameters
   listeners:
     - name: http
-      port: 80
+      port: 8008
       protocol: HTTP
       allowedRoutes:
         namespaces:

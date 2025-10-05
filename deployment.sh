@@ -42,8 +42,12 @@ while [ $# -gt 0 ]; do
           DTTOKEN="$2"
          shift 2
           ;;
-       --dturl)
-          DTURL="$2"
+        --environment)
+        ENVIRONMENT="$2"
+        shift 2
+        ;;
+       --dtid)
+          DT_TENANT_ID="$2"
          shift 2
           ;;
        --clustername)
@@ -65,9 +69,12 @@ echo "Checking arguments"
    echo "Error: clustername not set!"
    exit 1
  fi
- if [ -z "$DTURL" ]; then
-   echo "Error: Dt url not set!"
+ if [ -z "$DT_TENANT_ID" ]; then
+   echo "Error: tennat id not set!"
    exit 1
+ fi
+ if [ -z "$ENVIRONMENT" ]; then
+   ENVIRONMENT="live"
  fi
 
  if [ -z "$DTTOKEN" ]; then
@@ -83,6 +90,15 @@ echo "Checking arguments"
    echo "Error: type of test  not set!"
    exit 1
  fi
+
+
+if [ "$ENVIRONMENT" == "live" ]; then
+  export DYNATRACE_LIVE_URL="$DT_TENANT_ID.live.dynatrace.com"
+  export DYNATRACE_APPS_URL="$DT_TENANT_ID.apps.dynatrace.com"
+else
+  export DYNATRACE_LIVE_URL="$DT_TENANT_ID.$ENVIRONMENT.dynatracelabs.com"
+  export DYNATRACE_APPS_URL="$DT_TENANT_ID.$ENVIRONMENT.apps.dynatracelabs.com"
+fi
 
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0-rc.2/experimental-install.yaml
 
@@ -210,7 +226,7 @@ helm upgrade dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operato
   --atomic
 kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
 kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DTOPERATORTOKEN" --from-literal="dataIngestToken=$DTTOKEN"
-sed -i  '' "s,TENANTURL_TOREPLACE,$DTURL," dynatrace/dynakube.yaml
+sed -i  '' "s,TENANTURL_TOREPLACE,$DYNATRACE_LIVE_URL," dynatrace/dynakube.yaml
 sed -i  '' "s,CLUSTER_NAME_TO_REPLACE,$CLUSTERNAME,"  dynatrace/dynakube.yaml
 
 
@@ -225,8 +241,8 @@ kubectl apply -f opentelemetry/rbac.yaml
 
 #deploy demo application
 kubectl apply -f dynatrace/dynakube.yaml -n dynatrace
-kubectl create ns otel-demo
-kubectl label namespace  otel-demo oneagent=false
+kubectl create ns booking
+kubectl label namespace  booking oneagent=false
 
 
 #---label namespace-----
@@ -234,40 +250,41 @@ echo "labeling demo namespace"
 if [  "$TYPE" = 'kuma' ]; then
   echo " kuma"
    kubectl apply -f kuma/kuma_gateway.yaml
-   kubectl label namespace otel-demo kuma.io/sidecar-injection=enabled
+   kubectl label namespace booking kuma.io/sidecar-injection=enabled
    kubectl apply -f openTelemetry-manifest_statefulset.yaml
    kubectl apply -f kuma/referencegrant.yaml
-   kubectl apply -f opentelemetry/simpleroute.yaml
+   kubectl apply -f bookinfo/manifest/simpleroute.yaml
 
 else
   if [  "$TYPE" = 'linkerd' ]; then
     kubectl apply -f linkerd/gateway.yaml
-    kubectl annotate ns otel-demo linkerd.io/inject=enabled
+    kubectl annotate ns booking linkerd.io/inject=enabled
     kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_linkerd.yaml
     kubedtl apply -f linkerd/referencegrant.yaml
   else
      if [  "$TYPE" = 'ambient' ]; then
        echo " ambient"
        kubectl apply -f istio/gateway.yaml
-       kubectl label namespace otel-demo istio.io/dataplane-mode=ambient
+       kubectl label namespace booking istio.io/dataplane-mode=ambient
        kubectl apply -f istio/ambientmesh/waypoint.yaml
-       kubectl label namespace otel-demo istio.io/use-waypoint=otel-demo-waypoint
+       kubectl label namespace booking istio.io/use-waypoint=bookinfo-waypoint
        kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
        kubectl apply -f istio/referencegrant.yaml
      else
         if [  "$TYPE" = 'istio' ]; then
           echo " istio"
           kubectl apply -f istio/gateway.yaml
-          kubectl label namespace otel-demo istio-injection=enabled
+          kubectl label namespace booking istio-injection=enabled
           kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
           kubectl apply -f istio/referencegrant.yaml
         else
           if [  "$TYPE" = 'ambient-kgateway' ]; then
                echo " ambient-kgateway"
+               kubectl apply -f kgateway-ambient/gatewayparameter.yaml
                kubectl apply -f kgateway-ambient/gateway.yaml
-               kubectl label namespace otel-demo istio.io/dataplane-mode=ambient
+               kubectl label namespace booking istio.io/dataplane-mode=ambient
                kubectl apply -f kgateway-ambient/waypoint.yaml
-               kubectl label namespace otel-demo istio.io/use-waypoint=kgateway-waypoint
+               kubectl label namespace booking istio.io/use-waypoint=kgateway-waypoint
                kubectl apply -f kgateway-ambient/observability.yaml
                kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_kgateway.yaml
                kubectl apply -f kgateway-ambient/referencegrant.yaml
@@ -283,13 +300,14 @@ fi
 
 
 kubectl apply -f opentelemetry/openTelemetry-manifest_ds.yaml
-kubectl apply -f opentelemetry/deploy_1_12.yaml -n otel-demo
+kubectl apply -f bookinfo/manifest/deploy.yaml -n booking
+kubectl apply -f bookinfo/manifest/loadtest.yaml -n booking
 
 if [  "$TYPE" != 'none' ]; then
     if [  "$TYPE" != 'ambient-kgateway' ]; then
        kubectl apply -f kgateway-ambient/simpleroute.yaml
     else
-      kubectl apply -f opentelemetry/simpleroute.yaml
+      kubectl apply -f bookinfo/manifest/simpleroute.yaml
     fi
 #  kubectl apply -f opentelemetry/policy.yaml
 fi

@@ -1,131 +1,97 @@
 
-
-# DestinationRule for Product Catalog - Circuit Breaker
+# ============================================
+# DestinationRule: Circuit Breaker for reviews
+# Referenced by HTTPRoute extensionRef
+# ============================================
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: product-catalog-circuit-breaker
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+  name: reviews-policies
+  namespace: booking
 spec:
-  host: product-catalog.otel-demo.svc.cluster.local
+  host: reviews.booking.svc.cluster.local
   trafficPolicy:
+    # Connection pool settings (acts as rate limiting)
     connectionPool:
       tcp:
         maxConnections: 100
       http:
-        http1MaxPendingRequests: 50
+        http1MaxPendingRequests: 10
         http2MaxRequests: 100
         maxRequestsPerConnection: 2
+        # Additional connection settings
+        maxRetries: 3
+    # Circuit breaker via outlier detection
     outlierDetection:
+      # Trip circuit after 5 consecutive errors
       consecutive5xxErrors: 5
+      consecutiveGatewayErrors: 3
+      # Check every 30 seconds
       interval: 30s
+      # Eject pod for 30 seconds
       baseEjectionTime: 30s
+      # Maximum 50% of instances can be ejected
       maxEjectionPercent: 50
+      # Minimum 50% must remain healthy
       minHealthPercent: 50
+    # Load balancing
     loadBalancer:
       simple: LEAST_REQUEST
-
+      localityLbSetting:
+        enabled: true
 ---
-# DestinationRule for Checkout Service - Circuit Breaker
+# ============================================
+# DestinationRule: Circuit Breaker for details
+# Referenced by HTTPRoute extensionRef
+# ============================================
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: checkout-circuit-breaker
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+  name: details-policies
+  namespace: booking
 spec:
-  host: checkout.otel-demo.svc.cluster.local
+  host: details.booking.svc.cluster.local
   trafficPolicy:
+    # Connection pool settings (acts as rate limiting)
     connectionPool:
       tcp:
         maxConnections: 50
       http:
-        http1MaxPendingRequests: 25
+        http1MaxPendingRequests: 10
         http2MaxRequests: 50
         maxRequestsPerConnection: 2
+        maxRetries: 3
+    # Circuit breaker via outlier detection
     outlierDetection:
-      consecutive5xxErrors: 3
-      interval: 20s
-      baseEjectionTime: 60s
+      consecutive5xxErrors: 5
+      consecutiveGatewayErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
       maxEjectionPercent: 50
       minHealthPercent: 50
+    # Load balancing
     loadBalancer:
       simple: LEAST_REQUEST
-
 ---
-# VirtualService for Frontend to Product Catalog - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-product-catalog-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  hosts:
-    - product-catalog.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            app: frontend
-      route:
-        - destination:
-            host: product-catalog.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 5s
-      retries:
-        attempts: 3
-        perTryTimeout: 2s
-        retryOn: 5xx,reset,connect-failure,refused-stream
-
----
-# VirtualService for Frontend to Checkout - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-checkout-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  hosts:
-    - checkout.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            app: frontend
-      route:
-        - destination:
-            host: checkout.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 10s
-      retries:
-        attempts: 2
-        perTryTimeout: 5s
-        retryOn: 5xx,reset,connect-failure,refused-stream
-
----
-# EnvoyFilter for Rate Limiting - Product Catalog
+# ============================================
+# EnvoyFilter: Rate Limiting for reviews
+# Referenced by HTTPRoute extensionRef
+# ============================================
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: product-catalog-ratelimit
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+  name: reviews-ratelimit
+  namespace: booking
 spec:
+  # Apply to productpage workload (outbound traffic)
   workloadSelector:
     labels:
-      app: product-catalog
+      app: productpage
   configPatches:
+    # Insert local rate limit filter
     - applyTo: HTTP_FILTER
       match:
-        context: SIDECAR_INBOUND
+        context: SIDECAR_OUTBOUND
         listener:
           filterChain:
             filter:
@@ -138,8 +104,9 @@ spec:
           name: envoy.filters.http.local_ratelimit
           typed_config:
             "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
-            stat_prefix: http_local_rate_limiter
+            stat_prefix: http_local_rate_limiter_reviews
             token_bucket:
+              # 100 requests per minute
               max_tokens: 100
               tokens_per_fill: 100
               fill_interval: 60s
@@ -158,24 +125,35 @@ spec:
                 header:
                   key: x-local-rate-limit
                   value: 'true'
-
+            # Apply only to reviews traffic
+            descriptors:
+              - entries:
+                  - key: destination_cluster
+                    value: outbound|9080||reviews.default.svc.cluster.local
+                token_bucket:
+                  max_tokens: 100
+                  tokens_per_fill: 100
+                  fill_interval: 60s
 ---
-# EnvoyFilter for Rate Limiting - Checkout Service
+# ============================================
+# EnvoyFilter: Rate Limiting for details
+# Referenced by HTTPRoute extensionRef
+# ============================================
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: checkout-ratelimit
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
+  name: details-ratelimit
+  namespace: booking
 spec:
+  # Apply to productpage workload (outbound traffic)
   workloadSelector:
     labels:
-      app: checkout
+      app: productpage
   configPatches:
+    # Insert local rate limit filter
     - applyTo: HTTP_FILTER
       match:
-        context: SIDECAR_INBOUND
+        context: SIDECAR_OUTBOUND
         listener:
           filterChain:
             filter:
@@ -188,8 +166,9 @@ spec:
           name: envoy.filters.http.local_ratelimit
           typed_config:
             "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
-            stat_prefix: http_local_rate_limiter
+            stat_prefix: http_local_rate_limiter_details
             token_bucket:
+              # 50 requests per minute (stricter than reviews)
               max_tokens: 50
               tokens_per_fill: 50
               fill_interval: 60s
@@ -208,3 +187,12 @@ spec:
                 header:
                   key: x-local-rate-limit
                   value: 'true'
+            # Apply only to details traffic
+            descriptors:
+              - entries:
+                  - key: destination_cluster
+                    value: outbound|9080||details.default.svc.cluster.local
+                token_bucket:
+                  max_tokens: 50
+                  tokens_per_fill: 50
+                  fill_interval: 60s

@@ -21,7 +21,7 @@ spec:
             - "-h"
             - "http://productpage.booking:9080"
             - "-u"
-            - "250"
+            - "50"
             - "-r"
             - "60"
       restartPolicy: "Never"
