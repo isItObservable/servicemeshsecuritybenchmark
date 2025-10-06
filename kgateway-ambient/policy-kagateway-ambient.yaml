@@ -1,4 +1,4 @@
-apiVersion: gateway.solo.io/v1
+apiVersion: gateway.kgateway.dev/v1alpha1
 kind: TrafficPolicy
 metadata:
   name: reviews-traffic-policy
@@ -45,7 +45,7 @@ spec:
 # ============================================
 # TrafficPolicy: Rate Limiting for details
 # ============================================
-apiVersion: gateway.solo.io/v1
+apiVersion: gateway.kgateway.dev/v1alpha1
 kind: TrafficPolicy
 metadata:
   name: details-traffic-policy
