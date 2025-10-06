@@ -2,7 +2,7 @@ site_name: "IsitObservabke Workshop: ServiceMesh Benchmark"
 repo_name: "View Code on GitHub"
 repo_url: "https://github.com/isItObservable/servicemeshsecuritybenchmark"
 nav:
-  - '1. About': index.md
+  - '1. Home': index.md
   - '2. Getting Started': getting-started.md
   - '3. Workshop': workshop.md
   - '4. Cleanup': cleanup.md
