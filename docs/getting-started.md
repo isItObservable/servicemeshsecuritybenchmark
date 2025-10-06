@@ -2,7 +2,7 @@
 
 ## Gather Details: Create API Token
 
-This Workshop requires an 2 API tokens:
+This Workshop requires 2 API tokens:
 * One to deploy the Dynatrace Operator
 * One to ingest metrics, logs, traces and events
 
@@ -11,7 +11,7 @@ This Workshop requires an 2 API tokens:
 
 --8<-- "snippets/info-required.md"
 
---8<-- "snippets/servicemesh-type.md.md"
+--8<-- "snippets/servicemesh-type.md"
 
 ## Start Demo
 
@@ -26,7 +26,7 @@ This Workshop requires an 2 API tokens:
 * Clone the repository to your local machine
 
     ```
-    git clone https://github.com/isItObservable/servicemeshsecuritybenchmark.git
+    git clone -b V3-Workshop --single-branch https://github.com/isItObservable/servicemeshsecuritybenchmark.git
     ```
 
     * Open the folder in Visual Studio code
@@ -63,5 +63,5 @@ This Workshop requires an 2 API tokens:
     In the new Visual Studio code window, open a new terminal and continue with the tutorial.
 
 <div class="grid cards" markdown>
-- [Click Here to Run the Demo :octicons-arrow-right-24:](run-demo.md)
+- [Click Here to Run the Demo :octicons-arrow-right-24:](workshop.md)
 </div>

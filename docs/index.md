@@ -1,4 +1,4 @@
-# ServiceMesh Benchmarl: The Workshop
+# ServiceMesh Benchmark: The Workshop
 
 
 

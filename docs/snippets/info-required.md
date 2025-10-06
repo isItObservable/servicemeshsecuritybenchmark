@@ -1,5 +1,5 @@
 
-The codspace will require to define several details: 
+The codespace will require to define several details: 
 
     * Environment ID
     * Environment Type
