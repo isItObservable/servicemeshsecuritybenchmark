@@ -857,10 +857,10 @@ EOF
 ```
 ┌─────────────────────────┐
 │         Pod             │
-│  ┌──────┐  ┌─────────┐ │
-│  │ App  │  │ Sidecar │ │  Memory: ~50-100MB
-│  │      │  │ (Envoy) │ │  CPU: Always running
-│  └──────┘  └─────────┘ │  Complexity: High
+│  ┌──────┐  ┌─────────┐  │
+│  │ App  │  │ Sidecar │  │  Memory: ~50-100MB
+│  │      │  │ (Envoy) │  │  CPU: Always running
+│  └──────┘  └─────────┘  │  Complexity: High
 └─────────────────────────┘
 ```
 
@@ -873,7 +873,7 @@ EOF
 ### Ambient Architecture: Split the Mesh
 
 ```
-┌─────────┐                                    ┌─────────┐
+┌─────────┐                                   ┌─────────┐
 │   Pod   │ ──┐                            ┌──│   Pod   │
 └─────────┘   │                            │  └─────────┘
               ↓                            ↑
@@ -1210,7 +1210,7 @@ KGateway uses a hierarchical policy model:
                  ↓
 ┌────────────────────────────────┐
 │     Route-level Policy         │  (Highest priority)
-│  (applies to specific HTTPRoute)│
+│ (applies to specific HTTPRoute)│
 └────────────────────────────────┘
 ```
 
@@ -1472,14 +1472,14 @@ curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
 
 ```
 ┌─────────────────────────────────────────────┐
-│           AI Gateway Layer (Optional)        │
+│           AI Gateway Layer (Optional)       │
 │  - LLM routing                              │
 │  - Cost control                             │
 │  - Prompt management                        │
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
-│        KGateway Policy Layer (Optional)      │
+│        KGateway Policy Layer (Optional)     │
 │  - TrafficPolicy                            │
 │  - RouteOption                              │
 │  - VirtualHostOption                        │
@@ -1494,8 +1494,8 @@ curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
                     ↓
 ┌─────────────────────────────────────────────┐
 │          Ambient Mesh (Istio)               │
-│  Layer 1: ztunnel (L4, mTLS)               │
-│  Layer 2: waypoint (L7, policies)          │
+│  Layer 1: ztunnel (L4, mTLS)                │
+│  Layer 2: waypoint (L7, policies)           │
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐

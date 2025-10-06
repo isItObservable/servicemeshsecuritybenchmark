@@ -2778,10 +2778,10 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <p><strong>Sidecar Architecture:</strong>
 <div class="highlight"><pre><span></span><code>┌─────────────────────────┐
 │         Pod             │
-│  ┌──────┐  ┌─────────┐ │
-│  │ App  │  │ Sidecar │ │  Memory: ~50-100MB
-│  │      │  │ (Envoy) │ │  CPU: Always running
-│  └──────┘  └─────────┘ │  Complexity: High
+│  ┌──────┐  ┌─────────┐  │
+│  │ App  │  │ Sidecar │  │  Memory: ~50-100MB
+│  │      │  │ (Envoy) │  │  CPU: Always running
+│  └──────┘  └─────────┘  │  Complexity: High
 └─────────────────────────┘
 </code></pre></div></p>
 <p><strong>Issues:</strong>
@@ -2790,7 +2790,7 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 - ❌ <strong>Operational complexity</strong>: Sidecar lifecycle management
 - ❌ <strong>Security surface</strong>: More containers = more CVEs</p>
 <h3 id="ambient-architecture-split-the-mesh">Ambient Architecture: Split the Mesh<a class="headerlink" href="#ambient-architecture-split-the-mesh" title="Permanent link">#</a></h3>
-<div class="highlight"><pre><span></span><code>┌─────────┐                                    ┌─────────┐
+<div class="highlight"><pre><span></span><code>┌─────────┐                                   ┌─────────┐
 │   Pod   │ ──┐                            ┌──│   Pod   │
 └─────────┘   │                            │  └─────────┘
               ↓                            ↑
@@ -3108,7 +3108,7 @@ reviews pod
                  ↓
 ┌────────────────────────────────┐
 │     Route-level Policy         │  (Highest priority)
-│  (applies to specific HTTPRoute)│
+│ (applies to specific HTTPRoute)│
 └────────────────────────────────┘
 </code></pre></div>
 <p><strong>Example:</strong>
@@ -3340,14 +3340,14 @@ curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </spa
 <h2 id="part-5-complete-architecture-best-practices-5-minutes">Part 5: Complete Architecture &amp; Best Practices (5 minutes)<a class="headerlink" href="#part-5-complete-architecture-best-practices-5-minutes" title="Permanent link">#</a></h2>
 <h3 id="the-complete-stack">The Complete Stack<a class="headerlink" href="#the-complete-stack" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────┐
-│           AI Gateway Layer (Optional)        │
+│           AI Gateway Layer (Optional)       │
 │  - LLM routing                              │
 │  - Cost control                             │
 │  - Prompt management                        │
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
-│        KGateway Policy Layer (Optional)      │
+│        KGateway Policy Layer (Optional)     │
 │  - TrafficPolicy                            │
 │  - RouteOption                              │
 │  - VirtualHostOption                        │
@@ -3362,8 +3362,8 @@ curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </spa
                     ↓
 ┌─────────────────────────────────────────────┐
 │          Ambient Mesh (Istio)               │
-│  Layer 1: ztunnel (L4, mTLS)               │
-│  Layer 2: waypoint (L7, policies)          │
+│  Layer 1: ztunnel (L4, mTLS)                │
+│  Layer 2: waypoint (L7, policies)           │
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
