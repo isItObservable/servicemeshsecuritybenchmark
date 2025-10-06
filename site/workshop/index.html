@@ -120,6 +120,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#service-mesh-workshop-gateway-api-ambient-architecture-ai-enhanced-gateways" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -358,6 +363,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    3. Workshop
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -370,6 +390,772 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workshop-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workshop Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workshop Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-your-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verify Your Environment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gamma-pattern-service-to-service-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      The GAMMA Pattern: Service-to-Service Routing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-1-create-your-first-service-to-service-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 1: Create Your First Service-to-Service Route
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-2-add-productpage-details-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 2: Add productpage → details Route
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-resilience-patterns-with-httproutes-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 2: Resilience Patterns with HTTPRoutes (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-request-timeouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 1: Request Timeouts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-0-understanding-gamma-policy-attachment-5-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 0: Understanding GAMMA Policy Attachment (5 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 0: Understanding GAMMA Policy Attachment (5 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-gamma" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GAMMA?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-policy-attachment-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Policy Attachment Problem
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-solution-extensionref" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Solution: extensionRef
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GAMMA Solution: extensionRef">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-direct-policy-attachment-preferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 1: Direct Policy Attachment (Preferred)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-extensionref-in-httproute-early-concept" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 2: extensionRef in HTTPRoute (Early Concept)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-two-patterns-direct-vs-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Two Patterns: Direct vs Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-evolution-why-both-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Evolution: Why Both Exist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-different-meshes-use-policy-attachment" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Different Meshes Use Policy Attachment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-example-both-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Example: Both Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-which-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Use Which Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-combining-both-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced: Combining Both Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-precedence-when-both-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Policy Precedence (When Both Exist)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-evolution-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Evolution Timeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-gamma-concepts-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key GAMMA Concepts Summary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-gateway-api-fundamentals-10-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 1: Gateway API Fundamentals (10 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals (10 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-bookinfo-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Bookinfo Application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-circuit-breaker-with-destinationrule" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 2: Circuit Breaker with DestinationRule
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 3: Rate Limiting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-3-complete-configuration-for-details-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 3: Complete Configuration for Details Service
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-understanding-ambient-mesh-architecture-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 3: Understanding Ambient Mesh Architecture (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Understanding Ambient Mesh Architecture (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-with-sidecars" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Problem with Sidecars
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ambient-architecture-split-the-mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ambient Architecture: Split the Mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#two-layers-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Two Layers Explained
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Two Layers Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layer-1-ztunnel-zero-trust-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 1: ztunnel (Zero Trust Tunnel)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-2-waypoint-l7-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 2: Waypoint (L7 Proxy)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-critical-difference-httproute-parentref" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Critical Difference: HTTPRoute parentRef
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traffic-flow-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Traffic Flow Comparison
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ambient-benefits-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ambient Benefits Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identity-preservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Identity Preservation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-kgateway-value-ai-integration-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4: KGateway Value &amp; AI Integration (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: KGateway Value &amp; AI Integration (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why KGateway?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kgateway-trafficpolicy-policy-attachment" class="md-nav__link">
+    <span class="md-ellipsis">
+      KGateway TrafficPolicy: Policy Attachment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-extensionref-with-trafficpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using extensionRef with TrafficPolicy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-trafficpolicy-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete TrafficPolicy Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trafficpolicy-for-details-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      TrafficPolicy for Details Service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-hierarchy-with-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Policy Hierarchy with KGateway
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requestresponse-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request/Response Transformation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-future-of-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI Gateway: Future of KGateway
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-complete-architecture-best-practices-5-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 5: Complete Architecture &amp; Best Practices (5 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Complete Architecture &amp; Best Practices (5 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-complete-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Complete Stack
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices Summary
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best Practices Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httproute-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTPRoute Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circuit-breaker-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circuit Breaker Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate-limiting-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rate Limiting Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI Gateway Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-troubleshooting-10-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 6: Troubleshooting (10 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Troubleshooting (10 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-httproute-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 1: HTTPRoute Not Working
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-circuit-breaker-not-tripping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 2: Circuit Breaker Not Tripping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-timeout-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 4: Timeout Not Working
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-key-takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary &amp; Key Takeaways
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary &amp; Key Takeaways">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-learned" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You Learned
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What You Learned">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gateway-api-gamma-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Gateway API GAMMA Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-resilience-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Resilience Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ambient-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Ambient Architecture
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-kgateway-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. KGateway Value
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-decision-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture Decision Matrix
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Topics (Optional)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Topics (Optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-cluster-with-ambient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Cluster with Ambient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canary-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Canary Deployments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#header-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Header-Based Routing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources &amp; Next Steps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resources &amp; Next Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practice Exercises
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#community" class="md-nav__link">
+    <span class="md-ellipsis">
+      Community
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workshop-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workshop Feedback
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -414,6 +1200,763 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workshop-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workshop Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workshop Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-your-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verify Your Environment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gamma-pattern-service-to-service-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      The GAMMA Pattern: Service-to-Service Routing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-1-create-your-first-service-to-service-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 1: Create Your First Service-to-Service Route
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-2-add-productpage-details-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 2: Add productpage → details Route
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-resilience-patterns-with-httproutes-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 2: Resilience Patterns with HTTPRoutes (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-request-timeouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 1: Request Timeouts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-0-understanding-gamma-policy-attachment-5-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 0: Understanding GAMMA Policy Attachment (5 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 0: Understanding GAMMA Policy Attachment (5 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-gamma" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GAMMA?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-policy-attachment-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Policy Attachment Problem
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-solution-extensionref" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Solution: extensionRef
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GAMMA Solution: extensionRef">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-direct-policy-attachment-preferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 1: Direct Policy Attachment (Preferred)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-extensionref-in-httproute-early-concept" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 2: extensionRef in HTTPRoute (Early Concept)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-two-patterns-direct-vs-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Two Patterns: Direct vs Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-evolution-why-both-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Evolution: Why Both Exist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-different-meshes-use-policy-attachment" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Different Meshes Use Policy Attachment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-example-both-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Example: Both Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-which-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Use Which Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-combining-both-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced: Combining Both Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-precedence-when-both-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Policy Precedence (When Both Exist)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamma-evolution-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      GAMMA Evolution Timeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-gamma-concepts-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key GAMMA Concepts Summary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-gateway-api-fundamentals-10-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 1: Gateway API Fundamentals (10 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals (10 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-bookinfo-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Bookinfo Application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-circuit-breaker-with-destinationrule" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 2: Circuit Breaker with DestinationRule
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern 3: Rate Limiting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-3-complete-configuration-for-details-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise 3: Complete Configuration for Details Service
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-understanding-ambient-mesh-architecture-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 3: Understanding Ambient Mesh Architecture (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Understanding Ambient Mesh Architecture (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-with-sidecars" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Problem with Sidecars
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ambient-architecture-split-the-mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ambient Architecture: Split the Mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#two-layers-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Two Layers Explained
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Two Layers Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layer-1-ztunnel-zero-trust-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 1: ztunnel (Zero Trust Tunnel)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-2-waypoint-l7-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 2: Waypoint (L7 Proxy)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-critical-difference-httproute-parentref" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Critical Difference: HTTPRoute parentRef
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traffic-flow-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Traffic Flow Comparison
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ambient-benefits-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ambient Benefits Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identity-preservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Identity Preservation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-kgateway-value-ai-integration-15-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4: KGateway Value &amp; AI Integration (15 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: KGateway Value &amp; AI Integration (15 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why KGateway?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kgateway-trafficpolicy-policy-attachment" class="md-nav__link">
+    <span class="md-ellipsis">
+      KGateway TrafficPolicy: Policy Attachment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-extensionref-with-trafficpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using extensionRef with TrafficPolicy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-trafficpolicy-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete TrafficPolicy Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trafficpolicy-for-details-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      TrafficPolicy for Details Service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-hierarchy-with-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Policy Hierarchy with KGateway
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requestresponse-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request/Response Transformation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-future-of-kgateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI Gateway: Future of KGateway
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-complete-architecture-best-practices-5-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 5: Complete Architecture &amp; Best Practices (5 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Complete Architecture &amp; Best Practices (5 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-complete-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Complete Stack
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices Summary
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best Practices Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httproute-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTPRoute Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circuit-breaker-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circuit Breaker Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate-limiting-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rate Limiting Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI Gateway Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-troubleshooting-10-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 6: Troubleshooting (10 minutes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Troubleshooting (10 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-httproute-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 1: HTTPRoute Not Working
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-circuit-breaker-not-tripping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 2: Circuit Breaker Not Tripping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-timeout-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem 4: Timeout Not Working
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-key-takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary &amp; Key Takeaways
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary &amp; Key Takeaways">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-learned" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You Learned
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What You Learned">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gateway-api-gamma-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Gateway API GAMMA Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-resilience-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Resilience Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ambient-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Ambient Architecture
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-kgateway-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. KGateway Value
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-decision-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture Decision Matrix
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Topics (Optional)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Topics (Optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-cluster-with-ambient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Cluster with Ambient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canary-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Canary Deployments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#header-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Header-Based Routing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources &amp; Next Steps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resources &amp; Next Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practice Exercises
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#community" class="md-nav__link">
+    <span class="md-ellipsis">
+      Community
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workshop-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workshop Feedback
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -432,9 +1975,1767 @@
   
 
 
-  <h1>3. Workshop</h1>
+<h1 id="service-mesh-workshop-gateway-api-ambient-architecture-ai-enhanced-gateways">Service Mesh Workshop: Gateway API, Ambient Architecture &amp; AI-Enhanced Gateways<a class="headerlink" href="#service-mesh-workshop-gateway-api-ambient-architecture-ai-enhanced-gateways" title="Permanent link">#</a></h1>
+<p><strong>Duration:</strong> 60 minutes<br />
+<strong>Level:</strong> Intermediate  </p>
+<h2 id="workshop-overview">Workshop Overview<a class="headerlink" href="#workshop-overview" title="Permanent link">#</a></h2>
+<p>Learn how to leverage Gateway API for service-to-service communication and implement resilience patterns using:
+1. Gateway API HTTPRoutes (GAMMA pattern)
+2. Rate limiting, circuit breakers, and timeouts
+3. Ambient mesh architecture and benefits
+4. KGateway for advanced features and AI capabilities</p>
+<h3 id="verify-your-environment">Verify Your Environment<a class="headerlink" href="#verify-your-environment" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check pods are running</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>booking
+
+<span class="c1"># Expected: productpage, reviews-v1/v2/v3, details-v1, ratings-v1</span>
+<span class="c1"># All should show 2/2 or 1/1 depending on mesh type</span>
+</code></pre></div>
+<h3 id="the-gamma-pattern-service-to-service-routing">The GAMMA Pattern: Service-to-Service Routing<a class="headerlink" href="#the-gamma-pattern-service-to-service-routing" title="Permanent link">#</a></h3>
+<p><strong>Traditional Gateway API (Ingress):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># External traffic: Internet → Gateway → Service</span>
+<span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-gateway</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span>
+</code></pre></div></p>
+<p><strong>GAMMA (Service Mesh):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Internal traffic: Service → Service</span>
+<span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span><span class="w">  </span><span class="c1"># Source service!</span>
+</code></pre></div></p>
+<h3 id="exercise-1-create-your-first-service-to-service-route">Exercise 1: Create Your First Service-to-Service Route<a class="headerlink" href="#exercise-1-create-your-first-service-to-service-route" title="Permanent link">#</a></h3>
+<p><strong>Task:</strong> Route traffic from productpage to reviews</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.networking.k8s.io/v1</span>
+<span class="s">kind: HTTPRoute</span>
+<span class="s">metadata:</span>
+<span class="s">  name: productpage-to-reviews</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  # ParentRef is the SOURCE (where traffic comes FROM)</span>
+<span class="s">  parentRefs:</span>
+<span class="s">    - group: &quot;&quot;</span>
+<span class="s">      kind: Service</span>
+<span class="s">      name: productpage</span>
+<span class="s">      port: 9080</span>
+<span class="s">  # Hostnames: where traffic goes TO</span>
+<span class="s">  hostnames:</span>
+<span class="s">    - reviews.default.svc.cluster.local</span>
+<span class="s">    - reviews</span>
+<span class="s">  rules:</span>
+<span class="s">    - matches:</span>
+<span class="s">        - path:</span>
+<span class="s">            type: PathPrefix</span>
+<span class="s">            value: /</span>
+<span class="s">      backendRefs:</span>
+<span class="s">        - name: reviews</span>
+<span class="s">          port: 9080</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p><strong>Verify:</strong>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>productpage-to-reviews<span class="w"> </span>-n<span class="w"> </span>booking
+kubectl<span class="w"> </span>describe<span class="w"> </span>httproute<span class="w"> </span>productpage-to-reviews<span class="w"> </span>-n<span class="w"> </span>booking
+</code></pre></div></p>
+<p><strong>Test:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get productpage pod</span>
+<span class="nv">PRODUCTPAGE_POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>productpage<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[0].metadata.name}&#39;</span><span class="k">)</span>
+
+<span class="c1"># Call reviews from productpage</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://reviews:9080/reviews/0<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</code></pre></div></p>
+<h3 id="exercise-2-add-productpage-details-route">Exercise 2: Add productpage → details Route<a class="headerlink" href="#exercise-2-add-productpage-details-route" title="Permanent link">#</a></h3>
+<p><strong>Your turn!</strong> Create an HTTPRoute for productpage → details</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create the HTTPRoute (fill in the blanks)</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.networking.k8s.io/v1</span>
+<span class="s">kind: HTTPRoute</span>
+<span class="s">metadata:</span>
+<span class="s">  name: productpage-to-details</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  parentRefs:</span>
+<span class="s">    - group: &quot;&quot;</span>
+<span class="s">      kind: Service</span>
+<span class="s">      name: ???  # What goes here?</span>
+<span class="s">      port: 9080</span>
+<span class="s">  hostnames:</span>
+<span class="s">    - ???  # What goes here?</span>
+<span class="s">  rules:</span>
+<span class="s">    - backendRefs:</span>
+<span class="s">        - name: ???  # What goes here?</span>
+<span class="s">          port: 9080</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<details>
+<summary>Solution</summary>
+
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">  </span><span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details.booking.svc.cluster.local</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+</details>
+
+<h2 id="part-2-resilience-patterns-with-httproutes-15-minutes">Part 2: Resilience Patterns with HTTPRoutes (15 minutes)<a class="headerlink" href="#part-2-resilience-patterns-with-httproutes-15-minutes" title="Permanent link">#</a></h2>
+<h3 id="pattern-1-request-timeouts">Pattern 1: Request Timeouts<a class="headerlink" href="#pattern-1-request-timeouts" title="Permanent link">#</a></h3>
+<p><strong>Why?</strong> Prevent cascading failures by failing fast.</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.networking.k8s.io/v1</span>
+<span class="s">kind: HTTPRoute</span>
+<span class="s">metadata:</span>
+<span class="s">  name: productpage-to-reviews</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  parentRefs:</span>
+<span class="s">    - group: &quot;&quot;</span>
+<span class="s">      kind: Service</span>
+<span class="s">      name: productpage</span>
+<span class="s">      port: 9080</span>
+<span class="s">  hostnames:</span>
+<span class="s">    - reviews.booking.svc.cluster.local</span>
+<span class="s">  rules:</span>
+<span class="s">    - matches:</span>
+<span class="s">        - path:</span>
+<span class="s">            type: PathPrefix</span>
+<span class="s">            value: /</span>
+<span class="s">      # Native timeout in Gateway API</span>
+<span class="s">      timeouts:</span>
+<span class="s">        request: 2s           # Total request timeout</span>
+<span class="s">        backendRequest: 1500ms # Backend-specific timeout</span>
+<span class="s">      backendRefs:</span>
+<span class="s">        - name: reviews</span>
+<span class="s">          port: 9080</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p><strong>Test Timeout:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check current timeout behavior</span>
+<span class="nb">time</span><span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://reviews:9080/reviews/0
+
+<span class="c1"># Should complete in &lt; 2s</span>
+</code></pre></div></p>
+<h2 id="part-0-understanding-gamma-policy-attachment-5-minutes">Part 0: Understanding GAMMA Policy Attachment (5 minutes)<a class="headerlink" href="#part-0-understanding-gamma-policy-attachment-5-minutes" title="Permanent link">#</a></h2>
+<h3 id="what-is-gamma">What is GAMMA?<a class="headerlink" href="#what-is-gamma" title="Permanent link">#</a></h3>
+<p><strong>GAMMA</strong> = <strong>Gateway API for Mesh Management and Administration</strong></p>
+<p>It's an initiative to extend Kubernetes Gateway API to handle service mesh use cases, not just ingress.</p>
+<p><strong>Key Goal:</strong> Use the same API (HTTPRoute) for:
+- ✅ <strong>North-South traffic</strong> (ingress: internet → service)
+- ✅ <strong>East-West traffic</strong> (service mesh: service → service)</p>
+<h3 id="the-policy-attachment-problem">The Policy Attachment Problem<a class="headerlink" href="#the-policy-attachment-problem" title="Permanent link">#</a></h3>
+<p><strong>Before GAMMA:</strong> Each mesh had its own way to attach policies:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Istio way</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.default.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+
+<span class="c1"># Linkerd way</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linkerd.io/v1alpha2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceProfile</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">routes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">...</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Kuma way</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kuma.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MeshCircuitBreaker</span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<p><strong>Problem:</strong> No standard way to attach policies across different meshes!</p>
+<h3 id="gamma-solution-extensionref">GAMMA Solution: extensionRef<a class="headerlink" href="#gamma-solution-extensionref" title="Permanent link">#</a></h3>
+<p>GAMMA introduced <strong>two patterns</strong> for policy attachment:</p>
+<h4 id="pattern-1-direct-policy-attachment-preferred">Pattern 1: Direct Policy Attachment (Preferred)<a class="headerlink" href="#pattern-1-direct-policy-attachment-preferred" title="Permanent link">#</a></h4>
+<p><strong>Concept:</strong> Policy CRD uses <code>targetRef</code> to attach to a resource.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Policy targets a specific resource</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># targetRef: &quot;I apply to this resource&quot;</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="c1"># Policy configuration</span>
+<span class="w">  </span><span class="nt">override</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">    </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<p><strong>How it works:</strong>
+<div class="highlight"><pre><span></span><code>TrafficPolicy ────targetRef────&gt; Service (reviews)
+                                      ↑
+HTTPRoute ────backendRef────────────┘
+</code></pre></div></p>
+<p>The policy is <strong>attached directly to the service</strong>, not through the HTTPRoute.</p>
+<h4 id="pattern-2-extensionref-in-httproute-early-concept">Pattern 2: extensionRef in HTTPRoute (Early Concept)<a class="headerlink" href="#pattern-2-extensionref-in-httproute-early-concept" title="Permanent link">#</a></h4>
+<p><strong>Concept:</strong> HTTPRoute references external policies via <code>extensionRef</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># extensionRef: &quot;Apply this policy to my traffic&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+</code></pre></div>
+<p><strong>How it works:</strong>
+<div class="highlight"><pre><span></span><code>HTTPRoute ────extensionRef────&gt; TrafficPolicy
+      │
+      └────backendRef────&gt; Service (reviews)
+</code></pre></div></p>
+<p>The policy is <strong>referenced from the HTTPRoute</strong>.</p>
+<h3 id="the-two-patterns-direct-vs-reference">The Two Patterns: Direct vs Reference<a class="headerlink" href="#the-two-patterns-direct-vs-reference" title="Permanent link">#</a></h3>
+<p><strong>Direct Policy Attachment (targetRef):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Policy CRD</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span><span class="w">        </span><span class="c1"># ← Policy points TO resource</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">override</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+
+<span class="c1"># HTTPRoute (no policy reference needed)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w">  </span><span class="c1"># Policy auto-applies</span>
+</code></pre></div></p>
+<p><strong>✅ Pros:</strong>
+- Cleaner separation of concerns
+- Policy can apply to multiple routes
+- Policy lifecycle independent of route</p>
+<p><strong>❌ Cons:</strong>
+- Policy applies to ALL traffic to service
+- Less flexible per-route configuration</p>
+<p><strong>extensionRef (Reference from Route):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Policy CRD (no targetRef)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># No targetRef - policy is standalone</span>
+<span class="w">  </span><span class="nt">override</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+
+<span class="c1"># HTTPRoute references policy</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span><span class="w">  </span><span class="c1"># ← Route points TO policy</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+</code></pre></div></p>
+<p><strong>✅ Pros:</strong>
+- Explicit policy attachment per route
+- Different policies for different routes to same service
+- Clear which policy applies to which route</p>
+<p><strong>❌ Cons:</strong>
+- More verbose
+- Policy tightly coupled to route
+- Must update route to change policy</p>
+<h3 id="gamma-evolution-why-both-exist">GAMMA Evolution: Why Both Exist<a class="headerlink" href="#gamma-evolution-why-both-exist" title="Permanent link">#</a></h3>
+<p><strong>Early GAMMA (2022-2023):</strong> Focused on <code>extensionRef</code>
+- Idea: Route explicitly references policies
+- Problem: Too verbose, tight coupling</p>
+<p><strong>Current GAMMA (2024+):</strong> Prefers <code>targetRef</code>
+- Idea: Policies attach to resources independently
+- Benefit: Cleaner, more declarative</p>
+<p><strong>Reality:</strong> Most implementations support <strong>both</strong> patterns!</p>
+<h3 id="how-different-meshes-use-policy-attachment">How Different Meshes Use Policy Attachment<a class="headerlink" href="#how-different-meshes-use-policy-attachment" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mesh</th>
+<th>Primary Pattern</th>
+<th>extensionRef Support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KGateway</strong></td>
+<td>targetRef</td>
+<td>✅ Yes (experimental)</td>
+</tr>
+<tr>
+<td><strong>Istio</strong></td>
+<td>Selectors (labels)</td>
+<td>⚠️ Limited</td>
+</tr>
+<tr>
+<td><strong>Kuma</strong></td>
+<td>targetRef</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><strong>Linkerd</strong></td>
+<td>Selectors</td>
+<td>⚠️ Limited</td>
+</tr>
+</tbody>
+</table>
+<h3 id="practical-example-both-patterns">Practical Example: Both Patterns<a class="headerlink" href="#practical-example-both-patterns" title="Permanent link">#</a></h3>
+<p><strong>Scenario:</strong> Apply timeout and circuit breaker to reviews service.</p>
+<p><strong>Option A: targetRef Pattern (Recommended)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create policies with targetRef</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">    </span><span class="nt">streamIdle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 
 
+<span class="c1"># 2. HTTPRoute (policies apply automatically)</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w">  </span><span class="c1"># Policies auto-apply!</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+<p><strong>How it works:</strong>
+1. TrafficPolicy targets <code>reviews</code> service
+2. HTTPRoute routes to <code>reviews</code>
+3. <strong>Result:</strong> Both policies automatically apply</p>
+<p><strong>Option B: extensionRef Pattern (More Explicit)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create standalone policies (no targetRef)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># No targetRef!</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">    </span><span class="nt">streamIdle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="c1"># 2. HTTPRoute explicitly references policies</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Explicitly reference policies</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+<p><strong>How it works:</strong>
+1. Policies are standalone
+2. HTTPRoute explicitly references each policy
+3. Policies only apply when referenced</p>
+<h3 id="when-to-use-which-pattern">When to Use Which Pattern<a class="headerlink" href="#when-to-use-which-pattern" title="Permanent link">#</a></h3>
+<p><strong>Use targetRef (Recommended):</strong>
+- ✅ Policy applies to all traffic to a service
+- ✅ Want cleaner HTTPRoute definitions
+- ✅ Policy lifecycle independent of routes
+- ✅ Multiple routes to same service with same policy</p>
+<p><strong>Example:</strong> All traffic to reviews should have 2s timeout</p>
+<p><strong>Use extensionRef:</strong>
+- ✅ Different policies for different routes to same service
+- ✅ Need explicit control over policy application
+- ✅ Conditional policy based on route matching</p>
+<p><strong>Example:</strong> Admin route gets 10s timeout, user route gets 2s timeout</p>
+<h3 id="advanced-combining-both-patterns">Advanced: Combining Both Patterns<a class="headerlink" href="#advanced-combining-both-patterns" title="Permanent link">#</a></h3>
+<p>You can use <strong>both</strong> patterns together!</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Base policy via targetRef (applies to all traffic)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-base-policy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">    </span><span class="nt">streamIdle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nn">---</span>
+<span class="c1"># Regular user route (gets base policy)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-user-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">headers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-type</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regular</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">      </span><span class="c1"># Uses reviews-base-policy (via targetRef)</span>
+<span class="nn">---</span>
+<span class="c1"># Admin route (overrides with extensionRef)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-admin-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">headers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-type</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">      </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Override base policy for admin</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-admin-policy</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+<p><strong>Result:</strong>
+- Regular users: 5s timeout, 2 retries (base policy)
+- Admin users: 10s timeout, 5 retries (override policy)</p>
+<h3 id="policy-precedence-when-both-exist">Policy Precedence (When Both Exist)<a class="headerlink" href="#policy-precedence-when-both-exist" title="Permanent link">#</a></h3>
+<p>When both targetRef and extensionRef policies exist:</p>
+<div class="highlight"><pre><span></span><code>extensionRef (HTTPRoute filter)  ← Highest priority
+         ↓
+targetRef with &#39;override&#39;        ← Medium priority
+         ↓
+targetRef with &#39;default&#39;         ← Lowest priority
+</code></pre></div>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Namespace default (lowest priority)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Namespace</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span><span class="w">  </span><span class="c1"># Default for all services</span>
+
+<span class="c1"># Service override (medium priority)</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">override</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span><span class="w">  </span><span class="c1"># Override namespace default</span>
+
+<span class="c1"># Route-specific (highest priority)</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-route-policy</span><span class="w">  </span><span class="c1"># timeout: 2s</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+</code></pre></div></p>
+<p><strong>Result:</strong> Critical route gets 2s timeout (highest priority)</p>
+<h3 id="gamma-evolution-timeline">GAMMA Evolution Timeline<a class="headerlink" href="#gamma-evolution-timeline" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code>2022: GAMMA Initiative Starts
+      ├─ Focus: extensionRef pattern
+      └─ Goal: Standard policy attachment
+
+2023: targetRef Pattern Emerges
+      ├─ Simpler than extensionRef
+      ├─ Hierarchical policies (namespace → service → route)
+      └─ Adopted by KGateway, Kuma
+
+2024: Hybrid Approach
+      ├─ targetRef preferred for most cases
+      ├─ extensionRef for specific overrides
+      └─ Both patterns supported
+
+2025: Current State
+      ├─ targetRef: Production ready
+      ├─ extensionRef: Experimental in most meshes
+      └─ Standard still evolving
+</code></pre></div>
+<h3 id="key-gamma-concepts-summary">Key GAMMA Concepts Summary<a class="headerlink" href="#key-gamma-concepts-summary" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>targetRef</strong></td>
+<td>Policy points to resource</td>
+<td><code>TrafficPolicy → Service</code></td>
+</tr>
+<tr>
+<td><strong>extensionRef</strong></td>
+<td>Route references policy</td>
+<td><code>HTTPRoute → TrafficPolicy</code></td>
+</tr>
+<tr>
+<td><strong>Policy Attachment</strong></td>
+<td>How policies apply to traffic</td>
+<td>targetRef or extensionRef</td>
+</tr>
+<tr>
+<td><strong>Hierarchy</strong></td>
+<td>Namespace → Service → Route</td>
+<td>Lowest to highest priority</td>
+</tr>
+<tr>
+<td><strong>override</strong></td>
+<td>Higher priority policy</td>
+<td>Replaces lower level</td>
+</tr>
+<tr>
+<td><strong>default</strong></td>
+<td>Lower priority policy</td>
+<td>Used if no override</td>
+</tr>
+</tbody>
+</table>
+<h2 id="part-1-gateway-api-fundamentals-10-minutes">Part 1: Gateway API Fundamentals (10 minutes)<a class="headerlink" href="#part-1-gateway-api-fundamentals-10-minutes" title="Permanent link">#</a></h2>
+<h3 id="understanding-the-bookinfo-application">Understanding the Bookinfo Application<a class="headerlink" href="#understanding-the-bookinfo-application" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────┐
+│ productpage │ (Python - Frontend)
+└──────┬──────┘
+       │
+       ├──────► reviews (Java - 3 versions)
+       │             └──────► ratings (Ruby)
+       │
+       └──────► details (Ruby - Book info)
+</code></pre></div>
+<h3 id="pattern-2-circuit-breaker-with-destinationrule">Pattern 2: Circuit Breaker with DestinationRule<a class="headerlink" href="#pattern-2-circuit-breaker-with-destinationrule" title="Permanent link">#</a></h3>
+<p><strong>Why?</strong> Stop calling failing services to give them time to recover.</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: networking.istio.io/v1beta1</span>
+<span class="s">kind: DestinationRule</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-circuit-breaker</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  host: reviews.booking.svc.cluster.local</span>
+<span class="s">  trafficPolicy:</span>
+<span class="s">    # Connection pool limits (rate limiting at connection level)</span>
+<span class="s">    connectionPool:</span>
+<span class="s">      tcp:</span>
+<span class="s">        maxConnections: 100</span>
+<span class="s">      http:</span>
+<span class="s">        http1MaxPendingRequests: 10    # Max queued requests</span>
+<span class="s">        http2MaxRequests: 100           # Max concurrent requests</span>
+<span class="s">        maxRequestsPerConnection: 2     # Connection reuse limit</span>
+<span class="s">    # Circuit breaker configuration</span>
+<span class="s">    outlierDetection:</span>
+<span class="s">      consecutive5xxErrors: 5           # Trip after 5 errors</span>
+<span class="s">      interval: 30s                      # Check every 30s</span>
+<span class="s">      baseEjectionTime: 30s             # Eject for 30s</span>
+<span class="s">      maxEjectionPercent: 50            # Max 50% of instances</span>
+<span class="s">      minHealthPercent: 50              # Keep 50% healthy minimum</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p><strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>consecutive5xxErrors</code></td>
+<td>Errors before ejection</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td>Detection check frequency</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>baseEjectionTime</code></td>
+<td>How long to eject</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>maxEjectionPercent</code></td>
+<td>Max % ejected</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Test Circuit Breaker:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Inject faults to trip the circuit breaker</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: networking.istio.io/v1beta1</span>
+<span class="s">kind: VirtualService</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-fault</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  hosts:</span>
+<span class="s">    - reviews</span>
+<span class="s">  http:</span>
+<span class="s">    - fault:</span>
+<span class="s">        abort:</span>
+<span class="s">          percentage:</span>
+<span class="s">            value: 100</span>
+<span class="s">          httpStatus: 503</span>
+<span class="s">      route:</span>
+<span class="s">        - destination:</span>
+<span class="s">            host: reviews</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Generate errors</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..10<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}\n&quot;</span><span class="w"> </span>http://reviews:9080/reviews/0
+<span class="k">done</span>
+
+
+<span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>virtualservice<span class="w"> </span>reviews-fault
+</code></pre></div></p>
+<h3 id="pattern-3-rate-limiting">Pattern 3: Rate Limiting<a class="headerlink" href="#pattern-3-rate-limiting" title="Permanent link">#</a></h3>
+<p><strong>Sidecar Approach (if using sidecar):</strong>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: networking.istio.io/v1alpha3</span>
+<span class="s">kind: EnvoyFilter</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-ratelimit</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  workloadSelector:</span>
+<span class="s">    labels:</span>
+<span class="s">      app: productpage</span>
+<span class="s">  configPatches:</span>
+<span class="s">    - applyTo: HTTP_FILTER</span>
+<span class="s">      match:</span>
+<span class="s">        context: SIDECAR_OUTBOUND</span>
+<span class="s">        listener:</span>
+<span class="s">          filterChain:</span>
+<span class="s">            filter:</span>
+<span class="s">              name: envoy.filters.network.http_connection_manager</span>
+<span class="s">              subFilter:</span>
+<span class="s">                name: envoy.filters.http.router</span>
+<span class="s">      patch:</span>
+<span class="s">        operation: INSERT_BEFORE</span>
+<span class="s">        value:</span>
+<span class="s">          name: envoy.filters.http.local_ratelimit</span>
+<span class="s">          typed_config:</span>
+<span class="s">            &quot;@type&quot;: type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit</span>
+<span class="s">            stat_prefix: http_local_rate_limiter</span>
+<span class="s">            token_bucket:</span>
+<span class="s">              max_tokens: 100</span>
+<span class="s">              tokens_per_fill: 100</span>
+<span class="s">              fill_interval: 60s  # 100 requests per minute</span>
+<span class="s">            filter_enabled:</span>
+<span class="s">              runtime_key: local_rate_limit_enabled</span>
+<span class="s">              default_value:</span>
+<span class="s">                numerator: 100</span>
+<span class="s">                denominator: HUNDRED</span>
+<span class="s">            filter_enforced:</span>
+<span class="s">              runtime_key: local_rate_limit_enforced</span>
+<span class="s">              default_value:</span>
+<span class="s">                numerator: 100</span>
+<span class="s">                denominator: HUNDRED</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p><strong>Test Rate Limiting:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Send rapid requests</span>
+<span class="nv">SUCCESS</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">FAILED</span><span class="o">=</span><span class="m">0</span>
+
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">150</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nv">CODE</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w">  </span>-n<span class="w"> </span>booking<span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}&quot;</span><span class="w"> </span>http://reviews:9080/reviews/0<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CODE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">SUCCESS</span><span class="o">=</span><span class="k">$((</span><span class="nv">SUCCESS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="k">))</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span><span class="nv">FAILED</span><span class="o">=</span><span class="k">$((</span><span class="nv">FAILED</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="k">))</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Success: </span><span class="nv">$SUCCESS</span><span class="s2">, Rate Limited: </span><span class="nv">$FAILED</span><span class="s2">&quot;</span>
+<span class="c1"># Should see some rate limited after 100 requests</span>
+</code></pre></div></p>
+<h3 id="exercise-3-complete-configuration-for-details-service">Exercise 3: Complete Configuration for Details Service<a class="headerlink" href="#exercise-3-complete-configuration-for-details-service" title="Permanent link">#</a></h3>
+<p><strong>Your turn!</strong> Apply timeout, circuit breaker, and rate limiting for details service.</p>
+<p><strong>Requirements:</strong>
+- Timeout: 1 second
+- Circuit breaker: 5 consecutive errors, 30s ejection
+- Rate limit: 50 requests per minute</p>
+<details>
+<summary>Solution</summary>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># HTTPRoute with timeout</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.networking.k8s.io/v1</span>
+<span class="s">kind: HTTPRoute</span>
+<span class="s">metadata:</span>
+<span class="s">  name: productpage-to-details</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  parentRefs:</span>
+<span class="s">    - group: &quot;&quot;</span>
+<span class="s">      kind: Service</span>
+<span class="s">      name: productpage</span>
+<span class="s">      port: 9080</span>
+<span class="s">  hostnames:</span>
+<span class="s">    - details.booking.svc.cluster.local</span>
+<span class="s">  rules:</span>
+<span class="s">    - timeouts:</span>
+<span class="s">        request: 1s</span>
+<span class="s">      backendRefs:</span>
+<span class="s">        - name: details</span>
+<span class="s">          port: 9080</span>
+<span class="s">---</span>
+<span class="s"># Circuit breaker</span>
+<span class="s">apiVersion: networking.istio.io/v1beta1</span>
+<span class="s">kind: DestinationRule</span>
+<span class="s">metadata:</span>
+<span class="s">  name: details-circuit-breaker</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  host: details.booking.svc.cluster.local</span>
+<span class="s">  trafficPolicy:</span>
+<span class="s">    connectionPool:</span>
+<span class="s">      http:</span>
+<span class="s">        http1MaxPendingRequests: 10</span>
+<span class="s">    outlierDetection:</span>
+<span class="s">      consecutive5xxErrors: 5</span>
+<span class="s">      interval: 30s</span>
+<span class="s">      baseEjectionTime: 30s</span>
+<span class="s">EOF</span>
+</code></pre></div>
+</details>
+
+<h2 id="part-3-understanding-ambient-mesh-architecture-15-minutes">Part 3: Understanding Ambient Mesh Architecture (15 minutes)<a class="headerlink" href="#part-3-understanding-ambient-mesh-architecture-15-minutes" title="Permanent link">#</a></h2>
+<h3 id="the-problem-with-sidecars">The Problem with Sidecars<a class="headerlink" href="#the-problem-with-sidecars" title="Permanent link">#</a></h3>
+<p><strong>Sidecar Architecture:</strong>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────┐
+│         Pod             │
+│  ┌──────┐  ┌─────────┐ │
+│  │ App  │  │ Sidecar │ │  Memory: ~50-100MB
+│  │      │  │ (Envoy) │ │  CPU: Always running
+│  └──────┘  └─────────┘ │  Complexity: High
+└─────────────────────────┘
+</code></pre></div></p>
+<p><strong>Issues:</strong>
+- ❌ <strong>Resource overhead</strong>: 50-100MB memory per pod
+- ❌ <strong>Startup time</strong>: Sidecar initialization delay
+- ❌ <strong>Operational complexity</strong>: Sidecar lifecycle management
+- ❌ <strong>Security surface</strong>: More containers = more CVEs</p>
+<h3 id="ambient-architecture-split-the-mesh">Ambient Architecture: Split the Mesh<a class="headerlink" href="#ambient-architecture-split-the-mesh" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────┐                                    ┌─────────┐
+│   Pod   │ ──┐                            ┌──│   Pod   │
+└─────────┘   │                            │  └─────────┘
+              ↓                            ↑
+         ┌─────────┐                  ┌─────────┐
+         │ ztunnel │ ════════════════►│ ztunnel │
+         │  (L4)   │    mTLS Tunnel   │  (L4)   │
+         └─────────┘                  └─────────┘
+              │                            ↑
+              │    (if L7 needed)          │
+              ↓                            │
+         ┌──────────┐                      │
+         │ Waypoint │ ─────────────────────┘
+         │   (L7)   │
+         └──────────┘
+</code></pre></div>
+<h3 id="two-layers-explained">Two Layers Explained<a class="headerlink" href="#two-layers-explained" title="Permanent link">#</a></h3>
+<h4 id="layer-1-ztunnel-zero-trust-tunnel">Layer 1: ztunnel (Zero Trust Tunnel)<a class="headerlink" href="#layer-1-ztunnel-zero-trust-tunnel" title="Permanent link">#</a></h4>
+<p><strong>What it does:</strong>
+- ✅ <strong>mTLS encryption</strong>: All traffic encrypted
+- ✅ <strong>Identity</strong>: Service account-based identity
+- ✅ <strong>L4 telemetry</strong>: Connection-level metrics
+- ✅ <strong>L4 authorization</strong>: Network policies</p>
+<p><strong>Deployment:</strong>
+- Runs as <strong>DaemonSet</strong> (one per node)
+- Written in <strong>Rust</strong> (fast, memory-safe)
+- <strong>Always running</strong> for all pods</p>
+<p><strong>Check ztunnel:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># View ztunnel pods</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>daemonset<span class="w"> </span>-n<span class="w"> </span>istio-system<span class="w"> </span>ztunnel
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>istio-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>ztunnel
+
+<span class="c1"># ztunnel provides automatic L4 security</span>
+</code></pre></div></p>
+<h4 id="layer-2-waypoint-l7-proxy">Layer 2: Waypoint (L7 Proxy)<a class="headerlink" href="#layer-2-waypoint-l7-proxy" title="Permanent link">#</a></h4>
+<p><strong>What it does:</strong>
+- ✅ <strong>L7 routing</strong>: HTTPRoute, header-based routing
+- ✅ <strong>Rate limiting</strong>: Request-level throttling
+- ✅ <strong>Circuit breaker</strong>: Outlier detection
+- ✅ <strong>Transformation</strong>: Header manipulation
+- ✅ <strong>Advanced features</strong>: Retries, timeouts, fault injection</p>
+<p><strong>Deployment:</strong>
+- Runs as <strong>Deployment</strong> (can scale)
+- <strong>Per-service</strong> or <strong>per-namespace</strong>
+- <strong>Only where needed</strong> (opt-in)</p>
+<p><strong>Check waypoint:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># View waypoint gateways</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>-n<span class="w"> </span>booking
+
+<span class="c1"># Each waypoint is a Gateway resource</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span class="w"> </span>reviews-waypoint
+</code></pre></div></p>
+<h3 id="the-critical-difference-httproute-parentref">The Critical Difference: HTTPRoute parentRef<a class="headerlink" href="#the-critical-difference-httproute-parentref" title="Permanent link">#</a></h3>
+<p><strong>In Sidecar Mesh:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Sidecar makes the L7 request</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span><span class="w">  </span><span class="c1"># ← Client service (has sidecar)</span>
+</code></pre></div></p>
+<p><strong>In Ambient Mesh:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Waypoint makes the L7 request</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span><span class="w">  </span><span class="c1"># ← Waypoint Gateway!</span>
+</code></pre></div></p>
+<h3 id="traffic-flow-comparison">Traffic Flow Comparison<a class="headerlink" href="#traffic-flow-comparison" title="Permanent link">#</a></h3>
+<p><strong>Sidecar:</strong>
+<div class="highlight"><pre><span></span><code>productpage pod
+    ↓
+productpage sidecar (L4 + L7)
+    ↓ mTLS
+reviews sidecar (L4 + L7)
+    ↓
+reviews pod
+</code></pre></div></p>
+<p><strong>Ambient:</strong>
+<div class="highlight"><pre><span></span><code>productpage pod
+    ↓
+ztunnel (L4 only)
+    ↓ mTLS + identity
+waypoint (L7 only - if needed)
+    ↓ policies applied
+ztunnel (L4 only)
+    ↓
+reviews pod
+</code></pre></div></p>
+<h3 id="ambient-benefits-summary">Ambient Benefits Summary<a class="headerlink" href="#ambient-benefits-summary" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Sidecar</th>
+<th>Ambient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Memory/Pod</strong></td>
+<td>+50-100MB</td>
+<td>+0MB</td>
+</tr>
+<tr>
+<td><strong>Startup Time</strong></td>
+<td>+5-10s</td>
+<td>+0s</td>
+</tr>
+<tr>
+<td><strong>L4 Security</strong></td>
+<td>Always</td>
+<td>Always</td>
+</tr>
+<tr>
+<td><strong>L7 Features</strong></td>
+<td>Always</td>
+<td>On-demand (waypoint)</td>
+</tr>
+<tr>
+<td><strong>HTTPRoute parentRef</strong></td>
+<td>Service</td>
+<td>Gateway</td>
+</tr>
+<tr>
+<td><strong>Resource Efficiency</strong></td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="identity-preservation">Identity Preservation<a class="headerlink" href="#identity-preservation" title="Permanent link">#</a></h3>
+<p><strong>Important:</strong> Even though waypoint makes the L7 request, the original client identity is preserved!</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># This still works in Ambient!</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security.istio.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizationPolicy</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">principals</span><span class="p">:</span>
+<span class="w">              </span><span class="c1"># This is productpage&#39;s identity, not waypoint&#39;s!</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cluster.local/ns/default/sa/bookinfo-productpage&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="part-4-kgateway-value-ai-integration-15-minutes">Part 4: KGateway Value &amp; AI Integration (15 minutes)<a class="headerlink" href="#part-4-kgateway-value-ai-integration-15-minutes" title="Permanent link">#</a></h2>
+<h3 id="why-kgateway">Why KGateway?<a class="headerlink" href="#why-kgateway" title="Permanent link">#</a></h3>
+<p>KGateway (Solo.io Gloo Gateway) extends Istio with enterprise features:</p>
+<ol>
+<li><strong>Unified Policy Management</strong>: TrafficPolicy instead of multiple CRDs</li>
+<li><strong>Request/Response Transformation</strong>: Modify traffic on-the-fly</li>
+<li><strong>Advanced Rate Limiting</strong>: More flexible than basic token bucket</li>
+<li><strong>AI Gateway Features</strong>: LLM routing, prompt management, cost tracking</li>
+</ol>
+<h3 id="kgateway-trafficpolicy-policy-attachment">KGateway TrafficPolicy: Policy Attachment<a class="headerlink" href="#kgateway-trafficpolicy-policy-attachment" title="Permanent link">#</a></h3>
+<p><strong>KGateway</strong> (from kgateway.dev) uses the Gateway API policy attachment pattern.</p>
+<p><strong>Instead of multiple resources:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Without KGateway: 3 separate resources</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule (circuit breaker)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService (timeout)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnvoyFilter (rate limiting)</span>
+</code></pre></div></p>
+<p><strong>With KGateway: Policy Attachment:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Attach to specific target</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="c1"># Override section for specific sources</span>
+
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">     </span><span class="nt">backoff</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">baseInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100ms</span>
+<span class="w">       </span><span class="nt">maxInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1s</span>
+<span class="w">    </span><span class="c1"># Timeout configuration</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">    </span><span class="nt">idle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">    </span><span class="c1"># Connection settings</span>
+<span class="w">  </span><span class="nt">connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">maxConnections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">maxPendingRequests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">maxRequestsPerConnection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">    </span><span class="nt">connectTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">    </span><span class="c1"># Load balancing</span>
+<span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROUND_ROBIN</span>
+</code></pre></div></p>
+<h3 id="using-extensionref-with-trafficpolicy">Using extensionRef with TrafficPolicy<a class="headerlink" href="#using-extensionref-with-trafficpolicy" title="Permanent link">#</a></h3>
+<p><strong>Update HTTPRoute to reference KGateway policies:</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.networking.k8s.io/v1</span>
+<span class="s">kind: HTTPRoute</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-route</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  parentRefs:</span>
+<span class="s">    - name: reviews-waypoint  # Ambient pattern</span>
+<span class="s">  hostnames:</span>
+<span class="s">    - reviews.booking.svc.cluster.local</span>
+<span class="s">  rules:</span>
+<span class="s">    - timeouts:</span>
+<span class="s">        request: 2s</span>
+<span class="s">      filters:</span>
+<span class="s">        # Reference KGateway TrafficPolicy</span>
+<span class="s">        - type: ExtensionRef</span>
+<span class="s">          extensionRef:</span>
+<span class="s">            group: gateway.kgateway.dev</span>
+<span class="s">            kind: TrafficPolicy</span>
+<span class="s">            name: reviews-policy</span>
+<span class="s">        # Can still reference Istio policies</span>
+<span class="s">        - type: ExtensionRef</span>
+<span class="s">          extensionRef:</span>
+<span class="s">            group: networking.istio.io</span>
+<span class="s">            kind: DestinationRule</span>
+<span class="s">            name: reviews-circuit-breaker</span>
+<span class="s">      backendRefs:</span>
+<span class="s">        - name: reviews</span>
+<span class="s">          port: 9080</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<h3 id="complete-trafficpolicy-example">Complete TrafficPolicy Example<a class="headerlink" href="#complete-trafficpolicy-example" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-complete-policy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">booking</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Target the reviews service</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="c1"># Policy configuration</span>
+
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span><span class="w">        </span><span class="c1"># Total request timeout</span>
+<span class="w">    </span><span class="nt">idle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span><span class="w">          </span><span class="c1"># Idle connection timeout</span>
+<span class="w">    </span><span class="c1"># Retry policy</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">perTryTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+<span class="w">    </span><span class="nt">retryOn</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5xx&quot;</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;reset&quot;</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connect-failure&quot;</span>
+<span class="w">    </span><span class="nt">backoff</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">baseInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100ms</span>
+<span class="w">        </span><span class="nt">maxInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1s</span>
+<span class="w">    </span><span class="c1"># Connection pool (circuit breaker component)</span>
+<span class="w">  </span><span class="nt">connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">maxConnections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">maxPendingRequests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">maxRequestsPerConnection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">    </span><span class="nt">connectTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">    </span><span class="nt">idleTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">    </span><span class="c1"># Load balancing</span>
+<span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain"># For consistent hash</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain"># type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONSISTENT_HASH</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain"># consistentHash</span><span class="p p-Indicator">:</span>
+<span class="w">      </span><span class="c1">#   httpHeaderName: x-user-id</span>
+</code></pre></div>
+<h3 id="trafficpolicy-for-details-service">TrafficPolicy for Details Service<a class="headerlink" href="#trafficpolicy-for-details-service" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details-policy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">booking</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span>
+
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1s</span>
+<span class="w">    </span><span class="nt">idle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">perTryTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300ms</span>
+<span class="w">    </span><span class="nt">retryOn</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5xx&quot;</span>
+<span class="w">    </span><span class="nt">backoff</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">baseInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100ms</span>
+<span class="w">  </span><span class="nt">connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">maxConnections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">    </span><span class="nt">maxPendingRequests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">connectTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROUND_ROBIN</span>
+</code></pre></div>
+<h3 id="policy-hierarchy-with-kgateway">Policy Hierarchy with KGateway<a class="headerlink" href="#policy-hierarchy-with-kgateway" title="Permanent link">#</a></h3>
+<p>KGateway uses a hierarchical policy model:</p>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────┐
+│    Namespace-level Policy      │  (Lowest priority)
+│  (applies to all in namespace) │
+└────────────────┬───────────────┘
+                 │
+                 ↓
+┌────────────────────────────────┐
+│     Service-level Policy       │  (Medium priority)
+│   (applies to specific service)│
+└────────────────┬───────────────┘
+                 │
+                 ↓
+┌────────────────────────────────┐
+│     Route-level Policy         │  (Highest priority)
+│  (applies to specific HTTPRoute)│
+└────────────────────────────────┘
+</code></pre></div>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Namespace-level default</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">namespace-defaults</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Namespace</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="nn">---</span>
+<span class="c1"># Service-level override</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-policy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">booking</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span><span class="w">  </span><span class="c1"># More strict than namespace default</span>
+</code></pre></div></p>
+<h3 id="requestresponse-transformation">Request/Response Transformation<a class="headerlink" href="#requestresponse-transformation" title="Permanent link">#</a></h3>
+<p>Use KGateway's policy attachment with HTTPRoute filters for header manipulation:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Add request headers</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequestHeaderModifier</span>
+<span class="w">          </span><span class="nt">requestHeaderModifier</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">add</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">x-source-service</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">x-mesh-type</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ambient</span>
+<span class="w">        </span><span class="c1"># Add response headers</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ResponseHeaderModifier</span>
+<span class="w">          </span><span class="nt">responseHeaderModifier</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">add</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">x-processed-by</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+<p><strong>Test transformation:</strong>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-v<span class="w"> </span>http://reviews:9080/reviews/0<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;x-&quot;</span>
+<span class="c1"># Should see custom headers!</span>
+</code></pre></div></p>
+<h3 id="ai-gateway-future-of-kgateway">AI Gateway: Future of KGateway<a class="headerlink" href="#ai-gateway-future-of-kgateway" title="Permanent link">#</a></h3>
+<p><strong>Note:</strong> AI Gateway features are emerging in the Gateway API ecosystem. KGateway focuses on the core Gateway API spec.</p>
+<p>For AI/LLM routing, you would:</p>
+<ol>
+<li><strong>Use HTTPRoute for basic routing</strong></li>
+<li><strong>Use external AI proxy</strong> (like LiteLLM, Portkey)</li>
+<li><strong>Combine with KGateway policies</strong> for rate limiting and observability</li>
+</ol>
+<p><strong>Architecture Pattern:</strong></p>
+<div class="highlight"><pre><span></span><code>Client Request
+    ↓
+HTTPRoute (KGateway)
+    ├─ Rate Limiting (TrafficPolicy)
+    ├─ Timeout (TrafficPolicy)
+    └─ Circuit Breaker
+         ↓
+AI Gateway 
+├─ Model Routing
+├─ Cost Tracking
+├─ Prompt Management
+└─ Response Caching
+     ↓
+LLM Providers (OpenAI, Anthropic, etc.)
+</code></pre></div>
+<p><strong>Example: AI Service with KGateway Policies:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HTTPRoute to AI service</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-service-route</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-waypoint</span>
+<span class="w">  </span><span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-service.default.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PathPrefix</span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/v1/chat/completions</span>
+<span class="w">      </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Apply rate limiting</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
+<span class="w">          </span><span class="nt">extensionRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev</span>
+<span class="w">            </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-service-policy</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-proxy-service</span><span class="w">  </span><span class="c1"># LiteLLM or similar</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="nn">---</span>
+<span class="c1"># TrafficPolicy for AI service</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-service-policy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-proxy-service</span>
+
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span>
+<span class="w">    </span><span class="nt">idle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120s</span>
+<span class="c1"># Retry on transient errors</span>
+<span class="w">  </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">    </span><span class="nt">perTryTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">    </span><span class="nt">retryOn</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5xx&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;reset&quot;</span>
+<span class="w">    </span><span class="nt">backoff</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">baseInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1s</span>
+<span class="w">      </span><span class="nt">maxInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="c1"># Connection limits (cost control)</span>
+<span class="w">  </span><span class="nt">connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">maxConnections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">maxPendingRequests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="c1"># Load balancing</span>
+<span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span>
+</code></pre></div>
+<p><strong>Deploy AI Proxy (example with LiteLLM):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-openai-secret</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-system</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-gateway</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api-key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$AZURE_KEY</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Backend</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-openai</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-system</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-gateway</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ai</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">llm</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apic.ocp.provider.com</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">full</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/my-openai-service/gpt35/chat/completions&quot;</span>
+<span class="w">      </span><span class="nt">openai</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4</span>
+<span class="w">        </span><span class="nt">authToken</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SecretRef</span>
+<span class="w">          </span><span class="nt">secretRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-openai-secret</span>
+<span class="w">        </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4o</span>
+<span class="w">      </span><span class="nt">authHeader</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">headerName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-key</span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AI</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-openai</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-system</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-gateway</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ai-gateway</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-system</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PathPrefix</span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/azure-openai</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-openai</span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-system</span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev</span>
+<span class="w">          </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Backend</span>
+</code></pre></div>
+<p><strong>Client Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Call AI service through KGateway</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;model&quot;: &quot;gpt-4&quot;,</span>
+<span class="s1">    &quot;messages&quot;: [</span>
+<span class="s1">      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain service mesh&quot;}</span>
+<span class="s1">    ]</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<p><strong>Benefits of KGateway + AI Proxy:</strong>
+- ✅ <strong>Rate limiting</strong>: Control AI costs with KGateway TrafficPolicy
+- ✅ <strong>Timeout management</strong>: Long timeouts for LLM responses
+- ✅ <strong>Circuit breaker</strong>: Fail fast on LLM provider issues
+- ✅ <strong>Retry logic</strong>: Handle transient failures
+- ✅ <strong>Observability</strong>: Metrics at gateway level
+- ✅ <strong>Model routing</strong>: AI proxy handles model selection
+- ✅ <strong>Cost tracking</strong>: AI proxy tracks token usage</p>
+<h2 id="part-5-complete-architecture-best-practices-5-minutes">Part 5: Complete Architecture &amp; Best Practices (5 minutes)<a class="headerlink" href="#part-5-complete-architecture-best-practices-5-minutes" title="Permanent link">#</a></h2>
+<h3 id="the-complete-stack">The Complete Stack<a class="headerlink" href="#the-complete-stack" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────┐
+│           AI Gateway Layer (Optional)        │
+│  - LLM routing                              │
+│  - Cost control                             │
+│  - Prompt management                        │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│        KGateway Policy Layer (Optional)      │
+│  - TrafficPolicy                            │
+│  - RouteOption                              │
+│  - VirtualHostOption                        │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│         Gateway API (HTTPRoute)             │
+│  - Service-to-service routing               │
+│  - Timeouts                                 │
+│  - extensionRef to policies                 │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│          Ambient Mesh (Istio)               │
+│  Layer 1: ztunnel (L4, mTLS)               │
+│  Layer 2: waypoint (L7, policies)          │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│              Services                       │
+│  productpage, reviews, details              │
+└─────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="best-practices-summary">Best Practices Summary<a class="headerlink" href="#best-practices-summary" title="Permanent link">#</a></h3>
+<h4 id="httproute-configuration">HTTPRoute Configuration<a class="headerlink" href="#httproute-configuration" title="Permanent link">#</a></h4>
+<p>✅ <strong>DO:</strong>
+- Use descriptive names (<code>productpage-to-reviews</code>)
+- Always set timeouts
+- Use extensionRef for policies
+- In Ambient: parentRef = waypoint Gateway</p>
+<p>❌ <strong>DON'T:</strong>
+- Hardcode IPs in hostnames
+- Skip timeout configuration
+- Mix sidecar and ambient patterns</p>
+<h4 id="circuit-breaker-configuration">Circuit Breaker Configuration<a class="headerlink" href="#circuit-breaker-configuration" title="Permanent link">#</a></h4>
+<p>✅ <strong>DO:</strong>
+- Start with <code>consecutive5xxErrors: 5</code>
+- Set <code>baseEjectionTime</code> = <code>interval</code>
+- Keep <code>maxEjectionPercent: 50</code> for safety
+- Test with fault injection</p>
+<p>❌ <strong>DON'T:</strong>
+- Set <code>consecutive5xxErrors: 1</code> (too aggressive)
+- Eject 100% of instances
+- Forget to set <code>minHealthPercent</code></p>
+<h4 id="rate-limiting-configuration">Rate Limiting Configuration<a class="headerlink" href="#rate-limiting-configuration" title="Permanent link">#</a></h4>
+<p>✅ <strong>DO:</strong>
+- Set realistic limits based on capacity
+- Use different limits per service
+- Monitor rate limit metrics
+- Combine with circuit breakers</p>
+<p>❌ <strong>DON'T:</strong>
+- Use same limit for all services
+- Set limits too low (causes false positives)
+- Forget to log rate limit events</p>
+<h4 id="ai-gateway-configuration">AI Gateway Configuration<a class="headerlink" href="#ai-gateway-configuration" title="Permanent link">#</a></h4>
+<p>✅ <strong>DO:</strong>
+- Set cost budgets (<code>costPerHour</code>)
+- Enable response caching
+- Use routing rules for model selection
+- Track token usage metrics
+- Version your prompts</p>
+<p>❌ <strong>DON'T:</strong>
+- Route everything to expensive models
+- Skip caching (wastes money)
+- Hardcode prompts in application code
+- Ignore cost metrics</p>
+<h2 id="part-6-troubleshooting-10-minutes">Part 6: Troubleshooting (10 minutes)<a class="headerlink" href="#part-6-troubleshooting-10-minutes" title="Permanent link">#</a></h2>
+<h4 id="problem-1-httproute-not-working">Problem 1: HTTPRoute Not Working<a class="headerlink" href="#problem-1-httproute-not-working" title="Permanent link">#</a></h4>
+<p><strong>Symptoms:</strong>
+- Traffic not flowing
+- HTTPRoute shows "Accepted: False"</p>
+<p><strong>Debug Steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check HTTPRoute status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>&lt;name&gt;<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">20</span><span class="w"> </span>status
+
+<span class="c1"># 2. Check parentRef</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>&lt;name&gt;<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span>parentRefs
+
+<span class="c1"># 3. Verify parent exists</span>
+<span class="c1"># If sidecar: check service exists</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>service<span class="w"> </span>productpage
+
+<span class="c1"># If ambient: check waypoint exists</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>reviews-waypoint
+
+<span class="c1"># 4. Check listener compatibility</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span class="w"> </span>&lt;gateway-name&gt;
+</code></pre></div></p>
+<p><strong>Common Issues:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"ParentRef not found"</td>
+<td>Wrong parent name</td>
+<td>Check <code>kubectl get gateway</code> or <code>kubectl get service</code></td>
+</tr>
+<tr>
+<td>"No matching listeners"</td>
+<td>Wrong hostname</td>
+<td>Check hostnames match service DNS</td>
+</tr>
+<tr>
+<td>"Backend not found"</td>
+<td>Wrong backend name</td>
+<td>Check <code>kubectl get service</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="problem-2-circuit-breaker-not-tripping">Problem 2: Circuit Breaker Not Tripping<a class="headerlink" href="#problem-2-circuit-breaker-not-tripping" title="Permanent link">#</a></h4>
+<p><strong>Symptoms:</strong>
+- Service keeps receiving traffic despite errors
+- No ejections in metrics</p>
+<h4 id="problem-4-timeout-not-working">Problem 4: Timeout Not Working<a class="headerlink" href="#problem-4-timeout-not-working" title="Permanent link">#</a></h4>
+<p><strong>Symptoms:</strong>
+- Requests hang longer than expected
+- Timeout setting ignored</p>
+<p><strong>Debug Steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check HTTPRoute timeout</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>reviews-route<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span>timeouts
+
+<span class="c1"># 2. Check if VirtualService overrides it</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>virtualservice<span class="w"> </span>reviews-vs<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>timeout
+</code></pre></div></p>
+<p><strong>Common Issues:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Timeout ignored</td>
+<td>VirtualService overrides</td>
+<td>Remove VirtualService timeout or align them</td>
+</tr>
+<tr>
+<td>Wrong timeout</td>
+<td>Multiple timeout configs</td>
+<td>Check both HTTPRoute and VirtualService</td>
+</tr>
+<tr>
+<td>No timeout</td>
+<td>Missing configuration</td>
+<td>Add timeout to HTTPRoute</td>
+</tr>
+</tbody>
+</table>
+<h2 id="summary-key-takeaways">Summary &amp; Key Takeaways<a class="headerlink" href="#summary-key-takeaways" title="Permanent link">#</a></h2>
+<h3 id="what-you-learned">What You Learned<a class="headerlink" href="#what-you-learned" title="Permanent link">#</a></h3>
+<h4 id="1-gateway-api-gamma-pattern">1. Gateway API GAMMA Pattern<a class="headerlink" href="#1-gateway-api-gamma-pattern" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Service-to-Service routing</span>
+<span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span><span class="w">      </span><span class="c1"># Source</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span>
+<span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w">           </span><span class="c1"># Destination</span>
+</code></pre></div>
+<h4 id="2-resilience-patterns">2. Resilience Patterns<a class="headerlink" href="#2-resilience-patterns" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Purpose</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Timeout</strong></td>
+<td>Fail fast</td>
+<td>HTTPRoute timeouts</td>
+</tr>
+<tr>
+<td><strong>Circuit Breaker</strong></td>
+<td>Stop cascading failures</td>
+<td>DestinationRule outlierDetection</td>
+</tr>
+<tr>
+<td><strong>Rate Limiting</strong></td>
+<td>Protect from overload</td>
+<td>EnvoyFilter/WasmPlugin</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-ambient-architecture">3. Ambient Architecture<a class="headerlink" href="#3-ambient-architecture" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code>┌──────────┐
+│   Pod    │  No sidecar!
+└────┬─────┘
+     │
+     ↓
+┌──────────┐
+│ ztunnel  │  L4: mTLS, identity
+└────┬─────┘  (DaemonSet - always running)
+     │
+     ↓ (if L7 needed)
+┌──────────┐
+│ Waypoint │  L7: policies, routing
+└──────────┘  (Deployment - on-demand)
+</code></pre></div>
+<p><strong>Key Differences:</strong>
+- <strong>Sidecar:</strong> HTTPRoute parentRef = client service
+- <strong>Ambient:</strong> HTTPRoute parentRef = waypoint Gateway
+- <strong>Identity:</strong> Preserved through ztunnel in both cases</p>
+<h4 id="4-kgateway-value">4. KGateway Value<a class="headerlink" href="#4-kgateway-value" title="Permanent link">#</a></h4>
+<p><strong>Unified Policies:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">TrafficPolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rate limiting ✅</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timeout ✅</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All in one resource!</span>
+</code></pre></div></p>
+<p><strong>Advanced Features:</strong>
+- Request/response transformation
+- Better observability</p>
+<p><strong>AI Gateway:</strong>
+- Multi-model routing
+- Cost control
+- Prompt management
+- Token tracking</p>
+<h3 id="architecture-decision-matrix">Architecture Decision Matrix<a class="headerlink" href="#architecture-decision-matrix" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Sidecar</th>
+<th>Ambient</th>
+<th>Ambient + KGateway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>L4 Security</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>L7 Routing</strong></td>
+<td>✅</td>
+<td>✅ (waypoint)</td>
+<td>✅ (waypoint)</td>
+</tr>
+<tr>
+<td><strong>Low Memory</strong></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Fast Startup</strong></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Advanced Routing</strong></td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Transformation</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>AI Integration</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Cost Control</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (AI)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation:</strong>
+- <strong>Start with:</strong> Ambient (efficient baseline)
+- <strong>Add when needed:</strong> KGateway (advanced features)
+- <strong>Consider for:</strong> AI workloads (cost control, routing)</p>
+<h2 id="advanced-topics-optional">Advanced Topics (Optional)<a class="headerlink" href="#advanced-topics-optional" title="Permanent link">#</a></h2>
+<h3 id="multi-cluster-with-ambient">Multi-Cluster with Ambient<a class="headerlink" href="#multi-cluster-with-ambient" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Gateway in cluster 1 can route to cluster 2</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cross-cluster-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.cluster2.global</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">          </span><span class="c1"># Cross-cluster reference</span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicluster.istio.io</span>
+<span class="w">          </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceImport</span>
+</code></pre></div>
+<h3 id="canary-deployments">Canary Deployments<a class="headerlink" href="#canary-deployments" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Split traffic between versions</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-canary</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-v1</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">          </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w">  </span><span class="c1"># 90% to stable</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-v2</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">          </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">  </span><span class="c1"># 10% to canary</span>
+</code></pre></div>
+<h3 id="header-based-routing">Header-Based Routing<a class="headerlink" href="#header-based-routing" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Route based on headers</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-header-route</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Beta users get v2</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">headers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">x-user-group</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">beta</span>
+<span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-v2</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">    </span><span class="c1"># Everyone else gets v1</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">backendRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-v1</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+</code></pre></div>
+<h2 id="resources-next-steps">Resources &amp; Next Steps<a class="headerlink" href="#resources-next-steps" title="Permanent link">#</a></h2>
+<h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://gateway-api.sigs.k8s.io/">Gateway API Specification</a></li>
+<li><a href="https://gateway-api.sigs.k8s.io/mesh/">GAMMA Initiative</a></li>
+<li><a href="https://istio.io/latest/docs/ambient/">Istio Ambient Mesh</a></li>
+<li><a href="https://docs.solo.io/gateway/">KGateway Documentation</a></li>
+<li><a href="https://docs.solo.io/gateway/latest/ai/">AI Gateway Guide</a></li>
+</ul>
+<h3 id="practice-exercises">Practice Exercises<a class="headerlink" href="#practice-exercises" title="Permanent link">#</a></h3>
+<ol>
+<li><strong>Add authentication</strong> to reviews service using JWT</li>
+<li><strong>Configure mTLS</strong> strict mode</li>
+<li><strong>Set up distributed tracing</strong> with Jaeger</li>
+<li><strong>Implement A/B testing</strong> with header routing</li>
+<li><strong>Create AI routing rules</strong> for different models</li>
+</ol>
+<h3 id="community">Community<a class="headerlink" href="#community" title="Permanent link">#</a></h3>
+<ul>
+<li>Gateway API Slack: <code>#sig-network-gateway-api</code></li>
+<li>Istio Slack: <code>#ambient</code></li>
+</ul>
+<h2 id="workshop-feedback">Workshop Feedback<a class="headerlink" href="#workshop-feedback" title="Permanent link">#</a></h2>
+<p>What worked well?
+- Gateway API concepts
+- Ambient architecture understanding
+- Hands-on exercises</p>
+<p>What to improve?
+- More AI Gateway examples?
+- Multi-cluster scenarios?
+- Performance tuning?</p>
+<p><strong>Share your feedback:</strong> [Open an issue in the repo]</p>
+<p><strong>End of Workshop</strong> 🎉</p>
+<p>Thank you for participating! Keep experimenting with Gateway API and Ambient mesh.</p>
 
 
 
