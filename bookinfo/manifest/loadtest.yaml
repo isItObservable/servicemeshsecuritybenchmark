@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/version: "1.0.0"
     dt.owner: booking
 spec:
-  schedule: "30 * * * *"
+  schedule: "45 * * * *"
   jobTemplate:
     spec:
       template:

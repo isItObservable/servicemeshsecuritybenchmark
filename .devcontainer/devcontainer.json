@@ -22,10 +22,6 @@
 		"8080": { "label": "Booking" }
 	},
 
-	"containerEnv": {
-		"RepositoryName": "demo-opentelemetry-patterns"
-
-	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	//"postCreateCommand": ".devcontainer/post-create.sh",
