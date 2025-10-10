@@ -29,7 +29,7 @@
 	],
 
 	"portsAttributes": {
-		"8080": { "label": "Booking" },
+		"8080": { "label": "Booking" }
 	},
 
 	// Install kind and run your setup scripts
