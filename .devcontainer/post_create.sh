@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
-
 export DEBIAN_FRONTEND=noninteractive
+
 echo "Installing system packages..."
 sudo apt update
-sudo apt install -y step jq curl vim gpg ca-certificates apt-transport-https
+sudo apt install -y jq curl vim gpg ca-certificates apt-transport-https
 
 echo "Installing step-cli..."
 curl -fsSL https://packages.smallstep.com/keys/apt/repo-signing-key.gpg -o /tmp/smallstep.asc
@@ -21,18 +21,21 @@ sudo apt-get install -y helm
 echo "Verifying tools are available..."
 helm version
 kubectl version --client
+
+echo "Installing kind..."
+curl -Lo /tmp/kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+chmod +x /tmp/kind
+sudo mv /tmp/kind /usr/local/bin/kind
 kind version
 
- echo "Installing kind..."
- curl -Lo /tmp/kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
- chmod +x /tmp/kind
- sudo mv /tmp/kind /usr/local/bin/kind
+echo "Waiting for Docker to be ready..."
+timeout 60 bash -c 'until docker info > /dev/null 2>&1; do echo "Waiting for Docker..."; sleep 2; done'
 
- echo "Creating kind cluster with custom config..."
- kind create cluster --config .devcontainer/kind-cluster.yaml --wait 5m
+echo "Creating kind cluster with custom config..."
+kind create cluster --config .devcontainer/kind-cluster.yaml --wait 5m
 
- echo "Verifying cluster..."
- kubectl cluster-info
- kubectl get nodes
+echo "Verifying cluster..."
+kubectl cluster-info
+kubectl get nodes
 
- echo "Kind cluster ready!"
+echo "✅ Kind cluster ready!"
