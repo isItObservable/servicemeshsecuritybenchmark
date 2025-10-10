@@ -18,7 +18,7 @@ sudo apt-get install helm
 
 
 
-eecho "Installing kind..."
+ echo "Installing kind..."
  curl -Lo /tmp/kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
  chmod +x /tmp/kind
  sudo mv /tmp/kind /usr/local/bin/kind
