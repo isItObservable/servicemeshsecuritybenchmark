@@ -8,7 +8,6 @@
 		"cpus": 2
 	},
 
-	// Add Docker-in-Docker and kubectl/helm features
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
@@ -34,7 +33,7 @@
 	},
 
 	// Install kind and run your setup scripts
-	"postCreateCommand": ".devcontainer/post_create.sh && /workspaces/${RepositoryName}/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN} --type ${localEnv:SM_TYPE}",
+	"postCreateCommand": "bash .devcontainer/post_create.sh && /workspaces/${RepositoryName}/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN} --type ${localEnv:SM_TYPE}",
 
 	// Add recommended secrets
 	"secrets": {
