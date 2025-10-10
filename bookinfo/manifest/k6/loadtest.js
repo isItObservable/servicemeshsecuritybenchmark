@@ -85,13 +85,12 @@ export default function() {
     //Access browseProduct page
     for ( let i=0; i<tasks["login"]; i++)
     {
-        let product = products[Math.floor(Math.random() * products.length)]
         let res = session.post(`/login`,{
                                                     'username': 'test',
                                                     'passwd': '123445',
 
                                                 },{
-                                                        headers: { 'Content-Type': 'multipart/form-data;},
+                                                        headers: { 'Content-Type': 'multipart/form-data'},
                                                         });
 
         sleep(waittime[Math.floor(Math.random() * waittime.length)])
@@ -121,16 +120,16 @@ export default function() {
             errors.add(1);
         }
         sleep(waittime[Math.floor(Math.random() * waittime.length)])
-        let res = session.get(`/api/v1/products/${product}/reviews`);
-        let checkRes = check(res, { "status is 200": (r) => r.status === 200 });
+        res = session.get(`/api/v1/products/${product}/reviews`);
+        checkRes = check(res, { "status is 200": (r) => r.status === 200 });
 
         // show the error per second in grafana
         if (checkRes === false ){
             errors.add(1);
         }
         sleep(waittime[Math.floor(Math.random() * waittime.length)])
-        let res = session.get(`/api/v1/products/${product}/ratings`);
-       let checkRes = check(res, { "status is 200": (r) => r.status === 200 });
+        res = session.get(`/api/v1/products/${product}/ratings`);
+        checkRes = check(res, { "status is 200": (r) => r.status === 200 });
 
        // show the error per second in grafana
        if (checkRes === false ){
