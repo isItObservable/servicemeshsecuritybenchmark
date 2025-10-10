@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 export DEBIAN_FRONTEND=noninteractive
 
 apt update
@@ -12,3 +15,19 @@ curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --
 echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt-get update
 sudo apt-get install helm
+
+
+
+eecho "Installing kind..."
+ curl -Lo /tmp/kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+ chmod +x /tmp/kind
+ sudo mv /tmp/kind /usr/local/bin/kind
+
+ echo "Creating kind cluster with custom config..."
+ kind create cluster --config .devcontainer/kind-cluster.yaml --wait 5m
+
+ echo "Verifying cluster..."
+ kubectl cluster-info
+ kubectl get nodes
+
+ echo "Kind cluster ready!"

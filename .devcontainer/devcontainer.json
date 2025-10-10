@@ -1,54 +1,70 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/kubernetes-helm
 {
 	"name": "ServiceMesh Environment",
 
-	"image": "ubuntu:jammy",
+	// Use a base image that has vscode user pre-configured
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
 
 	"hostRequirements": {
 		"cpus": 2
 	},
 
+	// Add Docker-in-Docker and kubectl/helm features
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest",
+			"helm": "latest",
+			"minikube": "none"
+		}
+	},
 
+	// Set the remote user
+	"remoteUser": "vscode",
 
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// Forward ports
 	"forwardPorts": [
 		8080
 	],
 
-	// add labels
 	"portsAttributes": {
-		"8080": { "label": "Booking" }
+		"8080": { "label": "Booking" },
 	},
 
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	//"postCreateCommand": ".devcontainer/post-create.sh",
-	"postCreateCommand": ".devcontainer/post-create.sh && /workspaces/$RepositoryName/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN}  --type ${localEnv:SM_TYPE}",
+	// Install kind and run your setup scripts
+	"postCreateCommand": ".devcontainer/post-create.sh && /workspaces/${RepositoryName}/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN} --type ${localEnv:SM_TYPE}",
 
 	// Add recommended secrets
 	"secrets": {
 		"DT_ENVIRONMENT_ID": {
-			 "description": "eg. abc12345 from https://abc12345.apps.dynatrace.com"
-	 },
+			"description": "eg. abc12345 from https://abc12345.apps.dynatrace.com"
+		},
 		"DT_ENVIRONMENT_TYPE": {
 			"description": "live, sprint or dev. Leave blank for live. Defaults to live"
-	 },
-	   "DT_API_TOKEN": {
-			 "description": "Dynatrace API token with these permissions: `logs.ingest`, `metrics.ingest`, `openTelemetryTrace.ingest`, `events.ingest`"
-	 },
+		},
+		"DT_API_TOKEN": {
+			"description": "Dynatrace API token with these permissions: `logs.ingest`, `metrics.ingest`, `openTelemetryTrace.ingest`, `events.ingest`"
+		},
 		"DT_OPERATOR_TOKEN": {
 			"description": "Dynatrace API token with these permissions: `Installer download`, `DataExport`, `settings.read`, `settings.write`,`entities.read`, `activeGateTokenManagement.create`"
-
 		},
 		"SM_TYPE": {
 			"description": "Type of service to deploy: kuma, istio, linkerd, ambient, or ambient-kgateway"
 		},
-
 		"NAME": {
-			"description": "Name of the environemernt"
+			"description": "Name of the environment"
 		}
- 	}
+	},
 
+	// Add Kubernetes VSCode extensions
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
 }
