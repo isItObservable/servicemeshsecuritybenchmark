@@ -4,7 +4,10 @@
 	"name": "ServiceMesh Environment",
 
 	"image": "ubuntu:jammy",
-
+	"remoteUser": "root",
+	"postCreateCommand": "useradd -m -s /bin/bash vscode && echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && su - vscode",
+	"containerUser": "root",
+	"updateRemoteUserUID": false,
 	"hostRequirements": {
 		"cpus": 2
 	},
