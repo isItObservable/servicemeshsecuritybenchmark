@@ -397,7 +397,7 @@ spec:
       serviceAccountName: bookinfo-productpage
       containers:
         - name: productpage
-          image: hrexed/bookinfo-productpage:1.0
+          image: hrexed/bookinfo-productpage:1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080

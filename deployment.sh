@@ -243,6 +243,7 @@ kubectl apply -f opentelemetry/rbac.yaml
 kubectl apply -f dynatrace/dynakube.yaml -n dynatrace
 kubectl create ns booking
 kubectl label namespace  booking oneagent=false
+kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="$DTURL" --from-literal=dt_api_token="$DTTOKEN" -n booking
 
 
 #---label namespace-----
