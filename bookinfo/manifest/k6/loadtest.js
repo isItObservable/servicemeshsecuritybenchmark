@@ -98,7 +98,7 @@ export default function() {
     }
      for ( let i=0; i<tasks["productpage-user"]; i++)
         {
-             let res = session.post(`/productpage?u=test`);
+             let res = session.get(`/productpage?u=test`);
              let checkRes = check(res, { "status is 200": (r) => r.status === 200 });
 
 

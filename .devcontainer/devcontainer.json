@@ -4,27 +4,13 @@
 	"name": "ServiceMesh Environment",
 
 	"image": "ubuntu:jammy",
-	"remoteUser": "root",
-	"postCreateCommand": "useradd -m -s /bin/bash vscode && echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && su - vscode",
-	"containerUser": "root",
-	"updateRemoteUserUID": false,
+
 	"hostRequirements": {
 		"cpus": 2
 	},
 
-	// some base images require a specific user name
-	"remoteUser": "vscode",
 
-	// Install extensions
-	"customizations": {
-		"vscode": {	
-			// Set container specific settings
-			"settings": {
-				"terminal.integrated.defaultProfile.linux": "zsh"
-			},			
-			"extensions": []
-		}
-	},
+
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
