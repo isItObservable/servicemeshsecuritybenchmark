@@ -31,9 +31,9 @@ const tasks = {
 
     "productpage": 2,
      "loging": 1,
-    "productpage-user": 2,
-    "browseProduct" : 5
-    "logout": 2,
+    "productpage-user": 4,
+    "browseProduct" : 5,
+    "logout": 1
 }
 
 

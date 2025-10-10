@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/version: "1.0.0"
     dt.owner: booking
 spec:
-  schedule: "45 * * * *"
+  schedule: "55 * * * *"
   jobTemplate:
     spec:
       template:
@@ -35,7 +35,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: k6load
-              image: hrexed/bookinfo-load:1.1
+              image: hrexed/bookinfo-load:1.2
               imagePullPolicy: Always
               args: [ "-u", "50", "-d", "59m" ]
               env:
