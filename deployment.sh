@@ -219,10 +219,9 @@ kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releas
 
 
 
-helm upgrade dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
+helm install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
   --version 1.7.1 \
   --create-namespace --namespace dynatrace \
-  --install \
   --atomic
 
 kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
