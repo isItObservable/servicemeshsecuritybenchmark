@@ -33,7 +33,7 @@
 	},
 
 	// Install kind and run your setup scripts
-	"postCreateCommand": "bash -c 'chmod +x .devcontainer/post_create.sh &&  chmod +x /workspaces/${RepositoryName}/deployment.sh && .devcontainer/post_create.sh && /workspaces/${RepositoryName}/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN} --type ${localEnv:SM_TYPE}'",
+	"postCreateCommand": "bash -c 'chmod +x .devcontainer/post_create.sh &&  chmod +x /workspaces/${RepositoryName}/deployment.sh && .devcontainer/post_create.sh && /workspaces/${RepositoryName}/deployment.sh --clustername ${localEnv:NAME} --dtid ${localEnv:DT_ENVIRONMENT_ID} --dtingesttoken ${localEnv:DT_API_TOKEN} --dtoperatortoken ${localEnv:DT_OPERATOR_TOKEN} --environment ${localEnv:DT_ENVIRONMENT_TYPE} --type ${localEnv:SM_TYPE}'",
 
 	// Add recommended secrets
 	"secrets": {
