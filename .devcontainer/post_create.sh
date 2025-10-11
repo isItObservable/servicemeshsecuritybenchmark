@@ -31,9 +31,17 @@ kind version
 echo "Waiting for Docker to be ready..."
 timeout 60 bash -c 'until docker info > /dev/null 2>&1; do echo "Waiting for Docker..."; sleep 2; done'
 
-echo "Creating kind cluster with custom config..."
-kind create cluster --config .devcontainer/kind-cluster.yaml --wait 5m
+echo "Current directory: $(pwd)"
+echo "Looking for kind config..."
+ls -la .devcontainer/kind-cluster.yaml || echo "Config not found!"
 
+echo "Creating kind cluster with custom config..."
+if [ -f "$(pwd)/.devcontainer/kind-cluster.yaml" ]; then
+    kind create cluster --config "$(pwd)/.devcontainer/kind-cluster.yaml" --wait 5m
+else
+    echo "Using default kind config (file not found at $(pwd)/.devcontainer/kind-cluster.yaml)"
+    kind create cluster --wait 5m
+fi
 echo "Verifying cluster..."
 kubectl cluster-info
 kubectl get nodes
