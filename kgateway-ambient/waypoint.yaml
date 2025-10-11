@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: kgateway-waypoint
-  namespace: bookinfo
+  namespace: booking
   labels:
     app.kubernetes.io/part-of: bookinfo
     istio.io/waypoint-for: all

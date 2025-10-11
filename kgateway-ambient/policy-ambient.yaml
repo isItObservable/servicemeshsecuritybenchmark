@@ -53,7 +53,7 @@ spec:
         retryOn: 5xx,reset,connect-failure,refused-stream
       route:
         - destination:
-            host: details.default.svc.cluster.local
+            host: details.booking.svc.cluster.local
             port:
               number: 9080
           weight: 100

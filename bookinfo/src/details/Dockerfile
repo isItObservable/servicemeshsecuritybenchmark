@@ -45,8 +45,6 @@ ENV ENABLE_EXTERNAL_BOOK_SERVICE ${enable_external_book_service:-false}
 
 # OpenTelemetry environment variables (can be overridden at runtime)
 ENV OTEL_SERVICE_NAME=details
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
-ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=none
 ENV OTEL_LOGS_EXPORTER=none

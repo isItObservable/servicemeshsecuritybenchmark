@@ -129,7 +129,7 @@ spec:
             descriptors:
               - entries:
                   - key: destination_cluster
-                    value: outbound|9080||reviews.default.svc.cluster.local
+                    value: outbound|9080||reviews.booking.svc.cluster.local
                 token_bucket:
                   max_tokens: 100
                   tokens_per_fill: 100
@@ -191,7 +191,7 @@ spec:
             descriptors:
               - entries:
                   - key: destination_cluster
-                    value: outbound|9080||details.default.svc.cluster.local
+                    value: outbound|9080||details.booking.svc.cluster.local
                 token_bucket:
                   max_tokens: 50
                   tokens_per_fill: 50

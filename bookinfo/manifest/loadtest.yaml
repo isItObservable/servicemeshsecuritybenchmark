@@ -35,7 +35,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: k6load
-              image: hrexed/bookinfo-load:1.4
+              image: hrexed/bookinfo-load:1.5
               imagePullPolicy: Always
               args: [ "-u", "50", "-d", "59m" ]
               env:

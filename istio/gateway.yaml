@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
   name: bookinfo-gateway
-  namespace: bookinfo
+  namespace: booking
 spec:
   gatewayClassName: istio
   listeners:

@@ -73,7 +73,7 @@ spec:
       serviceAccountName: bookinfo-details
       containers:
         - name: details
-          image: hrexed/bookinfo-details-otel:1.1
+          image: hrexed/bookinfo-details-otel:1.28
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080
@@ -83,6 +83,10 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_LOG_LEVEL
+              value: "debug"
+            - name: OTEL_PROPAGATORS
+              value: 'tracecontext,b3multi'
             - name: OTEL_COLLECTOR_NAME
               value: otel-collector.default.svc.cluster.local
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -90,7 +94,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
 
 ---
 ##################################################################################################
@@ -140,7 +144,7 @@ spec:
       serviceAccountName: bookinfo-ratings
       containers:
         - name: ratings
-          image: hrexed/bookinfo-ratings-otel:1.4
+          image: hrexed/bookinfo-ratings-otel:1.15
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080
@@ -150,14 +154,18 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_LOG_LEVEL
+              value: "info"
+            - name: OTEL_PROPAGATORS
+              value: 'tracecontext,b3multi'
             - name: OTEL_COLLECTOR_NAME
               value: otel-collector.default.svc.cluster.local
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
 
 ---
 ##################################################################################################
@@ -223,9 +231,9 @@ spec:
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
           ports:
             - containerPort: 9080
           volumeMounts:
@@ -277,9 +285,9 @@ spec:
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
           ports:
             - containerPort: 9080
           volumeMounts:
@@ -331,9 +339,9 @@ spec:
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
           ports:
             - containerPort: 9080
           volumeMounts:
@@ -397,7 +405,7 @@ spec:
       serviceAccountName: bookinfo-productpage
       containers:
         - name: productpage
-          image: hrexed/bookinfo-productpage:1.1
+          image: hrexed/bookinfo-productpage:1.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080
@@ -412,9 +420,9 @@ spec:
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -458,7 +466,7 @@ spec:
     spec:
       containers:
         - name: ratings
-          image: hrexed/bookinfo-ratings-otel:1.4
+          image: hrexed/bookinfo-ratings-otel:1.15
           imagePullPolicy: IfNotPresent
           env:
             # This assumes you registered your mysql vm as
@@ -478,14 +486,16 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_PROPAGATORS
+              value: 'tracecontext,b3multi'
             - name: OTEL_COLLECTOR_NAME
               value: otel-collector.default.svc.cluster.local
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: delta
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
           ports:
             - containerPort: 9080
 ---

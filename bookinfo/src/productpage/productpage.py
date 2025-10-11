@@ -19,9 +19,15 @@ from flask import Flask, request, session, render_template, redirect, g
 from json2html import json2html
 from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.propagate import set_global_textmap
+from opentelemetry.propagators.composite import CompositePropagator
 from opentelemetry.propagators.b3 import B3MultiFormat
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
 from prometheus_client import Counter, generate_latest
 import asyncio
 import logging
@@ -35,6 +41,32 @@ import sys
 # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
 # The only thing missing will be the response.body which is not logged.
 import http.client as http_client
+
+resource = Resource(attributes={
+    "service.name": os.getenv("OTEL_SERVICE_NAME", "productpage"),
+    "service.version": os.getenv("SERVICE_VERSION", "v1"),
+})
+
+tracer_provider = TracerProvider(resource=resource)
+trace.set_tracer_provider(tracer_provider)
+propagator = CompositePropagator([
+    TraceContextTextMapPropagator(),
+    B3MultiFormat()
+])
+
+# Configure OTLP exporter
+otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+print(f"Configuring OpenTelemetry exporter to: {otlp_endpoint}")
+
+otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+tracer_provider.add_span_processor(span_processor)
+
+# Auto-instrument Flask and requests
+
+RequestsInstrumentor().instrument()
+
+
 http_client.HTTPConnection.debuglevel = 0
 
 app = Flask(__name__)
@@ -112,14 +144,6 @@ request_result_counter = Counter('request_result', 'Results of requests', ['dest
 # intended as a reference to help people get started, eg how to create spans,
 # extract/inject context, etc.
 
-
-propagator = B3MultiFormat()
-set_global_textmap(B3MultiFormat())
-provider = TracerProvider()
-# Sets the global default tracer provider
-trace.set_tracer_provider(provider)
-
-tracer = trace.get_tracer(__name__)
 
 
 def getForwardHeaders(request):

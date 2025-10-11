@@ -71,7 +71,7 @@ export default function() {
     //Access setCurrency page
     for ( let i=0; i<tasks["productpage"]; i++)
     {
-         let res = session.post(`/productpage`);
+         let res = session.get(`/productpage`);
          let checkRes = check(res, { "status is 200": (r) => r.status === 200 });
 
 

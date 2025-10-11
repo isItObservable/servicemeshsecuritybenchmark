@@ -26,7 +26,7 @@ ARG service_version
 ENV SERVICE_VERSION=${service_version:-v1}
 # OpenTelemetry configuration
 ENV OTEL_SERVICE_NAME=ratings
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=none
 ENV OTEL_LOGS_EXPORTER=none

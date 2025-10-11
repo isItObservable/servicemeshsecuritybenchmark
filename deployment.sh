@@ -220,15 +220,23 @@ kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releas
 
 
 helm upgrade dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
-  --version 1.7.0 \
+  --version 1.7.1 \
   --create-namespace --namespace dynatrace \
   --install \
   --atomic
+
 kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
 kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DTOPERATORTOKEN" --from-literal="dataIngestToken=$DTTOKEN"
-sed -i  '' "s,TENANTURL_TOREPLACE,$DYNATRACE_LIVE_URL," dynatrace/dynakube.yaml
-sed -i  '' "s,CLUSTER_NAME_TO_REPLACE,$CLUSTERNAME,"  dynatrace/dynakube.yaml
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sed -i '' "s,TENANTURL_TOREPLACE,$DYNATRACE_LIVE_URL," dynatrace/dynakube.yaml
+    sed -i '' "s,CLUSTER_NAME_TO_REPLACE,$CLUSTERNAME," dynatrace/dynakube.yaml
+else
+    # Linux
+    sed -i "s,TENANTURL_TOREPLACE,$DYNATRACE_LIVE_URL," dynatrace/dynakube.yaml
+    sed -i "s,CLUSTER_NAME_TO_REPLACE,$CLUSTERNAME," dynatrace/dynakube.yaml
+fi
 
 ### Update the ip of the ip adress for the ingres
 #TODO to update this part to create the various Gateway rules

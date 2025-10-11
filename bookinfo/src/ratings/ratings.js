@@ -15,24 +15,34 @@
 // ============================================================================
 // OpenTelemetry instrumentation - MUST be initialized BEFORE any other require
 // ============================================================================
-const { NodeSDK } = require('@opentelemetry/sdk-node');
+const opentelemetry = require('@opentelemetry/sdk-node');
 const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc');
-const { Resource } = require('@opentelemetry/resources');
 const { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } = require('@opentelemetry/semantic-conventions');
-const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api');
+const { diag, DiagConsoleLogger, DiagLogLevel,trace, context,propagation } = require('@opentelemetry/api');
+const {
+  BatchSpanProcessor,
+} = require('@opentelemetry/sdk-trace-base');
+
+// Enable diagnostic logging
+console.log('Initializing OpenTelemetry...');
+console.log('OTEL_EXPORTER_OTLP_ENDPOINT:', process.env.OTEL_EXPORTER_OTLP_ENDPOINT);
+console.log('OTEL_SERVICE_NAME:', process.env.OTEL_SERVICE_NAME);
+console.log('OTEL_RESOURCE_ATTRIBUTES:', process.env.OTEL_RESOURCE_ATTRIBUTES);
 
 // Optional: Enable diagnostic logging for debugging
 if (process.env.OTEL_LOG_LEVEL === 'debug') {
   diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 }
+// Build resource attributes
+
+
 
 // Configure OpenTelemetry SDK
-const sdk = new NodeSDK({
+const sdk = new opentelemetry.NodeSDK({
 
-   traceExporter: new OTLPTraceExporter({
-     url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4317',
-   }),
+
+   traceExporter: new OTLPTraceExporter({    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4317',  }),
    instrumentations: [
      getNodeAutoInstrumentations({
        // Customize auto-instrumentation
@@ -48,9 +58,8 @@ const sdk = new NodeSDK({
    ],
  });
 
-// Start SDK
-sdk.start();
-console.log('OpenTelemetry instrumentation started');
+sdk.start()
+
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -121,7 +130,10 @@ if (process.env.SERVICE_VERSION === 'v2') {
 }
 
 dispatcher.onPost(/^\/ratings\/[0-9]*/, function (req, res) {
-  const span = api.trace.getActiveSpan();
+  const extractedContext = propagation.extract(context.active(), req.headers);
+
+  const span = tracer.startSpan('post /ratings/{productid}', undefined, extractedContext);
+
   const productIdStr = req.url.split('/').pop();
   const productId = parseInt(productIdStr);
   let ratings = {};
@@ -168,10 +180,13 @@ dispatcher.onPost(/^\/ratings\/[0-9]*/, function (req, res) {
     res.writeHead(200, {'Content-type': 'application/json'});
     res.end(JSON.stringify(putLocalReviews(productId, ratings)));
   }
+  span.end();
 });
 
 dispatcher.onGet(/^\/ratings\/[0-9]*/, function (req, res) {
-  const span = api.trace.getActiveSpan();
+  const extc = propagation.extract(context.active(), req.headers);
+
+  const span = tracer.startSpan('get /ratings/{productid}', undefined, extc);
   const productIdStr = req.url.split('/').pop();
   const productId = parseInt(productIdStr);
 
@@ -354,6 +369,7 @@ dispatcher.onGet(/^\/ratings\/[0-9]*/, function (req, res) {
         getLocalReviewsSuccessful(res, productId);
       }
   }
+  span.end();
 });
 
 dispatcher.onGet('/health', function (req, res) {

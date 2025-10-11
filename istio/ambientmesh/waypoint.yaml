@@ -4,7 +4,7 @@ metadata:
   labels:
     istio.io/waypoint-for: all
   name: bookinfo-waypoint
-  namespace: bookinfo
+  namespace: booking
 spec:
   gatewayClassName: istio-waypoint
   listeners:
