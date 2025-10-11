@@ -18,16 +18,14 @@ echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.co
 sudo apt-get update
 sudo apt-get install -y helm
 
-echo "Verifying tools are available..."
-helm version
-kubectl version --client
-
 echo "Installing kind..."
 curl -Lo /tmp/kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
 chmod +x /tmp/kind
 sudo mv /tmp/kind /usr/local/bin/kind
 
-echo "Verifying kind installation..."
+echo "Verifying tools are available..."
+helm version
+kubectl version --client
 kind version
 
 echo "Waiting for Docker to be ready..."
