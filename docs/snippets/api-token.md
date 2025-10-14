@@ -8,9 +8,12 @@
 * Write configuration
 * Paas integration - installer downloader
 
+<img src="/image/dt_operator_token.png" width="100%" alt="istio" />
 ### Ingest token permissions :
 * Ingest metrics (metrics.ingest)
 * Ingest logs (logs.ingest)
 * Ingest events (events.ingest)
 * Ingest OpenTelemetry
 * Read metrics
+
+<img src="/image/dt_ingest_token.png" width="100%" alt="istio" />
