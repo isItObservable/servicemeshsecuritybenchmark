@@ -3,12 +3,12 @@ apiVersion: gateway.kgateway.dev/v1alpha1
 kind: HTTPListenerPolicy
 metadata:
   name: logging-policy
-  namespace: booking
+  namespace: kgateway-system
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
-      name: kgateway-waypoint
+      name: bookinfo-gateway
   accessLog:
     - openTelemetry:
         grpcService:
@@ -29,7 +29,7 @@ spec:
   from:
     - group: gateway.kgateway.dev
       kind: HTTPListenerPolicy
-      namespace: booking
+      namespace: kgateway-system
   to:
     - group: ""
       kind: Service
@@ -39,12 +39,12 @@ apiVersion: gateway.kgateway.dev/v1alpha1
 kind: HTTPListenerPolicy
 metadata:
   name: tracing-policy
-  namespace: booking
+  namespace: kgateway-system
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
-      name: kgateway-waypoint
+      name: bookinfo-gateway
   tracing:
     provider:
       openTelemetry:

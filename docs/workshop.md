@@ -130,7 +130,7 @@ spec:
 
 
 
-## Part 2: Resilience Patterns with HTTPRoutes 
+## Part 1: Resilience Patterns with HTTPRoutes 
 
 ### Pattern 1: Request Timeouts
 
@@ -167,7 +167,7 @@ EOF
 ```
 
 
-## Part 0: Understanding GAMMA Policy Attachment (5 minutes)
+## Part 2: Understanding GAMMA Policy Attachment 
 
 ### What is GAMMA?
 
@@ -175,7 +175,10 @@ EOF
 
 It's an initiative to extend Kubernetes Gateway API to handle service mesh use cases, not just ingress.
 
-**Key Goal:** Use the same API (HTTPRoute) for:
+**Key Goal:** 
+
+Use the same API (HTTPRoute) for:
+
 - ✅ **North-South traffic** (ingress: internet → service)
 - ✅ **East-West traffic** (service mesh: service → service)
 
@@ -340,10 +343,22 @@ Policy CRD  to attach to a resource
     ```
 
 **How it works:**
-```
-TrafficPolicy ────targetRef────> Service (reviews)
-                                      ↑
-HTTPRoute ────backendRef────────────┘
+```mermaid
+flowchart TB
+    A["🌐 HTTPRoute<br/><small>Gateway Entry Point</small>"]
+    B["⚙️ TrafficPolicy<br/><small>Rate Limiting<br/>Timeouts<br/>Circuit Breaker</small>"]
+    C["📦 Service: reviews<br/><small>Backend Application</small>"]
+    
+    B -->|targetRef| C
+    A -->|backendRef| C
+    
+    classDef routeClass fill:#326ce5,stroke:#1a4d8f,stroke-width:3px,color:#fff,rx:10,ry:10
+    classDef policyClass fill:#ff6b6b,stroke:#cc5555,stroke-width:3px,color:#fff,rx:10,ry:10
+    classDef serviceClass fill:#51cf66,stroke:#3da84f,stroke-width:3px,color:#fff,rx:10,ry:10
+    
+    class A routeClass
+    class B policyClass
+    class C serviceClass
 ```
 
 The policy is **attached directly to the service**, not through the HTTPRoute.
@@ -371,12 +386,26 @@ spec:
 ```
 
 **How it works:**
-```
-HTTPRoute ────extensionRef────> TrafficPolicy
-      │
-      └────backendRef────> Service (reviews)
-```
+## **With Kubernetes Colors:**
 
+```mermaid
+flowchart LR
+    A["🌐 HTTPRoute<br/><small>Gateway Entry Point</small>"]
+    B["⚙️ TrafficPolicy<br/><small>Rate Limiting<br/>Timeouts<br/>Circuit Breaker</small>"]
+    C["📦 Service: reviews<br/><small>Backend Application</small>"]
+    
+    A -->|extensionRef| B
+    A -->|backendRef| C
+    B -.->|applies policies to| C
+    
+    classDef routeClass fill:#326ce5,stroke:#1a4d8f,stroke-width:3px,color:#fff,rx:10,ry:10
+    classDef policyClass fill:#ff6b6b,stroke:#cc5555,stroke-width:3px,color:#fff,rx:10,ry:10
+    classDef serviceClass fill:#51cf66,stroke:#3da84f,stroke-width:3px,color:#fff,rx:10,ry:10
+    
+    class A routeClass
+    class B policyClass
+    class C serviceClass
+```
 The policy is **referenced from the HTTPRoute**.
 
 ### The Two Patterns: Direct vs Reference
@@ -403,11 +432,13 @@ spec:
 ```
 
 **✅ Pros:**
+
 - Cleaner separation of concerns
 - Policy can apply to multiple routes
 - Policy lifecycle independent of route
 
 **❌ Cons:**
+
 - Policy applies to ALL traffic to service
 - Less flexible per-route configuration
 
@@ -439,11 +470,13 @@ spec:
 ```
 
 **✅ Pros:**
+
 - Explicit policy attachment per route
 - Different policies for different routes to same service
 - Clear which policy applies to which route
 
 **❌ Cons:**
+
 - More verbose
 - Policy tightly coupled to route
 - Must update route to change policy
@@ -451,10 +484,12 @@ spec:
 ### GAMMA Evolution: Why Both Exist
 
 **Early GAMMA (2022-2023):** Focused on `extensionRef`
+
 - Idea: Route explicitly references policies
 - Problem: Too verbose, tight coupling
 
-**Current GAMMA (2024+):** Prefers `targetRef`
+**Current GAMMA (2024+):** Prefers `targetRef``
+
 - Idea: Policies attach to resources independently
 - Benefit: Cleaner, more declarative
 
@@ -508,6 +543,7 @@ spec:
 ```
 
 **How it works:**
+
 1. TrafficPolicy targets `reviews` service
 2. HTTPRoute routes to `reviews`
 3. **Result:** Both policies automatically apply
@@ -553,6 +589,7 @@ spec:
 ```
 
 **How it works:**
+
 1. Policies are standalone
 2. HTTPRoute explicitly references each policy
 3. Policies only apply when referenced
@@ -560,6 +597,7 @@ spec:
 ### When to Use Which Pattern
 
 **Use targetRef (Recommended):**
+
 - ✅ Policy applies to all traffic to a service
 - ✅ Want cleaner HTTPRoute definitions
 - ✅ Policy lifecycle independent of routes
@@ -568,6 +606,7 @@ spec:
 **Example:** All traffic to reviews should have 2s timeout
 
 **Use extensionRef:**
+    
 - ✅ Different policies for different routes to same service
 - ✅ Need explicit control over policy application
 - ✅ Conditional policy based on route matching
@@ -645,14 +684,18 @@ spec:
 
 When both targetRef and extensionRef policies exist:
 
-```
-extensionRef (HTTPRoute filter)  ← Highest priority
-         ↓
-targetRef with 'override'        ← Medium priority
-         ↓
-targetRef with 'default'         ← Lowest priority
-```
-
+```mermaid
+flowchart TD
+    A["extensionRef (HTTPRoute filter)<br/>  <i>Highest priority</i>"]
+    B["targetRef with 'override'<br/><i> Medium priority</i>"]
+    C["targetRef with 'default'<br/><i>Lowest priority</i>"]
+    
+    A --> B --> C
+    
+    style A fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#fab005,stroke:#fff,stroke-width:2px,color:#000
+``` 
 **Example:**
 ```yaml
 # Namespace default (lowest priority)
@@ -737,15 +780,22 @@ spec:
 
 ### Understanding the Bookinfo Application
 
-```
-┌─────────────┐
-│ productpage │ (Python - Frontend)
-└──────┬──────┘
-       │
-       ├──────► reviews (Java - 3 versions)
-       │             └──────► ratings (Ruby)
-       │
-       └──────► details (Ruby - Book info)
+
+```mermaid
+flowchart TD
+    productpage["productpage<br/>(Python - Frontend)"]
+    
+    productpage --> reviews["reviews<br/>(Java - 3 versions)"]
+    productpage --> ratings["ratings<br/>(Ruby)"]
+    productpage --> details["details<br/>(Ruby - Book info)"]
+    
+    classDef frontend fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    classDef backend fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff
+    classDef ruby fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class productpage frontend
+    class reviews backend
+    class ratings,details ruby
 ```
 
 ### Pattern 2: Circuit Breaker 
@@ -1224,6 +1274,7 @@ EOF
 ```
 
 **Issues:**
+
 - ❌ **Resource overhead**: 50-100MB memory per pod
 - ❌ **Startup time**: Sidecar initialization delay
 - ❌ **Operational complexity**: Sidecar lifecycle management
@@ -1231,22 +1282,26 @@ EOF
 
 ### Ambient Architecture: Split the Mesh
 
-```
-┌─────────┐                                   ┌─────────┐
-│   Pod   │ ──┐                            ┌──│   Pod   │
-└─────────┘   │                            │  └─────────┘
-              ↓                            ↑
-         ┌─────────┐                  ┌─────────┐
-         │ ztunnel │ ════════════════►│ ztunnel │
-         │  (L4)   │    mTLS Tunnel   │  (L4)   │
-         └─────────┘                  └─────────┘
-              │                            ↑
-              │    (if L7 needed)          │
-              ↓                            │
-         ┌──────────┐                      │
-         │ Waypoint │ ─────────────────────┘
-         │   (L7)   │
-         └──────────┘
+
+```mermaid
+flowchart LR
+    P1["📦 Pod<br/>(Source)"]
+    Z1["🔒 ztunnel<br/>Layer 4<br/>Secure Overlay"]
+    Z2["🔒 ztunnel<br/>Layer 4<br/>Secure Overlay"]
+    W["⚙️ Waypoint<br/>Layer 7<br/>Policy & Routing"]
+    P2["📦 Pod<br/>(Destination)"]
+    
+    P1 -->|Traffic| Z1
+    Z1 ==>|"mTLS Tunnel<br/>(Encrypted)"| Z2
+    Z2 -->|Traffic| P2
+    Z1 -.->|"Optional<br/>L7 Processing"| W
+    W -.->|"Advanced Features<br/>(Retry, Timeout, etc)"| Z2
+    
+    style P1 fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    style P2 fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    style Z1 fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style Z2 fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style W fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ### Two Layers Explained
@@ -1254,12 +1309,14 @@ EOF
 #### Layer 1: ztunnel (Zero Trust Tunnel)
 
 **What it does:**
+
 - ✅ **mTLS encryption**: All traffic encrypted
 - ✅ **Identity**: Service account-based identity
 - ✅ **L4 telemetry**: Connection-level metrics
 - ✅ **L4 authorization**: Network policies
 
 **Deployment:**
+
 - Runs as **DaemonSet** (one per node)
 - Written in **Rust** (fast, memory-safe)
 - **Always running** for all pods
@@ -1276,6 +1333,7 @@ kubectl get pods -n istio-system -l app=ztunnel
 #### Layer 2: Waypoint (L7 Proxy)
 
 **What it does:**
+
 - ✅ **L7 routing**: HTTPRoute, header-based routing
 - ✅ **Rate limiting**: Request-level throttling
 - ✅ **Circuit breaker**: Outlier detection
@@ -1283,6 +1341,7 @@ kubectl get pods -n istio-system -l app=ztunnel
 - ✅ **Advanced features**: Retries, timeouts, fault injection
 
 **Deployment:**
+
 - Runs as **Deployment** (can scale)
 - **Per-service** or **per-namespace**
 - **Only where needed** (opt-in)
@@ -1318,27 +1377,42 @@ spec:
 ### Traffic Flow Comparison
 
 **Sidecar:**
-```
-productpage pod
-    ↓
-productpage sidecar (L4 + L7)
-    ↓ mTLS
-reviews sidecar (L4 + L7)
-    ↓
-reviews pod
+```mermaid
+flowchart TD
+    PP["📦 productpage pod<br/>(Application)"]
+    PS["🔒 productpage sidecar<br/>Envoy Proxy<br/>L4 + L7"]
+    RS["🔒 reviews sidecar<br/>Envoy Proxy<br/>L4 + L7"]
+    RP["📦 reviews pod<br/>(Application)"]
+    
+    PP -->|HTTP Request| PS
+    PS ==>|"mTLS Encrypted<br/>Tunnel"| RS
+    RS -->|HTTP Request| RP
+    
+    style PP fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    style PS fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style RS fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style RP fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 **Ambient:**
-```
-productpage pod
-    ↓
-ztunnel (L4 only)
-    ↓ mTLS + identity
-waypoint (L7 only - if needed)
-    ↓ policies applied
-ztunnel (L4 only)
-    ↓
-reviews pod
+```mermaid
+flowchart TD
+    PP["productpage pod"]
+    Z1["ztunnel<br/>(L4 only)"]
+    W["waypoint<br/>(L7 only - if needed)"]
+    Z2["ztunnel<br/>(L4 only)"]
+    RP["reviews pod"]
+    
+    PP --> Z1
+    Z1 ==>|"mTLS + identity"| W
+    W ==>|"policies applied"| Z2
+    Z2 --> RP
+    
+    style PP fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    style Z1 fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style W fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff
+    style Z2 fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style RP fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 
@@ -1375,7 +1449,7 @@ spec:
 
 ---
 
-## Part 4: KGateway Value & AI Integration (15 minutes)
+## Part 4: KGateway Value & AI Integration 
 
 ### Why KGateway?
 
@@ -1395,7 +1469,7 @@ KGateway (Solo.io Gloo Gateway) extends Istio with enterprise features:
 # Without KGateway: 3 separate resources
 - DestinationRule (circuit breaker)
 - VirtualService (timeout)
-- EnvoyFilter (rate limiting)
+- EnvoyFilter (rate limiting) only with Istio Sidecar
 ```
 
 **With KGateway: Policy Attachment:**
@@ -1554,23 +1628,17 @@ spec:
 
 KGateway uses a hierarchical policy model:
 
-```
-┌────────────────────────────────┐
-│    Namespace-level Policy      │  (Lowest priority)
-│  (applies to all in namespace) │
-└────────────────┬───────────────┘
-                 │
-                 ↓
-┌────────────────────────────────┐
-│     Service-level Policy       │  (Medium priority)
-│   (applies to specific service)│
-└────────────────┬───────────────┘
-                 │
-                 ↓
-┌────────────────────────────────┐
-│     Route-level Policy         │  (Highest priority)
-│ (applies to specific HTTPRoute)│
-└────────────────────────────────┘
+```mermaid
+flowchart TD
+    N["3️⃣ Namespace-level Policy<br/>(applies to all in namespace)<br/>⬇️ Lowest priority"]
+    S["2️⃣ Service-level Policy<br/>(applies to specific service)<br/>➡️ Medium priority"]
+    R["1️⃣ Route-level Policy<br/>(applies to specific HTTPRoute)<br/>⬆️ Highest priority"]
+    
+    N ==> S ==> R
+    
+    style N fill:#fab005,stroke:#fff,stroke-width:2px,color:#000
+    style S fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    style R fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 **Example:**
@@ -1639,12 +1707,6 @@ spec:
           port: 9080
 ```
 
-**Test transformation:**
-```bash
-kubectl exec $PRODUCTPAGE_POD -c productpage -n booking -- curl -v http://reviews:9080/reviews/0 2>&1 | grep "x-"
-# Should see custom headers!
-```
-
 
 ### AI Gateway: Future of KGateway
 
@@ -1658,21 +1720,11 @@ For AI/LLM routing, you would:
 
 **Architecture Pattern:**
 
-```
-Client Request
-    ↓
-HTTPRoute (KGateway)
-    ├─ Rate Limiting (TrafficPolicy)
-    ├─ Timeout (TrafficPolicy)
-    └─ Circuit Breaker
-         ↓
-AI Gateway 
-├─ Model Routing
-├─ Cost Tracking
-├─ Prompt Management
-└─ Response Caching
-     ↓
-LLM Providers (OpenAI, Anthropic, etc.)
+```mermaid
+graph TD
+    A[Client Request] --> B["HTTPRoute (KGateway)<br/>• Rate Limiting (TrafficPolicy)<br/>• Timeout (TrafficPolicy)<br/>• Circuit Breaker"]
+    B --> C["AI Gateway<br/>• Model Routing<br/>• Cost Tracking<br/>• Prompt Management<br/>• Response Caching"]
+    C --> D[LLM Providers<br/>OpenAI, Anthropic, etc.]
 ```
 
 **Example: AI Service with KGateway Policies:**
@@ -1816,6 +1868,7 @@ curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
 ```
 
 **Benefits of KGateway + AI Proxy:**
+
 - ✅ **Rate limiting**: Control AI costs with KGateway TrafficPolicy
 - ✅ **Timeout management**: Long timeouts for LLM responses
 - ✅ **Circuit breaker**: Fail fast on LLM provider issues
@@ -1842,12 +1895,13 @@ Observability is crucial for understanding service behavior, debugging issues, a
 
 Before starting, ensure you have:
 - One or more service meshes installed from previous sections
-- OpenTelemetry Demo application deployed
+- Booking application deployed
 - Access to the Kubernetes cluster
+- OpenTelemetry Collector Runing
 
----
 
-## 5.1 Enable Metrics Collection
+
+## 5.1 Enable Observability Collection
 
 === "Linkerd"
 
@@ -1857,12 +1911,15 @@ Before starting, ensure you have:
     - define our Opentelemetry collector endopint
     
     **Traces:**
+
     This cluster already has the jaeger insalled , but if you would like to install 
+
     ```bash
     helm install linkerd-jaeger -n linkerd -f linkerd/jaeger-value.yaml linkerd-edge/linkerd-jaeger
     ```
     where jaeger-value.yaml has:
-     ```yaml
+
+    ```yaml
     jaeger:
         enabled: false
     collector:
@@ -1873,6 +1930,7 @@ Before starting, ensure you have:
         collectorSvcAccount: otelcontribcol
     ```
     **Metrics:**
+
     Every linkerd proxy is exposing prometheus metrics by default on the port 4191
     We can easily configure our collector to scrape those metrics by adding the following scrape config:
     ```yaml    
@@ -1932,574 +1990,373 @@ Before starting, ensure you have:
     Linkerd aslo expose prometheus metrics on the control plane. 
     Here is the right scrape config:
     ```yaml 
+    - job_name: 'linkerd-controller'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+          - '{{.Values.linkerdNamespace}}'
+          - '{{.Values.namespace}}'
+      relabel_configs:
+      - source_labels:
+        - __meta_kubernetes_pod_container_port_name
+        action: keep
+        regex: admin-http
+      - source_labels: [ __meta_kubernetes_pod_container_name ]
+        action: replace
+        target_label: component
+    - job_name: 'linkerd-service-mirror'
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels:
+           - __meta_kubernetes_pod_label_linkerd_io_control_plane_component
+           - __meta_kubernetes_pod_container_port_name
+        action: keep
+        regex: linkerd-service-mirror;admin-http$
+      - source_labels: [ __meta_kubernetes_pod_container_name ]
+        action: replace
+        target_label: component
     ```
 
 === "Istio (Sidecar)"
 
-    Istio integrates with Prometheus for metrics collection:
+    Istio produces:
 
-    ```bash
-    # Install Prometheus addon
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
-    
-    # Install Grafana for visualization
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
-    
-    # Install Kiali for service mesh dashboard
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/kiali.yaml
-    
-    # Verify installation
-    kubectl get pods -n istio-system
+      - traces supporting the openteletry standards
+      - Metrics in Prometheus format
+      - Logs using the Opentelemetry Protocol
+
+    Traces and logs needs to be enabled when deploying istio , by configuring the meshconfig:
+
+    ```yaml
+    meshConfig:
+        accessLogFile: /dev/stdout
+        enablePrometheusMerge: true
+        defaultConfig:
+          tracing:
+            sampling: 100
+        defaultProviders:
+          tracing:
+            - "otelp"
+          accessLogging:
+            - "envoylogs"
+        enableTracing: true
+        extensionProviders:
+          - envoyOtelAls:
+              port: 4317
+              service: "otel-collector.default.svc.cluster.local"
+              logFormat:
+                labels:
+                  source: "ENVOY"
+                  mesh: "%ENVIRONMENT(ISTIO_META_MESH_ID)%"
+            name: "envoylogs"
+          - name: "otelp"
+            opentelemetry:
+              service: "otel-collector.default.svc.cluster.local"
+              port: 4317
+              resource_detectors:
+                environment: { }
     ```
 
-    **Access Dashboards:**
-    ```bash
-    # Prometheus
-    kubectl port-forward -n istio-system svc/prometheus 9090:9090
-    
-    # Grafana
-    kubectl port-forward -n istio-system svc/grafana 3000:3000
-    
-    # Kiali
-    kubectl port-forward -n istio-system svc/kiali 20001:20001
-    ```
+    Once Provider defined you can customize your telmetry configuration per namespace using the Telemetry CRD.
 
-    **Enable Metrics on Namespace:**
+    **Metrics:**
+
+    Istio will automatically expose Promehteus metrics on each sidecar proxy ( data plane) and metrics from the controlplane 
+    We can easiliy scrape those metrics with the following scrape config:
+    
+    ***DataPlane:***
+
+    ```yaml
+    - job_name: kubernetes-pods
+      kubernetes_sd_configs:
+          - role: pod
+      relabel_configs:
+        - action: keep
+          regex: true
+          source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+        - action: replace
+          regex: (https?)
+          source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+          target_label: __scheme__
+        - action: replace
+          regex: (.+)
+          source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_path
+          target_label: __metrics_path__
+        - action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          source_labels:
+            - __address__
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_namespace
+          target_label: kubernetes_namespace
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_pod_name
+          target_label: kubernetes_pod_name
+        - action: drop
+          regex: Pending|Succeeded|Failed
+          source_labels:
+            - __meta_kubernetes_pod_phase
+    ```
+    ***Controlplane:***
+
+    ```yaml
+        - job_name: 'istiod'
+          kubernetes_sd_configs:
+            - role: endpoints
+              namespaces:
+                names:
+                  - istio-system
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name ]
+              action: keep
+              regex: istiod;http-monitoring
+    ```
+    Istio also provide a dashboard throught their kiali extension
+    this extension could deployed :
+
     ```bash
-    # Metrics are automatically collected for meshed namespaces
-    kubectl get pods -n otel-demo -o jsonpath='{.items[*].spec.containers[*].name}' | grep istio-proxy
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.27/samples/addons/kiali.yaml
     ```
 
 === "Istio (Ambient)"
 
-    Ambient mode uses ztunnel for L4 metrics and waypoints for L7 metrics:
-
-    ```bash
-    # Install observability addons
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
+    Ambient mode uses ztunnel for L4 metrics and waypoints for L7 metrics & traces:
     
-    # Verify ztunnel is collecting L4 metrics
-    kubectl logs -n istio-system -l app=ztunnel | grep metrics
-    ```
-
-    **View Ambient-specific Metrics:**
-    ```bash
-    # Access Prometheus
-    kubectl port-forward -n istio-system svc/prometheus 9090:9090
+    Collecting data and configuring it would be following the same approach as Istio
     
-    # Query L4 metrics from ztunnel
-    # In Prometheus, query: istio_tcp_connections_opened_total
-    
-    # Query L7 metrics from waypoint (if deployed)
-    # istio_requests_total{source_workload="waypoint"}
-    ```
-
-    **Deploy Waypoint for L7 Metrics:**
-    ```bash
-    # Create waypoint for namespace
-    kubectl label namespace otel-demo istio.io/use-waypoint=waypoint
-    
-    istioctl x waypoint apply -n otel-demo --name waypoint
-    ```
 
 === "Kuma"
 
-    Kuma integrates with Prometheus using MeshMetric policy:
-
-    ```bash
-    # Install Prometheus via Helm
-    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-    helm install prometheus prometheus-community/kube-prometheus-stack \
-      --namespace monitoring --create-namespace
-    ```
-
-    **Configure Prometheus to Scrape Kuma Metrics:**
+    Kuma can produce :
+    - metrics using the Opentelemtry protocol
+    - traces using Opentelemtry
+    - logs using Opentelemtry
+    
+    To enable the observability we simply need to configure the dedicated crd:
+    **Metrics**
     ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: prometheus-config
-      namespace kuma-system
-    data:
-      prometheus.yml: |
-        scrape_configs:
-        - job_name: 'kuma-dataplanes'
-          kubernetes_sd_configs:
-          - role: pod
-            namespaces:
-              names:
-              - otel-demo
-          relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_annotation_kuma_io_sidecar_injected]
-            action: keep
-            regex: true
-    EOF
-    ```
-
-    **Enable Metrics via MeshMetric:**
-    ```yaml
-    kubectl apply -f - <<EOF
     apiVersion: kuma.io/v1alpha1
     kind: MeshMetric
     metadata:
-      name: prometheus-metrics
-      namespace: kuma-system
-      labels:
+        name: metrics-default
+        namespace: kuma-system
+     labels:
         kuma.io/mesh: default
     spec:
       targetRef:
-        kind: Mesh
+          kind: Mesh
       default:
-        backends:
-        - type: Prometheus
-          prometheus:
-            port: 5670
-            path: /metrics
-            tls:
-              mode: Disabled
-    EOF
+         backends:
+         - type: OpenTelemetry
+      openTelemetry:
+        endpoint: otel-collector.default.svc.cluster.local:4317
+        refreshInterval: 60s
     ```
-
-=== "Ambient + kgateway"
-
-    kgateway with Ambient mesh uses Istio's observability stack:
-
-    ```bash
-    # Install Prometheus and Grafana
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
-    
-    # kgateway automatically exports metrics to Prometheus
-    # Metrics endpoint: :9091/metrics on gateway pods
-    ```
-
-    **View kgateway Metrics:**
-    ```bash
-    # Get gateway pod
-    GATEWAY_POD=$(kubectl get pods -n default -l gateway.networking.k8s.io/gateway-name=api-gateway -o jsonpath='{.items[0].metadata.name}')
-    
-    # Port-forward to metrics endpoint
-    kubectl port-forward -n default ${GATEWAY_POD} 9091:9091
-    
-    # Curl metrics
-    curl http://localhost:9091/metrics | grep envoy_
-    ```
-
----
-
-## 5.2 Enable Distributed Tracing
-
-=== "Linkerd"
-
-    Linkerd supports OpenTelemetry tracing:
-
-    ```bash
-    # Install Jaeger for trace collection
-    kubectl create namespace tracing
-    kubectl apply -n tracing -f https://raw.githubusercontent.com/linkerd/linkerd-examples/main/jaeger/jaeger.yaml
-    ```
-
-    **Configure Linkerd to Send Traces:**
+    **Traces**
     ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: linkerd-config-overrides
-      namespace: linkerd
-    data:
-      values: |
-        proxyInit:
-          tracing:
-            enabled: true
-            collector: jaeger-collector.tracing.svc.cluster.local:14268
-    EOF
-    ```
-
-    **Update Linkerd Configuration:**
-    ```bash
-    # Upgrade Linkerd with tracing enabled
-    linkerd upgrade --addon-config linkerd-config-overrides | kubectl apply -f -
-    
-    # Restart pods to pick up new config
-    kubectl rollout restart deployment -n otel-demo
-    ```
-
-    **Access Jaeger UI:**
-    ```bash
-    kubectl port-forward -n tracing svc/jaeger 16686:16686
-    # Open http://localhost:16686
-    ```
-
-=== "Istio (Sidecar)"
-
-    Istio has built-in support for distributed tracing:
-
-    ```bash
-    # Install Jaeger
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
-    ```
-
-    **Enable Tracing via Telemetry API:**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: mesh-default
-      namespace: istio-system
-    spec:
-      tracing:
-      - providers:
-        - name: jaeger
-        randomSamplingPercentage: 100.0
-    EOF
-    ```
-
-    **Configure Trace Provider:**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: install.istio.io/v1alpha1
-    kind: IstioOperator
-    metadata:
-      name: istio-config
-      namespace: istio-system
-    spec:
-      meshConfig:
-        enableTracing: true
-        defaultConfig:
-          tracing:
-            sampling: 100.0
-            zipkin:
-              address: jaeger-collector.istio-system.svc.cluster.local:9411
-    EOF
-    ```
-
-    **Access Jaeger UI:**
-    ```bash
-    kubectl port-forward -n istio-system svc/jaeger 16686:16686
-    # Open http://localhost:16686
-    ```
-
-=== "Istio (Ambient)"
-
-    Ambient mode supports tracing for L7 traffic through waypoints:
-
-    ```bash
-    # Install Jaeger
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
-    ```
-
-    **Enable Tracing for Ambient:**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: waypoint-tracing
-      namespace: otel-demo
-    spec:
-      selector:
-        matchLabels:
-          gateway.networking.k8s.io/gateway-name: waypoint
-      tracing:
-      - providers:
-        - name: jaeger
-        randomSamplingPercentage: 100.0
-    EOF
-    ```
-
-    **Note:** L4 traffic (ztunnel) doesn't generate traces. Deploy waypoint for L7 tracing:
-    ```bash
-    istioctl x waypoint apply -n otel-demo --name waypoint
-    kubectl label namespace otel-demo istio.io/use-waypoint=waypoint
-    ```
-
-=== "Kuma"
-
-    Kuma supports tracing via MeshTrace policy:
-
-    ```bash
-    # Install Jaeger
-    kubectl create namespace tracing
-    kubectl apply -n tracing -f https://raw.githubusercontent.com/kumahq/kuma-demo/master/kubernetes/kuma-jaeger.yaml
-    ```
-
-    **Enable Tracing via MeshTrace:**
-    ```yaml
-    kubectl apply -f - <<EOF
     apiVersion: kuma.io/v1alpha1
     kind: MeshTrace
     metadata:
-      name: default-trace
-      namespace: kuma-system
-      labels:
-        kuma.io/mesh: default
+        name: default
+        namespace: kuma-system
+        labels:
+             kuma.io/mesh: default # optional, defaults to `default` if unset
     spec:
-      targetRef:
-        kind: Mesh
-      default:
-        backends:
-        - type: Zipkin
-          zipkin:
-            url: http://jaeger-collector.tracing.svc.cluster.local:9411/api/v2/spans
-        sampling:
-          overall: 1.0  # 100% sampling
-    EOF
+        targetRef:
+            kind: Mesh
+        default:
+            backends:
+            - type: OpenTelemetry
+        openTelemetry:
+            endpoint: otel-collector.default.svc.cluster.local:4317
     ```
-
-    **Access Jaeger UI:**
-    ```bash
-    kubectl port-forward -n tracing svc/jaeger-query 16686:16686
-    # Open http://localhost:16686
-    ```
-
-=== "Ambient + kgateway"
-
-    kgateway uses Istio's tracing configuration:
-
-    ```bash
-    # Install Jaeger
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
-    ```
-
-    **Enable Tracing for Gateway:**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: gateway-tracing
-      namespace: default
-    spec:
-      selector:
-        matchLabels:
-          gateway.networking.k8s.io/gateway-name: api-gateway
-      tracing:
-      - providers:
-        - name: jaeger
-        randomSamplingPercentage: 100.0
-        customTags:
-          gateway:
-            literal:
-              value: "kgateway"
-    EOF
-    ```
-
----
-
-## 5.3 Enable Access Logs
-
-=== "Linkerd"
-
-    Linkerd proxy automatically logs to stdout:
-
-    ```bash
-    # View access logs for a specific pod
-    kubectl logs -n otel-demo deploy/frontend -c linkerd-proxy
     
-    # Follow logs
-    kubectl logs -n otel-demo deploy/frontend -c linkerd-proxy -f
-    
-    # Enable verbose logging
-    kubectl set env -n otel-demo deploy/frontend \
-      -c linkerd-proxy LINKERD2_PROXY_LOG=info,linkerd=debug
-    ```
-
-    **Configure Log Format:**
-    ```bash
-    # Edit linkerd-config
-    kubectl edit cm/linkerd-config -n linkerd
-    
-    # Add under proxyInit:
-    #   accessLog: |-
-    #     format: '{"method":"%{REQUEST_METHOD}e","path":"%{REQUEST_PATH}e","status":%{RESPONSE_CODE}e}'
-    ```
-
-=== "Istio (Sidecar)"
-
-    Enable access logs via Telemetry API:
-
+    **Logs**
     ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: mesh-access-logs
-      namespace: istio-system
-    spec:
-      accessLogging:
-      - providers:
-        - name: envoy
-        filter:
-          expression: response.code >= 400
-    EOF
-    ```
-
-    **Custom Log Format:**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: custom-access-logs
-      namespace: otel-demo
-    spec:
-      accessLogging:
-      - providers:
-        - name: envoy
-        format:
-          text: |
-            [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%"
-            %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT%
-            %DURATION% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%"
-            "%REQ(X-REQUEST-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%"
-    EOF
-    ```
-
-    **View Logs:**
-    ```bash
-    kubectl logs -n otel-demo deploy/frontend -c istio-proxy
-    ```
-
-=== "Istio (Ambient)"
-
-    Enable access logs for ztunnel and waypoint:
-
-    **Ztunnel Logs (L4):**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: ztunnel-logs
-      namespace: istio-system
-    spec:
-      selector:
-        matchLabels:
-          app: ztunnel
-      accessLogging:
-      - providers:
-        - name: envoy
-    EOF
-    ```
-
-    **Waypoint Logs (L7):**
-    ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
-    metadata:
-      name: waypoint-logs
-      namespace: otel-demo
-    spec:
-      selector:
-        matchLabels:
-          gateway.networking.k8s.io/gateway-name: waypoint
-      accessLogging:
-      - providers:
-        - name: envoy
-    EOF
-    ```
-
-=== "Kuma"
-
-    Enable access logs via MeshAccessLog policy:
-
-    ```yaml
-    kubectl apply -f - <<EOF
     apiVersion: kuma.io/v1alpha1
     kind: MeshAccessLog
     metadata:
-      name: default-access-log
-      namespace: kuma-system
-      labels:
-        kuma.io/mesh: default
+        name: default
+        namespace: kuma-system
+        labels:
+            kuma.io/mesh: default # optional, defaults to `default` if it isn't configured
     spec:
-      targetRef:
-        kind: Mesh
-      to:
-      - targetRef:
-          kind: Mesh
-        default:
-          backends:
-          - type: File
-            file:
-              path: /dev/stdout
-              format:
-                plain: '[%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE%'
-    EOF
+        targetRef:
+            kind: Mesh
+        from: # delete this section if you don't want to log incoming traffic
+        - targetRef:
+            kind: Mesh
+          default:
+            backends:
+            - type: OpenTelemetry
+          openTelemetry:
+            endpoint: otel-collector.default.svc.cluster.local:4317
+            attributes:
+            - key: "start_time"
+              value: "%START_TIME%"
+            - key: "upstrea_transport_failure_reason"
+              value: "%UPSTREAM_TRANSPORT_FAILURE_REASON%"
+            - key: "REQUEST_DURATION"
+              value: "%REQUEST_DURATION%"
+            - key: "connection_termination_detail"
+              value: "%CONNECTION_TERMINATION_DETAILS%"
+            - key: "response_code_detail"
+              value: "%RESPONSE_CODE_DETAILS%"
+        to: # delete this section if you don't want to log outgoing traffic
+        - targetRef:
+             kind: Mesh
+          default:
+            backends:
+            - type: OpenTelemetry
+          openTelemetry:
+            endpoint: otel-collector.default.svc.cluster.local:4317
+          attributes:
+          - key: "start_time"
+            value: "%START_TIME%"
+          - key: "upstrea_transport_failure_reason"
+            value: "%UPSTREAM_TRANSPORT_FAILURE_REASON%"
+          - key: "REQUEST_DURATION"
+            value: "%REQUEST_DURATION%"
+          - key: "connection_termination_detail"
+            value: "%CONNECTION_TERMINATION_DETAILS%"
+          - key: "response_code_detail"
+            value: "%RESPONSE_CODE_DETAILS%"
     ```
-
-    **View Logs:**
-    ```bash
-    kubectl logs -n otel-demo deploy/frontend -c kuma-sidecar
-    ```
-
 === "Ambient + kgateway"
 
-    kgateway uses Envoy access logs:
+    Kgateway can produce :
+    - metrics in Prometheus format
+    - Traces using Opentelemetry
+    - Logs using Opentelemetry
+
+    To enable it you will need to configure: 
+
+    **Logs:**
 
     ```yaml
-    kubectl apply -f - <<EOF
-    apiVersion: telemetry.istio.io/v1
-    kind: Telemetry
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: HTTPListenerPolicy
     metadata:
-      name: gateway-access-logs
-      namespace: default
+        name: logging-policy
+        namespace: booking
     spec:
-      selector:
-        matchLabels:
-          gateway.networking.k8s.io/gateway-name: api-gateway
-      accessLogging:
-      - providers:
-        - name: envoy
-        format:
-          json:
-            method: "%REQ(:METHOD)%"
-            path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
-            protocol: "%PROTOCOL%"
-            response_code: "%RESPONSE_CODE%"
-            duration: "%DURATION%"
-            upstream_host: "%UPSTREAM_HOST%"
-    EOF
+        targetRefs:
+            - group: gateway.networking.k8s.io
+              kind: Gateway
+              name: kgateway-waypoint
+        accessLog:
+        - openTelemetry:
+          grpcService:
+            backendRef:
+                name: otel-collector
+                namespace: default
+                port: 4317
+            logName: "http-gateway-access-logs"
+            body: >-
+            "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %RESPONSE_CODE% "%REQ(:AUTHORITY)%" "%UPSTREAM_CLUSTER%"'
+    ```
+    **Traces:**
+
+    ```yaml
+      apiVersion: gateway.kgateway.dev/v1alpha1
+      kind: HTTPListenerPolicy
+      metadata:
+         name: tracing-policy
+         namespace: booking
+      spec:
+         targetRefs:
+            - group: gateway.networking.k8s.io
+              kind: Gateway
+              name: kgateway-waypoint
+         tracing:
+            provider:
+                openTelemetry:
+            serviceName: http
+            grpcService:
+              backendRef:
+                name: otel-collector
+                namespace: default
+                port: 4317
+            spawnUpstreamSpan: true
     ```
 
----
+     **Metrics:**
 
-## 5.4 Verify Observability
-
-Generate some traffic and verify observability features:
-
-```bash
-# Generate traffic
-for i in {1..100}; do
-  curl -s http://$(kubectl get svc frontend -n otel-demo -o jsonpath='{.status.loadBalancer.ingress[0].ip}') > /dev/null
-  echo "Request $i sent"
-  sleep 0.1
-done
-```
-
-**Check Metrics:**
-- Access Prometheus/Grafana dashboards
-- Query for request rates, latencies, error rates
-- Look for mesh-specific metrics (e.g., `istio_requests_total`, `linkerd_request_total`)
-
-**Check Traces:**
-- Open Jaeger UI
-- Search for traces from `frontend` service
-- Verify end-to-end trace spans across services
-- Check for proper context propagation
-
-**Check Logs:**
-- View access logs from various pods
-- Verify log format includes necessary fields
-- Check for errors or anomalies
-
----
-
+     To collect the kgateway metrics you will need to use the following scrape config :
+    ```yaml
+     - job_name: kgateway-gateways
+       honor_labels: true
+       kubernetes_sd_configs:
+        - role: pod
+       relabel_configs:
+        - action: keep
+          regex: kube-gateway
+          source_labels:
+            - __meta_kubernetes_pod_label_kgateway
+        - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+          action: keep
+          regex: true
+        - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_pod_ip
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          separator: ':'
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels: [ __meta_kubernetes_namespace ]
+          action: replace
+          target_label: kube_namespace
+        - source_labels: [ __meta_kubernetes_pod_name ]
+          action: replace
+          target_label: pod
+     - job_name: kgateway-controlplane
+       honor_labels: true
+       kubernetes_sd_configs:
+        - role: pod
+       relabel_configs:
+        - action: keep
+          regex: kgateway
+          source_labels:
+            - __meta_kubernetes_pod_label_kgateway
+        - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+          action: keep
+          regex: true
+        - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_pod_ip
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          separator: ':'
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels: [ __meta_kubernetes_namespace ]
+          action: replace
+          target_label: kube_namespace
+        - source_labels: [ __meta_kubernetes_pod_name ]
+          action: replace
+          target_label: pod
+    ```
 ## Summary
 
 You've successfully enabled observability across different service mesh implementations:
@@ -2509,91 +2366,30 @@ You've successfully enabled observability across different service mesh implemen
 ✅ **Access Logs**: Request-level logging for debugging
 
 **Key Takeaways:**
+
 - Each mesh has different approaches to observability
 - Linkerd: Built-in metrics, add-on for tracing
 - Istio: Telemetry API for unified configuration
 - Kuma: Policy-based configuration (MeshMetric, MeshTrace, MeshAccessLog)
-- All meshes integrate well with standard observability tools (Prometheus, Jaeger, Grafana)
+- All meshes integrate well with standard observability tools (Prometheus,OpenTelemetry)
 
-**Next Steps:**
-- Explore advanced metrics and alerting
-- Set up long-term storage for metrics and traces
-- Create custom dashboards in Grafana
-- Integrate with your existing observability stack
 
----
+## Part 5: Complete Architecture & Best Practices 
 
-## Troubleshooting
-
-**Metrics not showing up:**
-- Verify Prometheus is scraping the correct endpoints
-- Check service mesh proxy logs for errors
-- Ensure proper labels/annotations on pods
-
-**Traces not appearing:**
-- Verify trace collector is reachable
-- Check sampling rate (set to 100% for testing)
-- Ensure proper trace context propagation (check headers)
-
-**Access logs not visible:**
-- Verify Telemetry/Policy is applied correctly
-- Check if logs are enabled on the proxy
-- Look in the correct container (sidecar/proxy)
-
-**For Ambient mode:**
-- Remember: L4 metrics only from ztunnel
-- L7 metrics/traces require waypoint deployment
-- Check both ztunnel and waypoint configurations
-- 
-## Part 5: Complete Architecture & Best Practices (5 minutes)
-
-### The Complete Stack
-
-```
-┌─────────────────────────────────────────────┐
-│           AI Gateway Layer (Optional)       │
-│  - LLM routing                              │
-│  - Cost control                             │
-│  - Prompt management                        │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│        KGateway Policy Layer (Optional)     │
-│  - TrafficPolicy                            │
-│  - RouteOption                              │
-│  - VirtualHostOption                        │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│         Gateway API (HTTPRoute)             │
-│  - Service-to-service routing               │
-│  - Timeouts                                 │
-│  - extensionRef to policies                 │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│          Ambient Mesh (Istio)               │
-│  Layer 1: ztunnel (L4, mTLS)                │
-│  Layer 2: waypoint (L7, policies)           │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│              Services                       │
-│  productpage, reviews, details              │
-└─────────────────────────────────────────────┘
-```
 
 ### Best Practices Summary
 
 #### HTTPRoute Configuration
 
 ✅ **DO:**
+
 - Use descriptive names (`productpage-to-reviews`)
 - Always set timeouts
 - Use extensionRef for policies
 - In Ambient: parentRef = waypoint Gateway
 
 ❌ **DON'T:**
+
 - Hardcode IPs in hostnames
 - Skip timeout configuration
 - Mix sidecar and ambient patterns
@@ -2601,12 +2397,14 @@ You've successfully enabled observability across different service mesh implemen
 #### Circuit Breaker Configuration
 
 ✅ **DO:**
+
 - Start with `consecutive5xxErrors: 5`
 - Set `baseEjectionTime` = `interval`
 - Keep `maxEjectionPercent: 50` for safety
 - Test with fault injection
 
 ❌ **DON'T:**
+
 - Set `consecutive5xxErrors: 1` (too aggressive)
 - Eject 100% of instances
 - Forget to set `minHealthPercent`
@@ -2614,12 +2412,14 @@ You've successfully enabled observability across different service mesh implemen
 #### Rate Limiting Configuration
 
 ✅ **DO:**
+
 - Set realistic limits based on capacity
 - Use different limits per service
 - Monitor rate limit metrics
 - Combine with circuit breakers
 
 ❌ **DON'T:**
+
 - Use same limit for all services
 - Set limits too low (causes false positives)
 - Forget to log rate limit events
@@ -2627,6 +2427,7 @@ You've successfully enabled observability across different service mesh implemen
 #### AI Gateway Configuration
 
 ✅ **DO:**
+
 - Set cost budgets (`costPerHour`)
 - Enable response caching
 - Use routing rules for model selection
@@ -2634,18 +2435,20 @@ You've successfully enabled observability across different service mesh implemen
 - Version your prompts
 
 ❌ **DON'T:**
+
 - Route everything to expensive models
 - Skip caching (wastes money)
 - Hardcode prompts in application code
 - Ignore cost metrics
 
 
-## Part 6: Troubleshooting (10 minutes)
+## Part 6: Troubleshooting
 
 
 #### Problem 1: HTTPRoute Not Working
 
 **Symptoms:**
+
 - Traffic not flowing
 - HTTPRoute shows "Accepted: False"
 
@@ -2679,12 +2482,14 @@ kubectl describe gateway <gateway-name>
 #### Problem 2: Circuit Breaker Not Tripping
 
 **Symptoms:**
+
 - Service keeps receiving traffic despite errors
 - No ejections in metrics
 
 #### Problem 4: Timeout Not Working
 
 **Symptoms:**
+
 - Requests hang longer than expected
 - Timeout setting ignored
 
@@ -2705,89 +2510,6 @@ kubectl get virtualservice reviews-vs -o yaml | grep timeout
 | Wrong timeout | Multiple timeout configs | Check both HTTPRoute and VirtualService |
 | No timeout | Missing configuration | Add timeout to HTTPRoute |
 
-
-## Summary & Key Takeaways
-
-### What You Learned
-
-#### 1. Gateway API GAMMA Pattern
-```yaml
-# Service-to-Service routing
-parentRefs:
-  - kind: Service      # Source
-    name: productpage
-hostnames:
-  - reviews           # Destination
-```
-
-#### 2. Resilience Patterns
-
-| Pattern | Purpose | Configuration |
-|---------|---------|---------------|
-| **Timeout** | Fail fast | HTTPRoute timeouts |
-| **Circuit Breaker** | Stop cascading failures | DestinationRule outlierDetection |
-| **Rate Limiting** | Protect from overload | EnvoyFilter/WasmPlugin |
-
-#### 3. Ambient Architecture
-
-```
-┌──────────┐
-│   Pod    │  No sidecar!
-└────┬─────┘
-     │
-     ↓
-┌──────────┐
-│ ztunnel  │  L4: mTLS, identity
-└────┬─────┘  (DaemonSet - always running)
-     │
-     ↓ (if L7 needed)
-┌──────────┐
-│ Waypoint │  L7: policies, routing
-└──────────┘  (Deployment - on-demand)
-```
-
-**Key Differences:**
-- **Sidecar:** HTTPRoute parentRef = client service
-- **Ambient:** HTTPRoute parentRef = waypoint Gateway
-- **Identity:** Preserved through ztunnel in both cases
-
-#### 4. KGateway Value
-
-**Unified Policies:**
-```yaml
-TrafficPolicy:
-  - Rate limiting ✅
-  - Timeout ✅
-  - All in one resource!
-```
-
-**Advanced Features:**
-- Request/response transformation
-- Better observability
-
-**AI Gateway:**
-- Multi-model routing
-- Cost control
-- Prompt management
-- Token tracking
-
-### Architecture Decision Matrix
-
-| Need | Sidecar | Ambient | Ambient + KGateway |
-|------|---------|---------|-------------------|
-| **L4 Security** | ✅ | ✅ | ✅ |
-| **L7 Routing** | ✅ | ✅ (waypoint) | ✅ (waypoint) |
-| **Low Memory** | ❌ | ✅ | ✅ |
-| **Fast Startup** | ❌ | ✅ | ✅ |
-| **Advanced Routing** |  ✅️ | ⚠️ | ✅ |
-| **Transformation** |  ✅ | ❌ | ✅ |
-| **AI Integration** | ❌ | ❌ | ✅ |
-| **Cost Control** | ❌ | ❌ | ✅ (AI) |
-
-**Recommendation:**
-- **Start with:** Ambient (efficient baseline)
-- **Add when needed:** KGateway (advanced features)
-- **Consider for:** AI workloads (cost control, routing)
 
 ## Advanced Topics (Optional)
 
@@ -2871,17 +2593,10 @@ spec:
 - [AI Gateway Guide](https://docs.solo.io/gateway/latest/ai/)
 
 
-### Practice Exercises
-
-1. **Add authentication** to reviews service using JWT
-2. **Configure mTLS** strict mode
-3. **Set up distributed tracing** with Jaeger
-4. **Implement A/B testing** with header routing
-5. **Create AI routing rules** for different models
 
 ### Community
 - Gateway API Slack: `#sig-network-gateway-api`
-- Istio Slack: `#ambient`
+- Istio Ambient Slack: `#ambient`
 
 
 ## Workshop Feedback
@@ -2899,7 +2614,6 @@ What to improve?
 **Share your feedback:** [Open an issue in the repo]
 
 
-
 **End of Workshop** 🎉
 
-Thank you for participating! Keep experimenting with Gateway API and Ambient mesh.
+Thank you for participating! 

@@ -269,6 +269,7 @@ else
     kubectl annotate ns booking linkerd.io/inject=enabled
     kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_linkerd.yaml
     kubedtl apply -f linkerd/referencegrant.yaml
+    kubect apply -f linkerd/observability.yaml
   else
      if [  "$TYPE" = 'ambient' ]; then
        echo " ambient"
