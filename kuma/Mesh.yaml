@@ -1,7 +1,0 @@
-apiVersion: kuma.io/v1alpha1
-kind: Mesh
-metadata:
-  annotations:
-    k8s.kuma.io/mesh-defaults-generated: "true"
-  name: default
-spec:
