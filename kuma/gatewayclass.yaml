@@ -5,12 +5,6 @@ metadata:
   namespace: kuma-system
 spec:
   serviceType: NodePort
-  serviceTemplate:
-    spec:
-      ports:
-        - name: http-80
-          port: 80
-          nodePort: 30080
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass

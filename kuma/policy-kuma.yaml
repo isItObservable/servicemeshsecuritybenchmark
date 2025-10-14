@@ -1,3 +1,4 @@
+---
 # ============================================
 # MeshTimeout: Request timeout for reviews
 # ============================================
@@ -9,21 +10,18 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target the route from productpage to reviews
   targetRef:
     kind: MeshService
     name: reviews_booking_svc_9080
-  from:
+  to:
     - targetRef:
         kind: MeshService
-        name: productpage_booking_svc_9080
+        name: reviews_booking_svc_9080
       default:
-        # HTTP request timeout
+        connectionTimeout: 5s
+        idleTimeout: 3600s
         http:
           requestTimeout: 2s
-          # Idle timeout
-          idleTimeout: 15s
-          # Stream idle timeout
           streamIdleTimeout: 30s
 ---
 # ============================================
@@ -37,18 +35,18 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target the route from productpage to details
   targetRef:
     kind: MeshService
     name: details_booking_svc_9080
-  from:
+  to:
     - targetRef:
         kind: MeshService
-        name: productpage_booking_svc_9080
+        name: details_booking_svc_9080
       default:
+        connectionTimeout: 5s
+        idleTimeout: 3600s
         http:
           requestTimeout: 1s
-          idleTimeout: 15s
           streamIdleTimeout: 30s
 ---
 # ============================================
@@ -62,40 +60,32 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target reviews service
   targetRef:
     kind: MeshService
     name: reviews_booking_svc_9080
-  # Apply from productpage
-  from:
+  to:
     - targetRef:
         kind: MeshService
-        name: productpage_booking_svc_9080
+        name: reviews_booking_svc_9080
       default:
-        # Connection pool settings
         connectionLimits:
           maxConnections: 100
           maxPendingRequests: 10
           maxRequests: 100
           maxRetries: 3
-        # Outlier detection (circuit breaker)
         outlierDetection:
-          # Number of errors before ejection
-          detectors:
-            totalErrors:
-              consecutive: 5
-            gatewayErrors:
-              consecutive: 3
-            localOriginErrors:
-              consecutive: 5
-          # Detection interval
+          disabled: false
           interval: 30s
-          # Ejection time
           baseEjectionTime: 30s
-          # Maximum percentage of hosts that can be ejected
           maxEjectionPercent: 50
-          # Split external and local origin errors
-          splitExternalLocalOriginErrors: true
+          splitExternalAndLocalErrors: true
+          detectors:
+            totalFailures:
+              consecutive: 5
+            gatewayFailures:
+              consecutive: 3
+            localOriginFailures:
+              consecutive: 5
 ---
 # ============================================
 # MeshCircuitBreaker: Circuit breaker for details
@@ -108,15 +98,13 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target details service
   targetRef:
     kind: MeshService
     name: details_booking_svc_9080
-  # Apply from productpage
-  from:
+  to:
     - targetRef:
         kind: MeshService
-        name: productpage_booking_svc_9080
+        name: details_booking_svc_9080
       default:
         connectionLimits:
           maxConnections: 50
@@ -124,14 +112,15 @@ spec:
           maxRequests: 50
           maxRetries: 3
         outlierDetection:
-          detectors:
-            totalErrors:
-              consecutive: 5
-            gatewayErrors:
-              consecutive: 3
+          disabled: false
           interval: 30s
           baseEjectionTime: 30s
           maxEjectionPercent: 50
+          detectors:
+            totalFailures:
+              consecutive: 5
+            gatewayFailures:
+              consecutive: 3
 ---
 # ============================================
 # MeshRateLimit: Rate limiting for reviews
@@ -144,24 +133,18 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target reviews service
   targetRef:
     kind: MeshService
     name: reviews_booking_svc_9080
-  # Apply from productpage
   from:
     - targetRef:
-        kind: MeshService
-        name: productpage_booking_svc_9080
+        kind: Mesh
       default:
-        # Local rate limiting (token bucket)
         local:
           http:
-            # 100 requests per minute
             requestRate:
               num: 100
               interval: 1m
-            # On rate limit, return 429
             onRateLimit:
               status: 429
               headers:
@@ -180,19 +163,15 @@ metadata:
   labels:
     kuma.io/mesh: default
 spec:
-  # Target details service
   targetRef:
     kind: MeshService
     name: details_booking_svc_9080
-  # Apply from productpage
   from:
     - targetRef:
-        kind: MeshService
-        name: productpage_booking_svc_9080
+        kind: Mesh
       default:
         local:
           http:
-            # 50 requests per minute (stricter than reviews)
             requestRate:
               num: 50
               interval: 1m
@@ -204,7 +183,7 @@ spec:
                     value: "true"
 ---
 # ============================================
-# Optional: MeshRetry for automatic retries
+# MeshRetry: Automatic retries for reviews
 # ============================================
 apiVersion: kuma.io/v1alpha1
 kind: MeshRetry
@@ -217,10 +196,10 @@ spec:
   targetRef:
     kind: MeshService
     name: reviews_booking_svc_9080
-  from:
+  to:
     - targetRef:
         kind: MeshService
-        name: productpage_booking_svc_9080
+        name: reviews_booking_svc_9080
       default:
         http:
           numRetries: 3
@@ -228,12 +207,5 @@ spec:
           backOff:
             baseInterval: 25ms
             maxInterval: 250ms
-          retriableStatusCodes:
-            - 500
-            - 502
-            - 503
-            - 504
-          retriableMethods:
-            - GET
-            - HEAD
-            - OPTIONS
+          retryOn:
+            - "5xx"
