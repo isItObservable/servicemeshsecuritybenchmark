@@ -6,10 +6,10 @@ This Workshop requires 2 API tokens:
 * One to deploy the Dynatrace Operator
 * One to ingest metrics, logs, traces and events
 
-You have been invited to a Dyntrace tenant.
+You have been invited to a Dynatrace tenant.
 
 All the relevant applications are displayed on your welcome screen:
-<img src="/image/home_dt.png" width="100%" alt="welcome" />
+<img src="/images/home_dt.png" width="100%" alt="welcome" />
 
 --8<-- "snippets/api-token.md"
 

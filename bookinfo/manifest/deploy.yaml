@@ -191,61 +191,61 @@ metadata:
   name: bookinfo-reviews
   labels:
     account: reviews
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: reviews-v1
-  labels:
-    app: reviews
-    version: v1
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: reviews
-      version: v1
-  template:
-    metadata:
-      labels:
-        app: reviews
-        version: v1
-        app.kubernetes.io/component: reviews-v1
-    spec:
-      serviceAccountName: bookinfo-reviews
-      containers:
-        - name: reviews
-          image:  hrexed/bookinfo-reviews-v1-otel:1.0
-          imagePullPolicy: IfNotPresent
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+ # name: reviews-v1
+ #@ labels:
+  #  app: reviews
+ #   version: v1
+#spec:
+#  replicas: 1
+#  selector:
+  #  matchLabels:
+ ##     app: reviews
+    #  version: v1
+ # #template:
+   # metadata:
+   #   labels:
+   #     app: reviews
+   #     version: v1
+   #     app.kubernetes.io/component: reviews-v1
+   # spec:
+   #   serviceAccountName: bookinfo-reviews
+   #   containers:
+   #     - name: reviews
+   #       image:  hrexed/bookinfo-reviews-v1-otel:1.0
+   #       imagePullPolicy: IfNotPresent#
 
-          env:
-            - name: LOG_DIR
-              value: "/tmp/logs"
-            - name: OTEL_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.labels['app.kubernetes.io/component']
-            - name: OTEL_COLLECTOR_NAME
-              value: otel-collector.default.svc.cluster.local
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: delta
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
-          ports:
-            - containerPort: 9080
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: wlp-output
-              mountPath: /opt/ibm/wlp/output
-      volumes:
-        - name: wlp-output
-          emptyDir: {}
-        - name: tmp
-          emptyDir: {}
+#          env:
+ #           - name: LOG_DIR
+  #            value: "/tmp/logs"
+    #        - name: OTEL_SERVICE_NAME
+   #           valueFrom:
+     #           fieldRef:
+      #            apiVersion: v1
+       #           fieldPath: metadata.labels['app.kubernetes.io/component']
+         #   - name: OTEL_COLLECTOR_NAME
+        #      value: otel-collector.default.svc.cluster.local
+        #    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+         #     value: delta
+          #  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+           #   value: http://$(OTEL_COLLECTOR_NAME):4317
+           # - name: OTEL_RESOURCE_ATTRIBUTES
+           #   value: service.name=$(OTEL_SERVICE_NAME),service.namespace=booking,service.version=1.1
+         # ports:
+        #    - containerPort: 9080
+        #  volumeMounts:
+         #   - name: tmp
+#              mountPath: /tmp
+#            - name: wlp-output
+#              mountPath: /opt/ibm/wlp/output
+#      volumes:
+#        - name: wlp-output
+#          emptyDir: {}
+#        - name: tmp
+#          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
