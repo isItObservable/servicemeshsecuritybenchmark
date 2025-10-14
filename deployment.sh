@@ -271,9 +271,9 @@ else
     kubectl apply -f linkerd/referencegrant.yaml
     kubectl apply -f linkerd/observability.yaml
     echo "🔧 Applying patch..."
-    HTTP_IDX=$(kubectl get svc bookinfo-gateway -n booking -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "listener-80") | .key')
+    HTTP_IDX=$(kubectl get svc bookinfo-gateway -n  kgateway-system  -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "listener-80") | .key')
     PATCH_OPS="[{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}]"
-    kubectl patch svc bookinfo-gateway -n booking  --type='json'  -p="${PATCH_OPS}"
+    kubectl patch svc bookinfo-gateway -n  kgateway-system   --type='json'  -p="${PATCH_OPS}"
 
   else
      if [  "$TYPE" = 'ambient' ]; then
@@ -343,7 +343,11 @@ if [  "$TYPE" != 'none' ]; then
     if [  "$TYPE" != 'ambient-kgateway' ]; then
        kubectl apply -f kgateway-ambient/simpleroute.yaml
     else
-      kubectl apply -f bookinfo/manifest/simpleroute.yaml
+      if [  "$TYPE" != 'linkerd' ]; then
+        kubectl apply -f kgateway-ambient/simpleroute.yaml
+      else
+        kubectl apply -f bookinfo/manifest/simpleroute.yaml
+      fi
     fi
 #  kubectl apply -f opentelemetry/policy.yaml
 fi
