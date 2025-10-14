@@ -281,11 +281,10 @@ else
        kubectl apply -f istio/referencegrant.yaml
 
        echo "🔧 Applying patch..."
-       SVC_JSON=$(kubectl get svc bookinfo-gateway-istio -n booking -o json)
-       HTTP_IDX=$(echo "$SVC_JSON" | jq '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
-       PATCH_OPS='['
-       PATCH_OPS="${PATCH_OPS}{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}"
-       kubectl patch svc bookinfo-gateway-istio -n booking --type='json' -p="${PATCH_OPS}"
+       HTTP_IDX=$(kubectl get svc bookinfo-gateway-istio -n booking -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+       PATCH_OPS="[{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}]"
+
+       kubectl patch svc bookinfo-gateway-istio -n booking  --type='json'  -p="${PATCH_OPS}"
 
      else
         if [  "$TYPE" = 'istio' ]; then
@@ -295,11 +294,13 @@ else
           kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
           kubectl apply -f istio/referencegrant.yaml
           echo "🔧 Applying patch..."
-          SVC_JSON=$(kubectl get svc bookinfo-gateway-istio -n booking -o json)
-          HTTP_IDX=$(echo "$SVC_JSON" | jq '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
-          PATCH_OPS='['
-          PATCH_OPS="${PATCH_OPS}{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}"
-          kubectl patch svc bookinfo-gateway-istio -n booking --type='json' -p="${PATCH_OPS}"
+          echo "🔧 Applying patch..."
+          HTTP_IDX=$(kubectl get svc bookinfo-gateway-istio -n booking -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+          PATCH_OPS="[{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}]"
+
+          kubectl patch svc bookinfo-gateway-istio -n booking  --type='json'  -p="${PATCH_OPS}"
+
+
 
         else
           if [  "$TYPE" = 'ambient-kgateway' ]; then

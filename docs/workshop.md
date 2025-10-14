@@ -1206,6 +1206,7 @@ flowchart TD
 **Your turn!** Apply timeout, circuit breaker, and rate limiting for details service.
 
 **Requirements:**
+
 - Timeout: 1 second
 - Circuit breaker: 5 consecutive errors, 30s ejection
 - Rate limit: 50 requests per minute
