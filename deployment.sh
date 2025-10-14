@@ -107,7 +107,7 @@ if [  "$TYPE" = 'kuma' ]; then
   echo "installing kuma"
   helm repo add kuma https://kumahq.github.io/charts
   helm repo update
-  helm install --create-namespace --namespace kuma-system kuma kuma/kuma
+  helm install --create-namespace --namespace kuma-system kuma kuma/kuma --wait
   kubectl apply -f kuma/gatewayclass.yaml
   kubectl apply -f kuma/MeshMetric.yaml
   kubectl apply -f kuma/meshtrace.yaml
@@ -259,7 +259,7 @@ if [  "$TYPE" = 'kuma' ]; then
   echo " kuma"
    kubectl apply -f kuma/kuma_gateway.yaml
    kubectl label namespace booking kuma.io/sidecar-injection=enabled
-   kubectl apply -f openTelemetry-manifest_statefulset.yaml
+   kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset.yaml
    kubectl apply -f kuma/referencegrant.yaml
    kubectl apply -f bookinfo/manifest/simpleroute.yaml
 
