@@ -271,7 +271,7 @@ else
     kubedtl apply -f linkerd/referencegrant.yaml
     kubect apply -f linkerd/observability.yaml
     echo "🔧 Applying patch..."
-    HTTP_IDX=$(kubectl get svc bookinfo-gateway -n booking -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+    HTTP_IDX=$(kubectl get svc bookinfo-gateway -n booking -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "listener-80") | .key')
     PATCH_OPS="[{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}]"
     kubectl patch svc bookinfo-gateway -n booking  --type='json'  -p="${PATCH_OPS}"
 
@@ -319,7 +319,7 @@ else
                kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_kgateway.yaml
                kubectl apply -f kgateway-ambient/referencegrant.yaml
                echo "🔧 Applying patch..."
-               HTTP_IDX=$(kubectl get svc bookinfo-gateway -n kgateway-system -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+               HTTP_IDX=$(kubectl get svc bookinfo-gateway -n kgateway-system -o json |  jq -r '.spec.ports | to_entries | .[] | select(.value.name == "listener-80") | .key')
                PATCH_OPS="[{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}]"
                kubectl patch svc bookinfo-gateway -n kgateway-system  --type='json'  -p="${PATCH_OPS}"
 
