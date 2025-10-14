@@ -7,6 +7,4 @@ This environment will deploy the Booking app with a one of the Service Mesh cove
 It will send Metrics , logs and traces to Dynatrace
 
 
-<div class="grid cards" markdown>
-- [Click Here to Begin :octicons-arrow-right-24:](getting-started.md)
-</div>
+[Click Here to Begin :octicons-arrow-right-24:](getting-started.md){ .md-button .md-button--primary }

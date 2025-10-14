@@ -278,6 +278,12 @@ else
        kubectl label namespace booking istio.io/use-waypoint=bookinfo-waypoint
        kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
        kubectl apply -f istio/referencegrant.yaml
+       GATEWAY_SVC=$(kubectl get svc -n booking -l gateway.networking.k8s.io/gateway-name=bookinfo-gateway -o jsonpath='{.items[0].metadata.name}')
+       #
+       echo "Patching service: ${GATEWAY_SVC} to use the standard nodeport"
+       #
+       # # Patch with fixed NodePorts
+       kubectl patch svc ${GATEWAY_SVC} -n booking --type='json' -p='[{"op": "add", "path": "/spec/ports/0/nodePort", "value": 30080}]'
      else
         if [  "$TYPE" = 'istio' ]; then
           echo " istio"
@@ -285,6 +291,10 @@ else
           kubectl label namespace booking istio-injection=enabled
           kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
           kubectl apply -f istio/referencegrant.yaml
+          echo "Patching service: ${GATEWAY_SVC} to use the standard nodeport"
+          # # Patch with fixed NodePorts
+          kubectl patch svc ${GATEWAY_SVC} -n booking --type='json' -p='[{"op": "add", "path": "/spec/ports/0/nodePort", "value": 30080}]'
+
         else
           if [  "$TYPE" = 'ambient-kgateway' ]; then
                echo " ambient-kgateway"
@@ -296,6 +306,8 @@ else
                kubectl apply -f kgateway-ambient/observability.yaml
                kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_kgateway.yaml
                kubectl apply -f kgateway-ambient/referencegrant.yaml
+
+
 
           else
             echo "no mesh- no annotation"

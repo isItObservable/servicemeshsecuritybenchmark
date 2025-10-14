@@ -150,7 +150,7 @@ spec:
         - group: core
           kind: ServiceAccount
           name: bookinfo-productpage
-          namespace: default
+          namespace: booking
 ---
 # ============================================
 # HTTPLocalRateLimitPolicy: Rate limiting for details
@@ -178,7 +178,7 @@ spec:
         - group: core
           kind: ServiceAccount
           name: bookinfo-productpage
-          namespace: default
+          namespace: booking
 ---
 # ============================================
 # HTTPRoute: productpage -> reviews

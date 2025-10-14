@@ -3,6 +3,8 @@ kind: Gateway
 metadata:
   name: bookinfo-gateway
   namespace: booking
+  annotations:
+    networking.istio.io/service-type: NodePort
 spec:
   gatewayClassName: istio
   listeners:

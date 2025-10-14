@@ -458,13 +458,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-2-resilience-patterns-with-httproutes-15-minutes" class="md-nav__link">
+  <a href="#part-2-resilience-patterns-with-httproutes" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 2: Resilience Patterns with HTTPRoutes (15 minutes)
+      Part 2: Resilience Patterns with HTTPRoutes
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes (15 minutes)">
+    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -629,13 +629,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-1-gateway-api-fundamentals-10-minutes" class="md-nav__link">
+  <a href="#part-1-gateway-api-fundamentals" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 1: Gateway API Fundamentals (10 minutes)
+      Part 1: Gateway API Fundamentals
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals (10 minutes)">
+    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -648,9 +648,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pattern-2-circuit-breaker-with-destinationrule" class="md-nav__link">
+  <a href="#pattern-2-circuit-breaker" class="md-nav__link">
     <span class="md-ellipsis">
-      Pattern 2: Circuit Breaker with DestinationRule
+      Pattern 2: Circuit Breaker
     </span>
   </a>
   
@@ -1261,13 +1261,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-2-resilience-patterns-with-httproutes-15-minutes" class="md-nav__link">
+  <a href="#part-2-resilience-patterns-with-httproutes" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 2: Resilience Patterns with HTTPRoutes (15 minutes)
+      Part 2: Resilience Patterns with HTTPRoutes
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes (15 minutes)">
+    <nav class="md-nav" aria-label="Part 2: Resilience Patterns with HTTPRoutes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1432,13 +1432,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-1-gateway-api-fundamentals-10-minutes" class="md-nav__link">
+  <a href="#part-1-gateway-api-fundamentals" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 1: Gateway API Fundamentals (10 minutes)
+      Part 1: Gateway API Fundamentals
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals (10 minutes)">
+    <nav class="md-nav" aria-label="Part 1: Gateway API Fundamentals">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1451,9 +1451,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pattern-2-circuit-breaker-with-destinationrule" class="md-nav__link">
+  <a href="#pattern-2-circuit-breaker" class="md-nav__link">
     <span class="md-ellipsis">
-      Pattern 2: Circuit Breaker with DestinationRule
+      Pattern 2: Circuit Breaker
     </span>
   </a>
   
@@ -1976,8 +1976,7 @@
 
 
 <h1 id="service-mesh-workshop-gateway-api-ambient-architecture-ai-enhanced-gateways">Service Mesh Workshop: Gateway API, Ambient Architecture &amp; AI-Enhanced Gateways<a class="headerlink" href="#service-mesh-workshop-gateway-api-ambient-architecture-ai-enhanced-gateways" title="Permanent link">#</a></h1>
-<p><strong>Duration:</strong> 60 minutes<br />
-<strong>Level:</strong> Intermediate  </p>
+<p><strong>Level:</strong> Intermediate  </p>
 <h2 id="workshop-overview">Workshop Overview<a class="headerlink" href="#workshop-overview" title="Permanent link">#</a></h2>
 <p>Learn how to leverage Gateway API for service-to-service communication and implement resilience patterns using:
 1. Gateway API HTTPRoutes (GAMMA pattern)
@@ -2037,13 +2036,6 @@ kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> <
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>productpage-to-reviews<span class="w"> </span>-n<span class="w"> </span>booking
 kubectl<span class="w"> </span>describe<span class="w"> </span>httproute<span class="w"> </span>productpage-to-reviews<span class="w"> </span>-n<span class="w"> </span>booking
 </code></pre></div></p>
-<p><strong>Test:</strong>
-<div class="highlight"><pre><span></span><code><span class="c1"># Get productpage pod</span>
-<span class="nv">PRODUCTPAGE_POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>productpage<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[0].metadata.name}&#39;</span><span class="k">)</span>
-
-<span class="c1"># Call reviews from productpage</span>
-kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://reviews:9080/reviews/0<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
-</code></pre></div></p>
 <h3 id="exercise-2-add-productpage-details-route">Exercise 2: Add productpage → details Route<a class="headerlink" href="#exercise-2-add-productpage-details-route" title="Permanent link">#</a></h3>
 <p><strong>Your turn!</strong> Create an HTTPRoute for productpage → details</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create the HTTPRoute (fill in the blanks)</span>
@@ -2086,7 +2078,7 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 </code></pre></div>
 </details>
 
-<h2 id="part-2-resilience-patterns-with-httproutes-15-minutes">Part 2: Resilience Patterns with HTTPRoutes (15 minutes)<a class="headerlink" href="#part-2-resilience-patterns-with-httproutes-15-minutes" title="Permanent link">#</a></h2>
+<h2 id="part-2-resilience-patterns-with-httproutes">Part 2: Resilience Patterns with HTTPRoutes<a class="headerlink" href="#part-2-resilience-patterns-with-httproutes" title="Permanent link">#</a></h2>
 <h3 id="pattern-1-request-timeouts">Pattern 1: Request Timeouts<a class="headerlink" href="#pattern-1-request-timeouts" title="Permanent link">#</a></h3>
 <p><strong>Why?</strong> Prevent cascading failures by failing fast.</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
@@ -2117,12 +2109,6 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <span class="s">          port: 9080</span>
 <span class="s">EOF</span>
 </code></pre></div>
-<p><strong>Test Timeout:</strong>
-<div class="highlight"><pre><span></span><code><span class="c1"># Check current timeout behavior</span>
-<span class="nb">time</span><span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://reviews:9080/reviews/0
-
-<span class="c1"># Should complete in &lt; 2s</span>
-</code></pre></div></p>
 <h2 id="part-0-understanding-gamma-policy-attachment-5-minutes">Part 0: Understanding GAMMA Policy Attachment (5 minutes)<a class="headerlink" href="#part-0-understanding-gamma-policy-attachment-5-minutes" title="Permanent link">#</a></h2>
 <h3 id="what-is-gamma">What is GAMMA?<a class="headerlink" href="#what-is-gamma" title="Permanent link">#</a></h3>
 <p><strong>GAMMA</strong> = <strong>Gateway API for Mesh Management and Administration</strong></p>
@@ -2154,7 +2140,11 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <h3 id="gamma-solution-extensionref">GAMMA Solution: extensionRef<a class="headerlink" href="#gamma-solution-extensionref" title="Permanent link">#</a></h3>
 <p>GAMMA introduced <strong>two patterns</strong> for policy attachment:</p>
 <h4 id="pattern-1-direct-policy-attachment-preferred">Pattern 1: Direct Policy Attachment (Preferred)<a class="headerlink" href="#pattern-1-direct-policy-attachment-preferred" title="Permanent link">#</a></h4>
-<p><strong>Concept:</strong> Policy CRD uses <code>targetRef</code> to attach to a resource.</p>
+<p><strong>Concept:</strong> </p>
+<p>Policy CRD  to attach to a resource</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">kgateway</label><label for="__tabbed_1_2">istio</label><label for="__tabbed_1_3">ambient</label><label for="__tabbed_1_4">kuma</label><label for="__tabbed_1_5">linkerd</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># Policy targets a specific resource</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TrafficPolicy</span>
@@ -2171,6 +2161,101 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
 <span class="w">    </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
 </code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-ratings</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.booking.svc.cluster.local</span>
+<span class="w">    </span><span class="nt">trafficPolicy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span>
+<span class="w">    </span><span class="nt">subsets</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testversion</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span>
+<span class="w">      </span><span class="nt">trafficPolicy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROUND_ROBIN</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-ratings</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.booking.svc.cluster.local</span>
+<span class="w">    </span><span class="nt">trafficPolicy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span>
+<span class="w">    </span><span class="nt">subsets</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testversion</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span>
+<span class="w">      </span><span class="nt">trafficPolicy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROUND_ROBIN</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kuma.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MeshTimeout</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-timeout</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kuma-system</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kuma.io/mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Target the route from productpage to reviews</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MeshService</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews_booking_svc_9080</span>
+<span class="w">  </span><span class="nt">from</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MeshService</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage_booking_svc_9080</span>
+<span class="w">      </span><span class="nt">default</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># HTTP request timeout</span>
+<span class="w">        </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">requestTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
+<span class="w">          </span><span class="c1"># Idle timeout</span>
+<span class="w">          </span><span class="nt">idleTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15s</span>
+<span class="w">          </span><span class="c1"># Stream idle timeout</span>
+<span class="w">          </span><span class="nt">streamIdleTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy.linkerd.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPLocalRateLimitPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details-ratelimit</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">booking</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Target the details server</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy.linkerd.io</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Server</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details-server</span>
+<span class="w">  </span><span class="c1"># Rate limit: 50 requests per minute (~0.83 req/s)</span>
+<span class="w">  </span><span class="nt">total</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requestsPerSecond</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">identity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-productpage</span>
+<span class="w">  </span><span class="nt">overrides</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">requestsPerSecond</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">clientRefs</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">core</span>
+<span class="w">          </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-productpage</span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">booking</span>
+</code></pre></div>
+</div>
+</div>
+</div>
 <p><strong>How it works:</strong>
 <div class="highlight"><pre><span></span><code>TrafficPolicy ────targetRef────&gt; Service (reviews)
                                       ↑
@@ -2486,6 +2571,10 @@ targetRef with &#39;default&#39;         ← Lowest priority
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
 <span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gateway.networking.k8s.io&quot;</span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgateway-waypoint</span>
 <span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExtensionRef</span>
@@ -2558,7 +2647,7 @@ targetRef with &#39;default&#39;         ← Lowest priority
 </tr>
 </tbody>
 </table>
-<h2 id="part-1-gateway-api-fundamentals-10-minutes">Part 1: Gateway API Fundamentals (10 minutes)<a class="headerlink" href="#part-1-gateway-api-fundamentals-10-minutes" title="Permanent link">#</a></h2>
+<h2 id="part-1-gateway-api-fundamentals">Part 1: Gateway API Fundamentals<a class="headerlink" href="#part-1-gateway-api-fundamentals" title="Permanent link">#</a></h2>
 <h3 id="understanding-the-bookinfo-application">Understanding the Bookinfo Application<a class="headerlink" href="#understanding-the-bookinfo-application" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>┌─────────────┐
 │ productpage │ (Python - Frontend)
@@ -2569,8 +2658,11 @@ targetRef with &#39;default&#39;         ← Lowest priority
        │
        └──────► details (Ruby - Book info)
 </code></pre></div>
-<h3 id="pattern-2-circuit-breaker-with-destinationrule">Pattern 2: Circuit Breaker with DestinationRule<a class="headerlink" href="#pattern-2-circuit-breaker-with-destinationrule" title="Permanent link">#</a></h3>
+<h3 id="pattern-2-circuit-breaker">Pattern 2: Circuit Breaker<a class="headerlink" href="#pattern-2-circuit-breaker" title="Permanent link">#</a></h3>
 <p><strong>Why?</strong> Stop calling failing services to give them time to recover.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">istio</label><label for="__tabbed_2_2">ambient</label><label for="__tabbed_2_3">kuma</label><label for="__tabbed_2_4">linkerd</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: networking.istio.io/v1beta1</span>
 <span class="s">kind: DestinationRule</span>
@@ -2629,40 +2721,197 @@ targetRef with &#39;default&#39;         ← Lowest priority
 </tr>
 </tbody>
 </table>
-<p><strong>Test Circuit Breaker:</strong>
-<div class="highlight"><pre><span></span><code><span class="c1"># Inject faults to trip the circuit breaker</span>
-kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>DestinationRule<span class="w"> </span>reviews-circuit-breaker
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: networking.istio.io/v1beta1</span>
-<span class="s">kind: VirtualService</span>
+<span class="s">kind: DestinationRule</span>
 <span class="s">metadata:</span>
-<span class="s">  name: reviews-fault</span>
+<span class="s">  name: reviews-circuit-breaker</span>
 <span class="s">  namespace: booking</span>
 <span class="s">spec:</span>
-<span class="s">  hosts:</span>
-<span class="s">    - reviews</span>
-<span class="s">  http:</span>
-<span class="s">    - fault:</span>
-<span class="s">        abort:</span>
-<span class="s">          percentage:</span>
-<span class="s">            value: 100</span>
-<span class="s">          httpStatus: 503</span>
-<span class="s">      route:</span>
-<span class="s">        - destination:</span>
-<span class="s">            host: reviews</span>
+<span class="s">  host: reviews.booking.svc.cluster.local</span>
+<span class="s">  trafficPolicy:</span>
+<span class="s">    # Connection pool limits (rate limiting at connection level)</span>
+<span class="s">    connectionPool:</span>
+<span class="s">      tcp:</span>
+<span class="s">        maxConnections: 100</span>
+<span class="s">      http:</span>
+<span class="s">        http1MaxPendingRequests: 10    # Max queued requests</span>
+<span class="s">        http2MaxRequests: 100           # Max concurrent requests</span>
+<span class="s">        maxRequestsPerConnection: 2     # Connection reuse limit</span>
+<span class="s">    # Circuit breaker configuration</span>
+<span class="s">    outlierDetection:</span>
+<span class="s">      consecutive5xxErrors: 5           # Trip after 5 errors</span>
+<span class="s">      interval: 30s                      # Check every 30s</span>
+<span class="s">      baseEjectionTime: 30s             # Eject for 30s</span>
+<span class="s">      maxEjectionPercent: 50            # Max 50% of instances</span>
+<span class="s">      minHealthPercent: 50              # Keep 50% healthy minimum</span>
 <span class="s">EOF</span>
-
-<span class="c1"># Generate errors</span>
-<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..10<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">  </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}\n&quot;</span><span class="w"> </span>http://reviews:9080/reviews/0
-<span class="k">done</span>
-
-
-<span class="c1"># Clean up fault</span>
-kubectl<span class="w"> </span>delete<span class="w"> </span>virtualservice<span class="w"> </span>reviews-fault
+</code></pre></div>
+<p><strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>consecutive5xxErrors</code></td>
+<td>Errors before ejection</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td>Detection check frequency</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>baseEjectionTime</code></td>
+<td>How long to eject</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>maxEjectionPercent</code></td>
+<td>Max % ejected</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>DestinationRule<span class="w"> </span>reviews-circuit-breaker
 </code></pre></div></p>
-<h3 id="pattern-3-rate-limiting">Pattern 3: Rate Limiting<a class="headerlink" href="#pattern-3-rate-limiting" title="Permanent link">#</a></h3>
-<p><strong>Sidecar Approach (if using sidecar):</strong>
+</div>
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: kuma.io/v1alpha1</span>
+<span class="s">kind: MeshCircuitBreaker</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-circuit-breaker</span>
+<span class="s">  namespace: kuma-system</span>
+<span class="s">  labels:</span>
+<span class="s">    kuma.io/mesh: default</span>
+<span class="s">spec:</span>
+<span class="s">  # Target reviews service</span>
+<span class="s">  targetRef:</span>
+<span class="s">    kind: MeshService</span>
+<span class="s">    name: reviews_booking_svc_9080</span>
+<span class="s">  # Apply from productpage</span>
+<span class="s">  from:</span>
+<span class="s">    - targetRef:</span>
+<span class="s">        kind: MeshService</span>
+<span class="s">        name: productpage_booking_svc_9080</span>
+<span class="s">      default:</span>
+<span class="s">        # Connection pool settings</span>
+<span class="s">        connectionLimits:</span>
+<span class="s">          maxConnections: 100</span>
+<span class="s">          maxPendingRequests: 10</span>
+<span class="s">          maxRequests: 100</span>
+<span class="s">          maxRetries: 3</span>
+<span class="s">        # Outlier detection (circuit breaker)</span>
+<span class="s">        outlierDetection:</span>
+<span class="s">          # Number of errors before ejection</span>
+<span class="s">          detectors:</span>
+<span class="s">            totalErrors:</span>
+<span class="s">              consecutive: 5</span>
+<span class="s">            gatewayErrors:</span>
+<span class="s">              consecutive: 3</span>
+<span class="s">            localOriginErrors:</span>
+<span class="s">              consecutive: 5</span>
+<span class="s">          # Detection interval</span>
+<span class="s">          interval: 30s</span>
+<span class="s">          # Ejection time</span>
+<span class="s">          baseEjectionTime: 30s</span>
+<span class="s">          # Maximum percentage of hosts that can be ejected</span>
+<span class="s">          maxEjectionPercent: 50</span>
+<span class="s">          # Split external and local origin errors</span>
+<span class="s">          splitExternalLocalOriginErrors: true</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p><strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>totalErrors</code></td>
+<td>Errors before ejection</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td>Detection check frequency</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>baseEjectionTime</code></td>
+<td>How long to eject</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>maxEjectionPercent</code></td>
+<td>Max % ejected</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>MeshCircuitBreaker<span class="w"> </span>reviews-circuit-breaker
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>annotate<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>reviews<span class="w"> </span>balancer.linkerd.io/failure-accrual<span class="o">=</span>consecutive
+kubectl<span class="w"> </span>annotate<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>reviews<span class="w"> </span>balancer.linkerd.io/failure-accrual-consecutive-max-failures<span class="o">=</span><span class="m">5</span>
+</code></pre></div>
+<strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>failure-accrual</code></td>
+<td>to enable circuitbreaker</td>
+<td>consecutive</td>
+</tr>
+<tr>
+<td><code>failure-accrual-consecutive-max-failures</code></td>
+<td>Number of failures</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>annotate<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>reviews<span class="w"> </span>balancer.linkerd.io/failure-accrual-
+kubectl<span class="w"> </span>annotate<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>reviews<span class="w"> </span>balancer.linkerd.io/failure-accrual-consecutive-max-failures-
+</code></pre></div></p>
+</div>
+</div>
+</div>
+<h3 id="pattern-3-rate-limiting">Pattern 3: Rate Limiting<a class="headerlink" href="#pattern-3-rate-limiting" title="Permanent link">#</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">istio</label><label for="__tabbed_3_2">kgateway</label><label for="__tabbed_3_3">kuma</label><label for="__tabbed_3_4">linkerd</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: networking.istio.io/v1alpha3</span>
 <span class="s">kind: EnvoyFilter</span>
 <span class="s">metadata:</span>
@@ -2704,24 +2953,225 @@ kubectl<span class="w"> </span>delete<span class="w"> </span>virtualservice<span
 <span class="s">                numerator: 100</span>
 <span class="s">                denominator: HUNDRED</span>
 <span class="s">EOF</span>
+</code></pre></div>
+<strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_tokens</code></td>
+<td>max tokens ( request)</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>fill_interval</code></td>
+<td>Evaluation period of the token</td>
+<td>60s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>EnvoyFilter<span class="w"> </span>reviews-ratelimit
 </code></pre></div></p>
-<p><strong>Test Rate Limiting:</strong>
-<div class="highlight"><pre><span></span><code><span class="c1"># Send rapid requests</span>
-<span class="nv">SUCCESS</span><span class="o">=</span><span class="m">0</span>
-<span class="nv">FAILED</span><span class="o">=</span><span class="m">0</span>
-
-<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">150</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">  </span><span class="nv">CODE</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$PRODUCTPAGE_POD</span><span class="w">  </span>-n<span class="w"> </span>booking<span class="w"> </span>-c<span class="w"> </span>productpage<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}&quot;</span><span class="w"> </span>http://reviews:9080/reviews/0<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CODE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
-<span class="w">    </span><span class="nv">SUCCESS</span><span class="o">=</span><span class="k">$((</span><span class="nv">SUCCESS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="k">))</span>
-<span class="w">  </span><span class="k">else</span>
-<span class="w">    </span><span class="nv">FAILED</span><span class="o">=</span><span class="k">$((</span><span class="nv">FAILED</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="k">))</span>
-<span class="w">  </span><span class="k">fi</span>
-<span class="k">done</span>
-
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Success: </span><span class="nv">$SUCCESS</span><span class="s2">, Rate Limited: </span><span class="nv">$FAILED</span><span class="s2">&quot;</span>
-<span class="c1"># Should see some rate limited after 100 requests</span>
+</div>
+<div class="tabbed-block">
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: gateway.kgateway.dev/v1alpha1</span>
+<span class="s">kind: TrafficPolicy</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-traffic-policy</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  # Target the reviews service via waypoint</span>
+<span class="s">  targetRef:</span>
+<span class="s">    group: &quot;&quot;</span>
+<span class="s">    kind: Service</span>
+<span class="s">    name: reviews</span>
+<span class="s">    namespace: booking</span>
+<span class="s">  # Rate limiting configuration</span>
+<span class="s">  policy:</span>
+<span class="s">    # Request rate limiting</span>
+<span class="s">    rateLimit:</span>
+<span class="s">      raw:</span>
+<span class="s">        rateLimits:</span>
+<span class="s">          - actions:</span>
+<span class="s">              - genericKey:</span>
+<span class="s">                  descriptorValue: &quot;reviews-rate-limit&quot;</span>
+<span class="s">            limit:</span>
+<span class="s">              requestsPerUnit: 100</span>
+<span class="s">              unit: MINUTE</span>
+<span class="s">        setActions:</span>
+<span class="s">          - headerValueMatch:</span>
+<span class="s">              descriptorValue: &quot;productpage-source&quot;</span>
+<span class="s">              headers:</span>
+<span class="s">                - name: &quot;:authority&quot;</span>
+<span class="s">                  stringMatch:</span>
+<span class="s">                    exact: &quot;reviews.booking.svc.cluster.local&quot;</span>
+<span class="s">    # Connection limits (part of rate limiting)</span>
+<span class="s">    connectionPool:</span>
+<span class="s">      http:</span>
+<span class="s">        http1MaxPendingRequests: 10</span>
+<span class="s">        http2MaxRequests: 100</span>
+<span class="s">        maxRequestsPerConnection: 2</span>
+<span class="s">      tcp:</span>
+<span class="s">        maxConnections: 100</span>
+<span class="s">    # Request timeout</span>
+<span class="s">    requestTimeout: 2s</span>
+<span class="s">    # Idle timeout</span>
+<span class="s">    idleTimeout: 30s</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requestsPerUnit</code></td>
+<td>max requests ( request)</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>unit</code></td>
+<td>Evaluation period of the token</td>
+<td>60s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>TrafficPolicy<span class="w"> </span>reviews-traffic-policy
 </code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: kuma.io/v1alpha1</span>
+<span class="s">kind: MeshRateLimit</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-ratelimit</span>
+<span class="s">  namespace: kuma-system</span>
+<span class="s">  labels:</span>
+<span class="s">    kuma.io/mesh: default</span>
+<span class="s">spec:</span>
+<span class="s">  # Target reviews service</span>
+<span class="s">  targetRef:</span>
+<span class="s">    kind: MeshService</span>
+<span class="s">    name: reviews_booking_svc_9080</span>
+<span class="s">  # Apply from productpage</span>
+<span class="s">  from:</span>
+<span class="s">    - targetRef:</span>
+<span class="s">        kind: MeshService</span>
+<span class="s">        name: productpage_booking_svc_9080</span>
+<span class="s">      default:</span>
+<span class="s">        # Local rate limiting (token bucket)</span>
+<span class="s">        local:</span>
+<span class="s">          http:</span>
+<span class="s">            # 100 requests per minute</span>
+<span class="s">            requestRate:</span>
+<span class="s">              num: 100</span>
+<span class="s">              interval: 1m</span>
+<span class="s">            # On rate limit, return 429</span>
+<span class="s">            onRateLimit:</span>
+<span class="s">              status: 429</span>
+<span class="s">              headers:</span>
+<span class="s">                add:</span>
+<span class="s">                  - name: x-kuma-rate-limited</span>
+<span class="s">                    value: &quot;true&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requestRate.num</code></td>
+<td>max requests ( request)</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>requestRate.interval</code></td>
+<td>Evaluation period of the token</td>
+<td>60s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>MeshRateLimit<span class="w"> </span>reviews-ratelimit
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: policy.linkerd.io/v1alpha1</span>
+<span class="s">kind: HTTPLocalRateLimitPolicy</span>
+<span class="s">metadata:</span>
+<span class="s">  name: reviews-ratelimit</span>
+<span class="s">  namespace: booking</span>
+<span class="s">spec:</span>
+<span class="s">  # Target the reviews server</span>
+<span class="s">  targetRef:</span>
+<span class="s">    group: policy.linkerd.io</span>
+<span class="s">    kind: Server</span>
+<span class="s">    name: reviews-server</span>
+<span class="s">  # Rate limit: 100 requests per minute (~1.67 req/s)</span>
+<span class="s">  total:</span>
+<span class="s">    requestsPerSecond: 2</span>
+<span class="s">  # Per-identity rate limits</span>
+<span class="s">  identity:</span>
+<span class="s">    kind: ServiceAccount</span>
+<span class="s">    name: bookinfo-productpage</span>
+<span class="s">  # Override for specific clients</span>
+<span class="s">  overrides:</span>
+<span class="s">    - requestsPerSecond: 2</span>
+<span class="s">      clientRefs:</span>
+<span class="s">        - group: core</span>
+<span class="s">          kind: ServiceAccount</span>
+<span class="s">          name: bookinfo-productpage</span>
+<span class="s">          namespace: booking</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<strong>Understanding the Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requestsPerSecond</code></td>
+<td>max requests  per sec( request)</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Clean up</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up fault</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>HTTPLocalRateLimitPolicy<span class="w"> </span>reviews-ratelimit
+</code></pre></div></p>
+</div>
+</div>
+</div>
 <h3 id="exercise-3-complete-configuration-for-details-service">Exercise 3: Complete Configuration for Details Service<a class="headerlink" href="#exercise-3-complete-configuration-for-details-service" title="Permanent link">#</a></h3>
 <p><strong>Your turn!</strong> Apply timeout, circuit breaker, and rate limiting for details service.</p>
 <p><strong>Requirements:</strong>
@@ -2933,7 +3383,7 @@ reviews pod
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">principals</span><span class="p">:</span>
 <span class="w">              </span><span class="c1"># This is productpage&#39;s identity, not waypoint&#39;s!</span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cluster.local/ns/default/sa/bookinfo-productpage&quot;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cluster.local/ns/booking/sa/bookinfo-productpage&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="part-4-kgateway-value-ai-integration-15-minutes">Part 4: KGateway Value &amp; AI Integration (15 minutes)<a class="headerlink" href="#part-4-kgateway-value-ai-integration-15-minutes" title="Permanent link">#</a></h2>
@@ -3613,13 +4063,13 @@ kubectl<span class="w"> </span>get<span class="w"> </span>virtualservice<span cl
 </tr>
 <tr>
 <td><strong>Advanced Routing</strong></td>
-<td>⚠️</td>
+<td>✅️</td>
 <td>⚠️</td>
 <td>✅</td>
 </tr>
 <tr>
 <td><strong>Transformation</strong></td>
-<td>❌</td>
+<td>✅</td>
 <td>❌</td>
 <td>✅</td>
 </tr>

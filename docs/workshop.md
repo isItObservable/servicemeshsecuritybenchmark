@@ -1,6 +1,6 @@
 # Service Mesh Workshop: Gateway API, Ambient Architecture & AI-Enhanced Gateways
 
-**Duration:** 60 minutes  
+
 **Level:** Intermediate  
 
 ## Workshop Overview
@@ -80,14 +80,6 @@ kubectl get httproute productpage-to-reviews -n booking
 kubectl describe httproute productpage-to-reviews -n booking
 ```
 
-**Test:**
-```bash
-# Get productpage pod
-PRODUCTPAGE_POD=$(kubectl get pod -n booking -l app=productpage -o jsonpath='{.items[0].metadata.name}')
-
-# Call reviews from productpage
-kubectl exec $PRODUCTPAGE_POD -c productpage -n booking -- curl -s http://reviews:9080/reviews/0 | head -20
-```
 
 ### Exercise 2: Add productpage → details Route
 
@@ -138,7 +130,7 @@ spec:
 
 
 
-## Part 2: Resilience Patterns with HTTPRoutes (15 minutes)
+## Part 2: Resilience Patterns with HTTPRoutes 
 
 ### Pattern 1: Request Timeouts
 
@@ -174,13 +166,6 @@ spec:
 EOF
 ```
 
-**Test Timeout:**
-```bash
-# Check current timeout behavior
-time kubectl exec $PRODUCTPAGE_POD -n booking -c productpage -- curl -s http://reviews:9080/reviews/0
-
-# Should complete in < 2s
-```
 
 ## Part 0: Understanding GAMMA Policy Attachment (5 minutes)
 
@@ -226,25 +211,133 @@ GAMMA introduced **two patterns** for policy attachment:
 
 #### Pattern 1: Direct Policy Attachment (Preferred)
 
-**Concept:** Policy CRD uses `targetRef` to attach to a resource.
+**Concept:** 
 
-```yaml
-# Policy targets a specific resource
-apiVersion: gateway.kgateway.dev/v1alpha1
-kind: TrafficPolicy
-metadata:
-  name: reviews-policy
-spec:
-  # targetRef: "I apply to this resource"
-  targetRef:
-    group: ""
-    kind: Service
-    name: reviews
-  # Policy configuration
-  override:
-    timeout: 2s
-    retry: {...}
-```
+Policy CRD  to attach to a resource
+
+=== "kgateway"
+
+    ```yaml
+    # Policy targets a specific resource
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: TrafficPolicy
+    metadata:
+      name: reviews-policy
+    spec:
+      # targetRef: "I apply to this resource"
+      targetRef:
+        group: ""
+        kind: Service
+        name: reviews
+      # Policy configuration
+      override:
+        timeout: 2s
+        retry: {...}
+    ```
+
+=== "istio"
+
+    ```yaml
+    apiVersion: networking.istio.io/v1
+    kind: DestinationRule
+    metadata:
+    name: bookinfo-ratings
+    spec:
+        host: reviews.booking.svc.cluster.local
+        trafficPolicy:
+            loadBalancer:
+            simple: LEAST_REQUEST
+        subsets:
+        - name: testversion
+          labels:
+            version: v3
+          trafficPolicy:
+            loadBalancer:
+                 simple: ROUND_ROBIN
+    ```
+
+
+=== "ambient"
+
+    ```yaml
+    apiVersion: networking.istio.io/v1
+    kind: DestinationRule
+    metadata:
+    name: bookinfo-ratings
+    spec:
+        host: reviews.booking.svc.cluster.local
+        trafficPolicy:
+            loadBalancer:
+            simple: LEAST_REQUEST
+        subsets:
+        - name: testversion
+          labels:
+            version: v3
+          trafficPolicy:
+            loadBalancer:
+                 simple: ROUND_ROBIN
+    ```
+
+
+
+=== "kuma"
+
+    ```yaml
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshTimeout
+    metadata:
+      name: reviews-timeout
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      # Target the route from productpage to reviews
+      targetRef:
+        kind: MeshService
+        name: reviews_booking_svc_9080
+      from:
+        - targetRef:
+            kind: MeshService
+            name: productpage_booking_svc_9080
+          default:
+            # HTTP request timeout
+            http:
+              requestTimeout: 2s
+              # Idle timeout
+              idleTimeout: 15s
+              # Stream idle timeout
+              streamIdleTimeout: 30s
+    ```
+
+
+=== "linkerd"
+
+    ```yaml
+    apiVersion: policy.linkerd.io/v1alpha1
+    kind: HTTPLocalRateLimitPolicy
+    metadata:
+      name: details-ratelimit
+      namespace: booking
+    spec:
+      # Target the details server
+      targetRef:
+        group: policy.linkerd.io
+        kind: Server
+        name: details-server
+      # Rate limit: 50 requests per minute (~0.83 req/s)
+      total:
+        requestsPerSecond: 1
+      identity:
+        kind: ServiceAccount
+        name: bookinfo-productpage
+      overrides:
+        - requestsPerSecond: 1
+          clientRefs:
+            - group: core
+              kind: ServiceAccount
+              name: bookinfo-productpage
+              namespace: booking
+    ```
 
 **How it works:**
 ```
@@ -588,6 +681,10 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 spec:
+  parentRefs:
+    - group: "gateway.networking.k8s.io"
+      kind: Gateway
+      name: kgateway-waypoint
   rules:
     - filters:
         - type: ExtensionRef
@@ -636,7 +733,7 @@ spec:
 
 
 
-## Part 1: Gateway API Fundamentals (10 minutes)
+## Part 1: Gateway API Fundamentals 
 
 ### Understanding the Bookinfo Application
 
@@ -651,146 +748,408 @@ spec:
        └──────► details (Ruby - Book info)
 ```
 
-### Pattern 2: Circuit Breaker with DestinationRule
+### Pattern 2: Circuit Breaker 
 
 **Why?** Stop calling failing services to give them time to recover.
 
-```bash
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: DestinationRule
-metadata:
-  name: reviews-circuit-breaker
-  namespace: booking
-spec:
-  host: reviews.booking.svc.cluster.local
-  trafficPolicy:
-    # Connection pool limits (rate limiting at connection level)
-    connectionPool:
-      tcp:
-        maxConnections: 100
-      http:
-        http1MaxPendingRequests: 10    # Max queued requests
-        http2MaxRequests: 100           # Max concurrent requests
-        maxRequestsPerConnection: 2     # Connection reuse limit
-    # Circuit breaker configuration
-    outlierDetection:
-      consecutive5xxErrors: 5           # Trip after 5 errors
-      interval: 30s                      # Check every 30s
-      baseEjectionTime: 30s             # Eject for 30s
-      maxEjectionPercent: 50            # Max 50% of instances
-      minHealthPercent: 50              # Keep 50% healthy minimum
-EOF
-```
-
-**Understanding the Configuration:**
-
-| Parameter | Meaning | Example Value |
-|-----------|---------|---------------|
-| `consecutive5xxErrors` | Errors before ejection | 5 |
-| `interval` | Detection check frequency | 30s |
-| `baseEjectionTime` | How long to eject | 30s |
-| `maxEjectionPercent` | Max % ejected | 50% |
-
-**Test Circuit Breaker:**
-```bash
-# Inject faults to trip the circuit breaker
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: reviews-fault
-  namespace: booking
-spec:
-  hosts:
-    - reviews
-  http:
-    - fault:
-        abort:
-          percentage:
-            value: 100
-          httpStatus: 503
-      route:
-        - destination:
-            host: reviews
-EOF
-
-# Generate errors
-for i in {1..10}; do
-  kubectl exec $PRODUCTPAGE_POD -c productpage -- curl -s -o /dev/null -w "%{http_code}\n" http://reviews:9080/reviews/0
-done
 
 
-# Clean up fault
-kubectl delete virtualservice reviews-fault
-```
+=== "istio"
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: networking.istio.io/v1beta1
+    kind: DestinationRule
+    metadata:
+      name: reviews-circuit-breaker
+      namespace: booking
+    spec:
+      host: reviews.booking.svc.cluster.local
+      trafficPolicy:
+        # Connection pool limits (rate limiting at connection level)
+        connectionPool:
+          tcp:
+            maxConnections: 100
+          http:
+            http1MaxPendingRequests: 10    # Max queued requests
+            http2MaxRequests: 100           # Max concurrent requests
+            maxRequestsPerConnection: 2     # Connection reuse limit
+        # Circuit breaker configuration
+        outlierDetection:
+          consecutive5xxErrors: 5           # Trip after 5 errors
+          interval: 30s                      # Check every 30s
+          baseEjectionTime: 30s             # Eject for 30s
+          maxEjectionPercent: 50            # Max 50% of instances
+          minHealthPercent: 50              # Keep 50% healthy minimum
+    EOF
+    ```
+    
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning | Example Value |
+    |-----------|---------|---------------|
+    | `consecutive5xxErrors` | Errors before ejection | 5 |
+    | `interval` | Detection check frequency | 30s |
+    | `baseEjectionTime` | How long to eject | 30s |
+    | `maxEjectionPercent` | Max % ejected | 50% |
+
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete DestinationRule reviews-circuit-breaker
+    ```
+
+=== "ambient"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: networking.istio.io/v1beta1
+    kind: DestinationRule
+    metadata:
+      name: reviews-circuit-breaker
+      namespace: booking
+    spec:
+      host: reviews.booking.svc.cluster.local
+      trafficPolicy:
+        # Connection pool limits (rate limiting at connection level)
+        connectionPool:
+          tcp:
+            maxConnections: 100
+          http:
+            http1MaxPendingRequests: 10    # Max queued requests
+            http2MaxRequests: 100           # Max concurrent requests
+            maxRequestsPerConnection: 2     # Connection reuse limit
+        # Circuit breaker configuration
+        outlierDetection:
+          consecutive5xxErrors: 5           # Trip after 5 errors
+          interval: 30s                      # Check every 30s
+          baseEjectionTime: 30s             # Eject for 30s
+          maxEjectionPercent: 50            # Max 50% of instances
+          minHealthPercent: 50              # Keep 50% healthy minimum
+    EOF
+    ```
+    
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning | Example Value |
+    |-----------|---------|---------------|
+    | `consecutive5xxErrors` | Errors before ejection | 5 |
+    | `interval` | Detection check frequency | 30s |
+    | `baseEjectionTime` | How long to eject | 30s |
+    | `maxEjectionPercent` | Max % ejected | 50% |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete DestinationRule reviews-circuit-breaker
+    ```
+
+
+=== "kuma"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshCircuitBreaker
+    metadata:
+      name: reviews-circuit-breaker
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      # Target reviews service
+      targetRef:
+        kind: MeshService
+        name: reviews_booking_svc_9080
+      # Apply from productpage
+      from:
+        - targetRef:
+            kind: MeshService
+            name: productpage_booking_svc_9080
+          default:
+            # Connection pool settings
+            connectionLimits:
+              maxConnections: 100
+              maxPendingRequests: 10
+              maxRequests: 100
+              maxRetries: 3
+            # Outlier detection (circuit breaker)
+            outlierDetection:
+              # Number of errors before ejection
+              detectors:
+                totalErrors:
+                  consecutive: 5
+                gatewayErrors:
+                  consecutive: 3
+                localOriginErrors:
+                  consecutive: 5
+              # Detection interval
+              interval: 30s
+              # Ejection time
+              baseEjectionTime: 30s
+              # Maximum percentage of hosts that can be ejected
+              maxEjectionPercent: 50
+              # Split external and local origin errors
+              splitExternalLocalOriginErrors: true
+    EOF
+    ```
+    
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning | Example Value |
+    |-----------|---------|---------------|
+    | `totalErrors` | Errors before ejection | 5 |
+    | `interval` | Detection check frequency | 30s |
+    | `baseEjectionTime` | How long to eject | 30s |
+    | `maxEjectionPercent` | Max % ejected | 50% |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete MeshCircuitBreaker reviews-circuit-breaker
+    ```
+
+
+=== "linkerd"
+    ```bash
+    kubectl annotate -n booking reviews balancer.linkerd.io/failure-accrual=consecutive
+    kubectl annotate -n booking reviews balancer.linkerd.io/failure-accrual-consecutive-max-failures=5
+    ```
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning                  | Example Value |
+    |-----------|--------------------------|---------------|
+    | `failure-accrual` | to enable circuitbreaker | consecutive   |
+    | `failure-accrual-consecutive-max-failures` | Number of failures       | 5             |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl annotate -n booking reviews balancer.linkerd.io/failure-accrual-
+    kubectl annotate -n booking reviews balancer.linkerd.io/failure-accrual-consecutive-max-failures-
+    ```
+    
+
+
+
 
 ### Pattern 3: Rate Limiting
 
-**Sidecar Approach (if using sidecar):**
-```bash
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: EnvoyFilter
-metadata:
-  name: reviews-ratelimit
-  namespace: booking
-spec:
-  workloadSelector:
-    labels:
-      app: productpage
-  configPatches:
-    - applyTo: HTTP_FILTER
-      match:
-        context: SIDECAR_OUTBOUND
-        listener:
-          filterChain:
-            filter:
-              name: envoy.filters.network.http_connection_manager
-              subFilter:
-                name: envoy.filters.http.router
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: envoy.filters.http.local_ratelimit
-          typed_config:
-            "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
-            stat_prefix: http_local_rate_limiter
-            token_bucket:
-              max_tokens: 100
-              tokens_per_fill: 100
-              fill_interval: 60s  # 100 requests per minute
-            filter_enabled:
-              runtime_key: local_rate_limit_enabled
-              default_value:
-                numerator: 100
-                denominator: HUNDRED
-            filter_enforced:
-              runtime_key: local_rate_limit_enforced
-              default_value:
-                numerator: 100
-                denominator: HUNDRED
-EOF
-```
 
-**Test Rate Limiting:**
-```bash
-# Send rapid requests
-SUCCESS=0
-FAILED=0
+=== "istio"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: networking.istio.io/v1alpha3
+    kind: EnvoyFilter
+    metadata:
+      name: reviews-ratelimit
+      namespace: booking
+    spec:
+      workloadSelector:
+        labels:
+          app: productpage
+      configPatches:
+        - applyTo: HTTP_FILTER
+          match:
+            context: SIDECAR_OUTBOUND
+            listener:
+              filterChain:
+                filter:
+                  name: envoy.filters.network.http_connection_manager
+                  subFilter:
+                    name: envoy.filters.http.router
+          patch:
+            operation: INSERT_BEFORE
+            value:
+              name: envoy.filters.http.local_ratelimit
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+                stat_prefix: http_local_rate_limiter
+                token_bucket:
+                  max_tokens: 100
+                  tokens_per_fill: 100
+                  fill_interval: 60s  # 100 requests per minute
+                filter_enabled:
+                  runtime_key: local_rate_limit_enabled
+                  default_value:
+                    numerator: 100
+                    denominator: HUNDRED
+                filter_enforced:
+                  runtime_key: local_rate_limit_enforced
+                  default_value:
+                    numerator: 100
+                    denominator: HUNDRED
+    EOF
+    ```
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning                        | Example Value |
+    |-----------|--------------------------------|---------------|
+    | `max_tokens` | max tokens ( request)          | 100           |
+    | `fill_interval` | Evaluation period of the token | 60s           |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete EnvoyFilter reviews-ratelimit
+    ```
 
-for i in $(seq 1 150); do
-  CODE=$(kubectl exec $PRODUCTPAGE_POD  -n booking -c productpage -- curl -s -o /dev/null -w "%{http_code}" http://reviews:9080/reviews/0 2>/dev/null)
-  if [ "$CODE" = "200" ]; then
-    SUCCESS=$((SUCCESS + 1))
-  else
-    FAILED=$((FAILED + 1))
-  fi
-done
 
-echo "Success: $SUCCESS, Rate Limited: $FAILED"
-# Should see some rate limited after 100 requests
-```
+=== "kgateway"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: TrafficPolicy
+    metadata:
+      name: reviews-traffic-policy
+      namespace: booking
+    spec:
+      # Target the reviews service via waypoint
+      targetRef:
+        group: ""
+        kind: Service
+        name: reviews
+        namespace: booking
+      # Rate limiting configuration
+      policy:
+        # Request rate limiting
+        rateLimit:
+          raw:
+            rateLimits:
+              - actions:
+                  - genericKey:
+                      descriptorValue: "reviews-rate-limit"
+                limit:
+                  requestsPerUnit: 100
+                  unit: MINUTE
+            setActions:
+              - headerValueMatch:
+                  descriptorValue: "productpage-source"
+                  headers:
+                    - name: ":authority"
+                      stringMatch:
+                        exact: "reviews.booking.svc.cluster.local"
+        # Connection limits (part of rate limiting)
+        connectionPool:
+          http:
+            http1MaxPendingRequests: 10
+            http2MaxRequests: 100
+            maxRequestsPerConnection: 2
+          tcp:
+            maxConnections: 100
+        # Request timeout
+        requestTimeout: 2s
+        # Idle timeout
+        idleTimeout: 30s
+    EOF
+    ```
+    **Understanding the Configuration:**
+    
+    | Parameter | Meaning                        | Example Value |
+    |-----------|--------------------------------|---------------|
+    | `requestsPerUnit` | max requests ( request)        | 100           |
+    | `unit` | Evaluation period of the token | 60s           |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete TrafficPolicy reviews-traffic-policy
+    ```
+
+
+=== "kuma"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshRateLimit
+    metadata:
+      name: reviews-ratelimit
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      # Target reviews service
+      targetRef:
+        kind: MeshService
+        name: reviews_booking_svc_9080
+      # Apply from productpage
+      from:
+        - targetRef:
+            kind: MeshService
+            name: productpage_booking_svc_9080
+          default:
+            # Local rate limiting (token bucket)
+            local:
+              http:
+                # 100 requests per minute
+                requestRate:
+                  num: 100
+                  interval: 1m
+                # On rate limit, return 429
+                onRateLimit:
+                  status: 429
+                  headers:
+                    add:
+                      - name: x-kuma-rate-limited
+                        value: "true"
+    EOF
+    ```
+    **Understanding the Configuration:**
+    
+    | Parameter              | Meaning                        | Example Value |
+    |------------------------|--------------------------------|---------------|
+    | `requestRate.num`      | max requests ( request)        | 100           |
+    | `requestRate.interval` | Evaluation period of the token | 60s           |
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete MeshRateLimit reviews-ratelimit
+    ```
+
+
+
+=== "linkerd"
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: policy.linkerd.io/v1alpha1
+    kind: HTTPLocalRateLimitPolicy
+    metadata:
+      name: reviews-ratelimit
+      namespace: booking
+    spec:
+      # Target the reviews server
+      targetRef:
+        group: policy.linkerd.io
+        kind: Server
+        name: reviews-server
+      # Rate limit: 100 requests per minute (~1.67 req/s)
+      total:
+        requestsPerSecond: 2
+      # Per-identity rate limits
+      identity:
+        kind: ServiceAccount
+        name: bookinfo-productpage
+      # Override for specific clients
+      overrides:
+        - requestsPerSecond: 2
+          clientRefs:
+            - group: core
+              kind: ServiceAccount
+              name: bookinfo-productpage
+              namespace: booking
+    EOF
+    ```
+    **Understanding the Configuration:**
+    
+    | Parameter              | Meaning                         | Example Value |
+    |------------------------|---------------------------------|---------------|
+    | `requestsPerSecond`      | max requests  per sec( request) | 2             |
+    
+    
+    **Clean up**
+    ```bash
+    # Clean up fault
+    kubectl delete HTTPLocalRateLimitPolicy reviews-ratelimit
+    ```
 
 ### Exercise 3: Complete Configuration for Details Service
 
@@ -1011,7 +1370,7 @@ spec:
         - source:
             principals:
               # This is productpage's identity, not waypoint's!
-              - "cluster.local/ns/default/sa/bookinfo-productpage"
+              - "cluster.local/ns/booking/sa/bookinfo-productpage"
 ```
 
 ---
@@ -1700,8 +2059,8 @@ TrafficPolicy:
 | **L7 Routing** | ✅ | ✅ (waypoint) | ✅ (waypoint) |
 | **Low Memory** | ❌ | ✅ | ✅ |
 | **Fast Startup** | ❌ | ✅ | ✅ |
-| **Advanced Routing** | ⚠️ | ⚠️ | ✅ |
-| **Transformation** | ❌ | ❌ | ✅ |
+| **Advanced Routing** |  ✅️ | ⚠️ | ✅ |
+| **Transformation** |  ✅ | ❌ | ✅ |
 | **AI Integration** | ❌ | ❌ | ✅ |
 | **Cost Control** | ❌ | ❌ | ✅ (AI) |
 
