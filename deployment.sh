@@ -328,6 +328,7 @@ fi
 
 kubectl apply -f opentelemetry/openTelemetry-manifest_ds.yaml
 kubectl apply -f bookinfo/manifest/deploy.yaml -n booking
+export SCHEDULE_TIME=$(date -u -d '+5 minutes' '+%M * * * *')
 kubectl apply -f bookinfo/manifest/loadtest.yaml -n booking
 
 if [  "$TYPE" != 'none' ]; then
