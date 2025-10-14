@@ -109,9 +109,7 @@ if [  "$TYPE" = 'kuma' ]; then
   helm repo update
   helm install --create-namespace --namespace kuma-system kuma kuma/kuma --wait
   kubectl apply -f kuma/gatewayclass.yaml
-  kubectl apply -f kuma/MeshMetric.yaml
-  kubectl apply -f kuma/meshtrace.yaml
-  kubectl apply -f kuma/MeshAccesslog.yaml
+
 
 
 
@@ -258,6 +256,9 @@ echo "labeling demo namespace"
 if [  "$TYPE" = 'kuma' ]; then
   echo " kuma"
    kubectl apply -f kuma/kuma_gateway.yaml
+   kubectl apply -f kuma/MeshMetric.yaml
+   kubectl apply -f kuma/meshtrace.yaml
+   kubectl apply -f kuma/MeshAccesslog.yaml
    kubectl label namespace booking kuma.io/sidecar-injection=enabled
    kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset.yaml
    kubectl apply -f kuma/referencegrant.yaml
