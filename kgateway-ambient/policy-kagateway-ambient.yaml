@@ -4,46 +4,21 @@ metadata:
   name: reviews-traffic-policy
   namespace: booking
 spec:
-  # Target the reviews service via waypoint
-  targetRef:
-    group: ""
-    kind: Service
-    name: reviews
-    namespace: booking
-  # Rate limiting configuration
-  policy:
-    # Request rate limiting
-    rateLimit:
-      raw:
-        rateLimits:
-          - actions:
-              - genericKey:
-                  descriptorValue: "reviews-rate-limit"
-            limit:
-              requestsPerUnit: 100
-              unit: MINUTE
-        setActions:
-          - headerValueMatch:
-              descriptorValue: "productpage-source"
-              headers:
-                - name: ":authority"
-                  stringMatch:
-                    exact: "reviews.booking.svc.cluster.local"
-    # Connection limits (part of rate limiting)
-    connectionPool:
-      http:
-        http1MaxPendingRequests: 10
-        http2MaxRequests: 100
-        maxRequestsPerConnection: 2
-      tcp:
-        maxConnections: 100
-    # Request timeout
-    requestTimeout: 2s
-    # Idle timeout
-    idleTimeout: 30s
+  # Connection pool settings (rate limiting at connection level)
+  rateLimit:
+    local:
+      tokenBucket:
+        maxTokens: 50
+        tokensPerFill: 10
+        fillInterval: 60s
+
+
+
+
+
 ---
 # ============================================
-# TrafficPolicy: Rate Limiting for details
+# TrafficPolicy: Rate Limiting, Timeouts for details
 # ============================================
 apiVersion: gateway.kgateway.dev/v1alpha1
 kind: TrafficPolicy
@@ -51,27 +26,11 @@ metadata:
   name: details-traffic-policy
   namespace: booking
 spec:
-  targetRef:
-    group: ""
-    kind: Service
-    name: details
-    namespace: booking
-  policy:
-    rateLimit:
-      raw:
-        rateLimits:
-          - actions:
-              - genericKey:
-                  descriptorValue: "details-rate-limit"
-            limit:
-              requestsPerUnit: 50
-              unit: MINUTE
-    connectionPool:
-      http:
-        http1MaxPendingRequests: 10
-        http2MaxRequests: 50
-        maxRequestsPerConnection: 2
-      tcp:
-        maxConnections: 50
-    requestTimeout: 1s
-    idleTimeout: 30s
+  rateLimit:
+    local:
+      tokenBucket:
+        maxTokens: 50
+        tokensPerFill: 10
+        fillInterval: 60s
+
+

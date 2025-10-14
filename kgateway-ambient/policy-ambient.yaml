@@ -1,66 +1,7 @@
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: reviews-vs
-  namespace: default
-spec:
-  hosts:
-    - reviews.booking.svc.cluster.local
-  http:
-    # Match traffic from waypoint
-    - match:
-        - sourceLabels:
-            gateway.networking.k8s.io/gateway-name:  kgateway-waypoint
-      # Request timeout
-      timeout: 2s
-      # Retry policy
-      retries:
-        attempts: 3
-        perTryTimeout: 500ms
-        retryOn: 5xx,reset,connect-failure,refused-stream,retriable-4xx
-      # Fault injection for testing (optional)
-      # fault:
-      #   delay:
-      #     percentage:
-      #       value: 0.1
-      #     fixedDelay: 5s
-      route:
-        - destination:
-            host: reviews.booking.svc.cluster.local
-            port:
-              number: 9080
-          weight: 100
----
-# ============================================
-# VirtualService: Request Timeout & Retry for details
-# ============================================
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: details-vs
-  namespace: booking
-spec:
-  hosts:
-    - details.booking.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            gateway.networking.k8s.io/gateway-name: kgateway-waypoint
-      timeout: 1s
-      retries:
-        attempts: 3
-        perTryTimeout: 300ms
-        retryOn: 5xx,reset,connect-failure,refused-stream
-      route:
-        - destination:
-            host: details.booking.svc.cluster.local
-            port:
-              number: 9080
-          weight: 100
----
+
 # ============================================
 # DestinationRule: Circuit Breaker for reviews
-# Istio native, works with Ambient waypoint
+# Works with Ambient/Waypoint
 # ============================================
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
@@ -70,45 +11,29 @@ metadata:
 spec:
   host: reviews.booking.svc.cluster.local
   trafficPolicy:
-    # Connection pool settings
+    # Connection pool settings (rate limiting at connection level)
     connectionPool:
       tcp:
         maxConnections: 100
-        connectTimeout: 30ms
-        tcpKeepalive:
-          time: 7200s
-          interval: 75s
       http:
         http1MaxPendingRequests: 10
         http2MaxRequests: 100
         maxRequestsPerConnection: 2
         maxRetries: 3
-        idleTimeout: 30s
-        h2UpgradePolicy: UPGRADE
     # Circuit breaker via outlier detection
     outlierDetection:
-      # Number of errors before ejection
       consecutive5xxErrors: 5
       consecutiveGatewayErrors: 3
-      consecutiveLocalOriginFailures: 5
-      # Detection interval
       interval: 30s
-      # How long to eject
       baseEjectionTime: 30s
-      # Maximum percentage of hosts that can be ejected
       maxEjectionPercent: 50
-      # Minimum percentage of hosts that must remain healthy
       minHealthPercent: 50
-      # Split external and local origin errors
       splitExternalLocalOriginErrors: true
-
-    # Port level settings
-    portLevelSettings:
-      - port:
-          number: 9080
-        connectionPool:
-          http:
-            http1MaxPendingRequests: 10
+    # Load balancer
+    loadBalancer:
+      simple: LEAST_REQUEST
+      localityLbSetting:
+        enabled: true
 ---
 # ============================================
 # DestinationRule: Circuit Breaker for details
@@ -124,13 +49,11 @@ spec:
     connectionPool:
       tcp:
         maxConnections: 50
-        connectTimeout: 30ms
       http:
         http1MaxPendingRequests: 10
         http2MaxRequests: 50
         maxRequestsPerConnection: 2
         maxRetries: 3
-        idleTimeout: 30s
     outlierDetection:
       consecutive5xxErrors: 5
       consecutiveGatewayErrors: 3
@@ -138,8 +61,49 @@ spec:
       baseEjectionTime: 30s
       maxEjectionPercent: 50
       minHealthPercent: 50
-      splitExternalLocalOriginErrors: true
     loadBalancer:
       simple: LEAST_REQUEST
-      localityLbSetting:
-        enabled: true
+---
+# ============================================
+# VirtualService: Timeout and Retry (alternative to HTTPRoute)
+# Can be used alongside HTTPRoute in Ambient
+# ============================================
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: reviews-vs
+  namespace: booking
+spec:
+  hosts:
+    - reviews.booking.svc.cluster.local
+  http:
+    - timeout: 2s
+      retries:
+        attempts: 3
+        perTryTimeout: 500ms
+        retryOn: 5xx,reset,connect-failure,refused-stream
+      route:
+        - destination:
+            host: reviews.booking.svc.cluster.local
+            port:
+              number: 9080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: details-vs
+  namespace: booking
+spec:
+  hosts:
+    - details.booking.svc.cluster.local
+  http:
+    - timeout: 1s
+      retries:
+        attempts: 3
+        perTryTimeout: 300ms
+        retryOn: 5xx,reset,connect-failure,refused-stream
+      route:
+        - destination:
+            host: details.booking.svc.cluster.local
+            port:
+              number: 9080
