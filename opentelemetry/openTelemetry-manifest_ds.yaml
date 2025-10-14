@@ -131,7 +131,7 @@ spec:
           # Extract metadata from file path
           - type: regex_parser
             id: extract_metadata_from_filepath
-            regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$'
+            regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$'
             parse_from: attributes["log.file.path"]
             cache:
               size: 128  # default maximum amount of Pods per Node is 110
@@ -256,7 +256,16 @@ spec:
         endpoint: ${DT_ENDPOINT}/api/v2/otlp
         headers:
           Authorization: "Api-Token ${DT_API_TOKEN}"
-      
+        timeout: 10s  # Increase significantly
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
     
     
     service:

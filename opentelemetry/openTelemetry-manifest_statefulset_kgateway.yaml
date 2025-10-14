@@ -276,6 +276,16 @@ spec:
         endpoint: ${DT_ENDPOINT}/api/v2/otlp
         headers:
           Authorization: "Api-Token ${DT_API_TOKEN}"
+        timeout: 10s  # Increase significantly
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
       debug:
         verbosity: detailed
 
