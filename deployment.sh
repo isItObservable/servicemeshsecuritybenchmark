@@ -107,7 +107,7 @@ if [  "$TYPE" = 'kuma' ]; then
   echo "installing kuma"
   helm repo add kuma https://kumahq.github.io/charts
   helm repo update
-  helm install --create-namespace --namespace kuma-system kuma kuma/kuma --wait
+  helm install --create-namespace --namespace kuma-system kuma kuma/kuma --set experimental.gatewayAPI=true --wait
   kubectl apply -f kuma/gatewayclass.yaml
 
 

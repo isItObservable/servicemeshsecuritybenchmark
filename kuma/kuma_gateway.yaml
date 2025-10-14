@@ -7,5 +7,5 @@ spec:
   gatewayClassName: kuma
   listeners:
     - name: http
-      port: 8008
+      port: 80
       protocol: HTTP
