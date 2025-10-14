@@ -101,20 +101,7 @@ spec:
       minHealthPercent: 50
       # Split external and local origin errors
       splitExternalLocalOriginErrors: true
-    # Load balancing
-    loadBalancer:
-      simple: LEAST_REQUEST
-      warmupDurationSecs: 10s
-      localityLbSetting:
-        enabled: true
-        distribute:
-          - from: us-east-1
-            to:
-              "us-east-1": 80
-              "us-west-1": 20
-        failover:
-          - from: us-east-1
-            to: us-west-1
+
     # Port level settings
     portLevelSettings:
       - port:

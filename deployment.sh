@@ -241,7 +241,7 @@ fi
 #TODO to update this part to create the various Gateway rules
 
 #Deploy collector
-kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="$DYNATRACE_LIVE_URL" --from-literal=clustername="$CLUSTERNAME"  --from-literal=clusterid=$CLUSTERID  --from-literal=dt_api_token="$DTTOKEN"
+kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="https://$DYNATRACE_LIVE_URL" --from-literal=clustername="$CLUSTERNAME"  --from-literal=clusterid=$CLUSTERID  --from-literal=dt_api_token="$DTTOKEN"
 kubectl label namespace  default oneagent=false
 kubectl apply -f opentelemetry/rbac.yaml
 
@@ -250,7 +250,7 @@ kubectl apply -f opentelemetry/rbac.yaml
 kubectl apply -f dynatrace/dynakube.yaml -n dynatrace
 kubectl create ns booking
 kubectl label namespace  booking oneagent=false
-kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="$DYNATRACE_LIVE_URL" --from-literal=dt_api_token="$DTTOKEN" -n booking
+kubectl create secret generic dynatrace  --from-literal=dynatrace_oltp_url="https://$DYNATRACE_LIVE_URL" --from-literal=dt_api_token="$DTTOKEN" -n booking
 
 
 #---label namespace-----

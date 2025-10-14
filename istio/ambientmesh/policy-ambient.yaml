@@ -65,26 +65,6 @@ spec:
       simple: LEAST_REQUEST
 ---
 # ============================================
-# ServiceEntry: For external rate limit service (optional)
-# If using external rate limiting instead of WasmPlugin
-# ============================================
-apiVersion: networking.istio.io/v1beta1
-kind: ServiceEntry
-metadata:
-  name: rate-limit-service
-  namespace: booking
-spec:
-  hosts:
-    - ratelimit.booking.svc.cluster.local
-  ports:
-    - number: 8081
-      name: grpc
-      protocol: GRPC
-  resolution: STATIC
-  endpoints:
-    - address: 127.0.0.1
----
-# ============================================
 # VirtualService: Timeout and Retry (alternative to HTTPRoute)
 # Can be used alongside HTTPRoute in Ambient
 # ============================================
@@ -104,7 +84,7 @@ spec:
         retryOn: 5xx,reset,connect-failure,refused-stream
       route:
         - destination:
-            host: reviews.default.svc.cluster.local
+            host: reviews.booking.svc.cluster.local
             port:
               number: 9080
 ---
@@ -124,6 +104,6 @@ spec:
         retryOn: 5xx,reset,connect-failure,refused-stream
       route:
         - destination:
-            host: details.default.svc.cluster.local
+            host: details.booking.svc.cluster.local
             port:
               number: 9080
