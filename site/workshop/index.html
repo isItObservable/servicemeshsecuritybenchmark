@@ -2040,9 +2040,11 @@ The policy is <strong>referenced from the HTTPRoute</strong>.</p>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span>
 <span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
 </code></pre></div>
-<p><strong>Result:</strong>
-- Regular users: 5s timeout, 2 retries (base policy)
-- Admin users: 10s timeout, 5 retries (override policy)</p>
+<p><strong>Result:</strong></p>
+<ul>
+<li>Regular users: 5s timeout, 2 retries (base policy)</li>
+<li>Admin users: 10s timeout, 5 retries (override policy)</li>
+</ul>
 <h3 id="policy-precedence-when-both-exist">Policy Precedence (When Both Exist)<a class="headerlink" href="#policy-precedence-when-both-exist" title="Permanent link">#</a></h3>
 <p>When both targetRef and extensionRef policies exist:</p>
 <p><pre class="mermaid"><code>flowchart TD
@@ -2097,25 +2099,31 @@ The policy is <strong>referenced from the HTTPRoute</strong>.</p>
 </code></pre></div></p>
 <p><strong>Result:</strong> Critical route gets 2s timeout (highest priority)</p>
 <h3 id="gamma-evolution-timeline">GAMMA Evolution Timeline<a class="headerlink" href="#gamma-evolution-timeline" title="Permanent link">#</a></h3>
-<div class="highlight"><pre><span></span><code>2022: GAMMA Initiative Starts
-      ├─ Focus: extensionRef pattern
-      └─ Goal: Standard policy attachment
+<pre class="mermaid"><code>timeline
+    title GAMMA Project Evolution - API Gateway Standards
 
-2023: targetRef Pattern Emerges
-      ├─ Simpler than extensionRef
-      ├─ Hierarchical policies (namespace → service → route)
-      └─ Adopted by KGateway, Kuma
+    2022 : GAMMA Initiative Starts
+         : Focus on extensionRef pattern
+         : Goal: Standard policy attachment
+         : Initial specification work
 
-2024: Hybrid Approach
-      ├─ targetRef preferred for most cases
-      ├─ extensionRef for specific overrides
-      └─ Both patterns supported
+    2023 : targetRef Pattern Emerges
+         : Simpler than extensionRef
+         : Hierarchical policies (namespace → service → route)
+         : Adopted by KGateway &amp; Kuma
+         : Growing community consensus
 
-2025: Current State
-      ├─ targetRef: Production ready
-      ├─ extensionRef: Experimental in most meshes
-      └─ Standard still evolving
-</code></pre></div>
+    2024 : Hybrid Approach
+         : targetRef preferred for most cases
+         : extensionRef for specific overrides
+         : Both patterns supported
+         : Production deployments increase
+
+    2025 : Current State
+         : targetRef: Production ready ✓
+         : extensionRef: Experimental status
+         : Standard still evolving
+         : XMesh proposal for Service capabilities</code></pre>
 <h3 id="key-gamma-concepts-summary">Key GAMMA Concepts Summary<a class="headerlink" href="#key-gamma-concepts-summary" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -2690,10 +2698,12 @@ kubectl<span class="w"> </span>delete<span class="w"> </span>HTTPLocalRateLimitP
 </div>
 <h3 id="exercise-3-complete-configuration-for-details-service">Exercise 3: Complete Configuration for Details Service<a class="headerlink" href="#exercise-3-complete-configuration-for-details-service" title="Permanent link">#</a></h3>
 <p><strong>Your turn!</strong> Apply timeout, circuit breaker, and rate limiting for details service.</p>
-<p><strong>Requirements:</strong>
-- Timeout: 1 second
-- Circuit breaker: 5 consecutive errors, 30s ejection
-- Rate limit: 50 requests per minute</p>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Timeout: 1 second</li>
+<li>Circuit breaker: 5 consecutive errors, 30s ejection</li>
+<li>Rate limit: 50 requests per minute</li>
+</ul>
 <details>
 <summary>Solution</summary>
 
@@ -2742,14 +2752,36 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <h2 id="part-3-understanding-ambient-mesh-architecture">Part 3: Understanding Ambient Mesh Architecture<a class="headerlink" href="#part-3-understanding-ambient-mesh-architecture" title="Permanent link">#</a></h2>
 <h3 id="the-problem-with-sidecars">The Problem with Sidecars<a class="headerlink" href="#the-problem-with-sidecars" title="Permanent link">#</a></h3>
 <p><strong>Sidecar Architecture:</strong>
-<div class="highlight"><pre><span></span><code>┌─────────────────────────┐
-│         Pod             │
-│  ┌──────┐  ┌─────────┐  │
-│  │ App  │  │ Sidecar │  │  Memory: ~50-100MB
-│  │      │  │ (Envoy) │  │  CPU: Always running
-│  └──────┘  └─────────┘  │  Complexity: High
-└─────────────────────────┘
-</code></pre></div></p>
+<pre class="mermaid"><code>graph LR
+    subgraph Pod["📦 Kubernetes Pod"]
+        direction TB
+        App["🚀 Application&lt;br/&gt;&lt;small&gt;Your Service&lt;/small&gt;"]
+        Proxy["🔀 Sidecar Proxy&lt;br/&gt;&lt;small&gt;Envoy&lt;/small&gt;"]
+    end
+
+    Incoming["🌐 Incoming&lt;br/&gt;Traffic"] --&gt; Proxy
+    Proxy --&gt; App
+    App --&gt; Proxy
+    Proxy --&gt; Outgoing["🌐 Outgoing&lt;br/&gt;Traffic"]
+
+    Pod -.-&gt;|"Resource Impact"| Resources
+
+    subgraph Resources["📊 Per-Pod Overhead"]
+        direction TB
+        R1["💾 Memory: 50-100 MB"]
+        R2["⚡ CPU: Always Active"]
+        R3["🔧 Complexity: High"]
+    end
+
+    style Pod fill:#e3f2fd,stroke:#1976d2,stroke-width:4px,color:#000
+    style App fill:#4caf50,stroke:#2e7d32,stroke-width:3px,color:#fff
+    style Proxy fill:#ff9800,stroke:#e65100,stroke-width:3px,color:#fff
+    style Resources fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#000
+    style R1 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style R2 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style R3 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style Incoming fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#fff
+    style Outgoing fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#fff</code></pre></p>
 <p><strong>Issues:</strong></p>
 <ul>
 <li>❌ <strong>Resource overhead</strong>: 50-100MB memory per pod</li>
@@ -2835,8 +2867,8 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span clas
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews-waypoint</span><span class="w">  </span><span class="c1"># ← Waypoint Gateway!</span>
 </code></pre></div></p>
 <h3 id="traffic-flow-comparison">Traffic Flow Comparison<a class="headerlink" href="#traffic-flow-comparison" title="Permanent link">#</a></h3>
-<p><strong>Sidecar:</strong>
-<pre class="mermaid"><code>flowchart TD
+<p><strong>Sidecar:</strong></p>
+<pre class="mermaid"><code>flowchart LR
     PP["📦 productpage pod&lt;br/&gt;(Application)"]
     PS["🔒 productpage sidecar&lt;br/&gt;Envoy Proxy&lt;br/&gt;L4 + L7"]
     RS["🔒 reviews sidecar&lt;br/&gt;Envoy Proxy&lt;br/&gt;L4 + L7"]
@@ -2849,9 +2881,9 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span clas
     style PP fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
     style PS fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
     style RS fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
-    style RP fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff</code></pre></p>
+    style RP fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff</code></pre>
 <p><strong>Ambient:</strong>
-<pre class="mermaid"><code>flowchart TD
+<pre class="mermaid"><code>flowchart LR
     PP["productpage pod"]
     Z1["ztunnel&lt;br/&gt;(L4 only)"]
     W["waypoint&lt;br/&gt;(L7 only - if needed)"]
@@ -3085,16 +3117,23 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span clas
 </code></pre></div>
 <h3 id="policy-hierarchy-with-kgateway">Policy Hierarchy with KGateway<a class="headerlink" href="#policy-hierarchy-with-kgateway" title="Permanent link">#</a></h3>
 <p>KGateway uses a hierarchical policy model:</p>
-<pre class="mermaid"><code>flowchart TD
-    N["3️⃣ Namespace-level Policy&lt;br/&gt;(applies to all in namespace)&lt;br/&gt;⬇️ Lowest priority"]
-    S["2️⃣ Service-level Policy&lt;br/&gt;(applies to specific service)&lt;br/&gt;➡️ Medium priority"]
-    R["1️⃣ Route-level Policy&lt;br/&gt;(applies to specific HTTPRoute)&lt;br/&gt;⬆️ Highest priority"]
+<pre class="mermaid"><code>flowchart TB
+    Title["&lt;b&gt;Policy Priority Hierarchy&lt;/b&gt;&lt;br/&gt;&lt;small&gt;Higher levels override lower levels&lt;/small&gt;"]
 
-    N ==&gt; S ==&gt; R
+    R["🔴 &lt;b&gt;Highest Priority&lt;/b&gt;&lt;br/&gt;Route-level Policy&lt;br/&gt;&lt;small&gt;Applies to specific HTTPRoute&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Most specific - overrides all&lt;/small&gt;"]
 
-    style N fill:#fab005,stroke:#fff,stroke-width:2px,color:#000
-    style S fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
-    style R fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff</code></pre>
+    S["🟠 &lt;b&gt;Medium Priority&lt;/b&gt;&lt;br/&gt;Service-level Policy&lt;br/&gt;&lt;small&gt;Applies to specific Service&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Overrides namespace level&lt;/small&gt;"]
+
+    N["🟡 &lt;b&gt;Lowest Priority&lt;/b&gt;&lt;br/&gt;Namespace-level Policy&lt;br/&gt;&lt;small&gt;Applies to all resources in namespace&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Default fallback&lt;/small&gt;"]
+
+    Title --&gt; R
+    R -.-&gt;|overrides| S
+    S -.-&gt;|overrides| N
+
+    style Title fill:#1a237e,stroke:#0d47a1,stroke-width:3px,color:#fff
+    style R fill:#e03131,stroke:#c92a2a,stroke-width:4px,color:#fff
+    style S fill:#fd7e14,stroke:#e8590c,stroke-width:3px,color:#fff
+    style N fill:#fab005,stroke:#f59f00,stroke-width:2px,color:#000</code></pre>
 <p><strong>Example:</strong>
 <div class="highlight"><pre><span></span><code><span class="c1"># Namespace-level default</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.kgateway.dev/v1alpha1</span>
@@ -3164,10 +3203,26 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span clas
 <li><strong>Combine with KGateway policies</strong> for rate limiting and observability</li>
 </ol>
 <p><strong>Architecture Pattern:</strong></p>
-<pre class="mermaid"><code>graph TD
-    A[Client Request] --&gt; B["HTTPRoute (KGateway)&lt;br/&gt;• Rate Limiting (TrafficPolicy)&lt;br/&gt;• Timeout (TrafficPolicy)&lt;br/&gt;• Circuit Breaker"]
-    B --&gt; C["AI Gateway&lt;br/&gt;• Model Routing&lt;br/&gt;• Cost Tracking&lt;br/&gt;• Prompt Management&lt;br/&gt;• Response Caching"]
-    C --&gt; D[LLM Providers&lt;br/&gt;OpenAI, Anthropic, etc.]</code></pre>
+<pre class="mermaid"><code>flowchart LR
+    Client["👤 Client&lt;br/&gt;&lt;small&gt;Application&lt;/small&gt;"]
+
+    Gateway["🌐 HTTPRoute - KGateway&lt;br/&gt;&lt;b&gt;Traffic Policies:&lt;/b&gt;&lt;br/&gt;• ⏱️ Rate Limiting&lt;br/&gt;• ⏰ Timeout&lt;br/&gt;• 🔌 Circuit Breaker"]
+
+    AI["🤖 AI Gateway&lt;br/&gt;&lt;b&gt;Intelligence Layer:&lt;/b&gt;&lt;br/&gt;• 🎯 Model Routing&lt;br/&gt;• 💰 Cost Tracking&lt;br/&gt;• 📝 Prompt Management&lt;br/&gt;• 💾 Response Caching"]
+
+    LLM["☁️ LLM Providers&lt;br/&gt;&lt;small&gt;OpenAI&lt;br/&gt;Anthropic&lt;br/&gt;Cohere, etc.&lt;/small&gt;"]
+
+    Client --&gt;|HTTP Request| Gateway
+    Gateway --&gt;|Validated Request| AI
+    AI --&gt;|API Call| LLM
+    LLM -.-&gt;|Response| AI
+    AI -.-&gt;|Cached/Tracked| Gateway
+    Gateway -.-&gt;|Response| Client
+
+    style Client fill:#9c27b0,stroke:#7b1fa2,stroke-width:3px,color:#fff
+    style Gateway fill:#1976d2,stroke:#0d47a1,stroke-width:3px,color:#fff
+    style AI fill:#2e7d32,stroke:#1b5e20,stroke-width:3px,color:#fff
+    style LLM fill:#d84315,stroke:#bf360c,stroke-width:3px,color:#fff</code></pre>
 <p><strong>Example: AI Service with KGateway Policies:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># HTTPRoute to AI service</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>

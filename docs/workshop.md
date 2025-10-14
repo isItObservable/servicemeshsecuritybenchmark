@@ -677,6 +677,7 @@ spec:
 ```
 
 **Result:**
+
 - Regular users: 5s timeout, 2 retries (base policy)
 - Admin users: 10s timeout, 5 retries (override policy)
 
@@ -742,25 +743,32 @@ spec:
 
 ### GAMMA Evolution Timeline
 
-```
-2022: GAMMA Initiative Starts
-      ├─ Focus: extensionRef pattern
-      └─ Goal: Standard policy attachment
-
-2023: targetRef Pattern Emerges
-      ├─ Simpler than extensionRef
-      ├─ Hierarchical policies (namespace → service → route)
-      └─ Adopted by KGateway, Kuma
-
-2024: Hybrid Approach
-      ├─ targetRef preferred for most cases
-      ├─ extensionRef for specific overrides
-      └─ Both patterns supported
-
-2025: Current State
-      ├─ targetRef: Production ready
-      ├─ extensionRef: Experimental in most meshes
-      └─ Standard still evolving
+```mermaid
+timeline
+    title GAMMA Project Evolution - API Gateway Standards
+    
+    2022 : GAMMA Initiative Starts
+         : Focus on extensionRef pattern
+         : Goal: Standard policy attachment
+         : Initial specification work
+    
+    2023 : targetRef Pattern Emerges
+         : Simpler than extensionRef
+         : Hierarchical policies (namespace → service → route)
+         : Adopted by KGateway & Kuma
+         : Growing community consensus
+    
+    2024 : Hybrid Approach
+         : targetRef preferred for most cases
+         : extensionRef for specific overrides
+         : Both patterns supported
+         : Production deployments increase
+    
+    2025 : Current State
+         : targetRef: Production ready ✓
+         : extensionRef: Experimental status
+         : Standard still evolving
+         : XMesh proposal for Service capabilities
 ```
 
 ### Key GAMMA Concepts Summary
@@ -1264,14 +1272,37 @@ EOF
 ### The Problem with Sidecars
 
 **Sidecar Architecture:**
-```
-┌─────────────────────────┐
-│         Pod             │
-│  ┌──────┐  ┌─────────┐  │
-│  │ App  │  │ Sidecar │  │  Memory: ~50-100MB
-│  │      │  │ (Envoy) │  │  CPU: Always running
-│  └──────┘  └─────────┘  │  Complexity: High
-└─────────────────────────┘
+```mermaid
+graph LR
+    subgraph Pod["📦 Kubernetes Pod"]
+        direction TB
+        App["🚀 Application<br/><small>Your Service</small>"]
+        Proxy["🔀 Sidecar Proxy<br/><small>Envoy</small>"]
+    end
+    
+    Incoming["🌐 Incoming<br/>Traffic"] --> Proxy
+    Proxy --> App
+    App --> Proxy
+    Proxy --> Outgoing["🌐 Outgoing<br/>Traffic"]
+    
+    Pod -.->|"Resource Impact"| Resources
+    
+    subgraph Resources["📊 Per-Pod Overhead"]
+        direction TB
+        R1["💾 Memory: 50-100 MB"]
+        R2["⚡ CPU: Always Active"]
+        R3["🔧 Complexity: High"]
+    end
+    
+    style Pod fill:#e3f2fd,stroke:#1976d2,stroke-width:4px,color:#000
+    style App fill:#4caf50,stroke:#2e7d32,stroke-width:3px,color:#fff
+    style Proxy fill:#ff9800,stroke:#e65100,stroke-width:3px,color:#fff
+    style Resources fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#000
+    style R1 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style R2 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style R3 fill:#fff,stroke:#bdbdbd,stroke-width:2px,color:#000
+    style Incoming fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#fff
+    style Outgoing fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#fff
 ```
 
 **Issues:**
@@ -1378,8 +1409,9 @@ spec:
 ### Traffic Flow Comparison
 
 **Sidecar:**
+
 ```mermaid
-flowchart TD
+flowchart LR
     PP["📦 productpage pod<br/>(Application)"]
     PS["🔒 productpage sidecar<br/>Envoy Proxy<br/>L4 + L7"]
     RS["🔒 reviews sidecar<br/>Envoy Proxy<br/>L4 + L7"]
@@ -1397,7 +1429,7 @@ flowchart TD
 
 **Ambient:**
 ```mermaid
-flowchart TD
+flowchart LR
     PP["productpage pod"]
     Z1["ztunnel<br/>(L4 only)"]
     W["waypoint<br/>(L7 only - if needed)"]
@@ -1630,16 +1662,23 @@ spec:
 KGateway uses a hierarchical policy model:
 
 ```mermaid
-flowchart TD
-    N["3️⃣ Namespace-level Policy<br/>(applies to all in namespace)<br/>⬇️ Lowest priority"]
-    S["2️⃣ Service-level Policy<br/>(applies to specific service)<br/>➡️ Medium priority"]
-    R["1️⃣ Route-level Policy<br/>(applies to specific HTTPRoute)<br/>⬆️ Highest priority"]
+flowchart TB
+    Title["<b>Policy Priority Hierarchy</b><br/><small>Higher levels override lower levels</small>"]
     
-    N ==> S ==> R
+    R["🔴 <b>Highest Priority</b><br/>Route-level Policy<br/><small>Applies to specific HTTPRoute</small><br/><small>Most specific - overrides all</small>"]
     
-    style N fill:#fab005,stroke:#fff,stroke-width:2px,color:#000
-    style S fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
-    style R fill:#e03131,stroke:#fff,stroke-width:2px,color:#fff
+    S["🟠 <b>Medium Priority</b><br/>Service-level Policy<br/><small>Applies to specific Service</small><br/><small>Overrides namespace level</small>"]
+    
+    N["🟡 <b>Lowest Priority</b><br/>Namespace-level Policy<br/><small>Applies to all resources in namespace</small><br/><small>Default fallback</small>"]
+    
+    Title --> R
+    R -.->|overrides| S
+    S -.->|overrides| N
+    
+    style Title fill:#1a237e,stroke:#0d47a1,stroke-width:3px,color:#fff
+    style R fill:#e03131,stroke:#c92a2a,stroke-width:4px,color:#fff
+    style S fill:#fd7e14,stroke:#e8590c,stroke-width:3px,color:#fff
+    style N fill:#fab005,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 **Example:**
@@ -1722,10 +1761,26 @@ For AI/LLM routing, you would:
 **Architecture Pattern:**
 
 ```mermaid
-graph TD
-    A[Client Request] --> B["HTTPRoute (KGateway)<br/>• Rate Limiting (TrafficPolicy)<br/>• Timeout (TrafficPolicy)<br/>• Circuit Breaker"]
-    B --> C["AI Gateway<br/>• Model Routing<br/>• Cost Tracking<br/>• Prompt Management<br/>• Response Caching"]
-    C --> D[LLM Providers<br/>OpenAI, Anthropic, etc.]
+flowchart LR
+    Client["👤 Client<br/><small>Application</small>"]
+    
+    Gateway["🌐 HTTPRoute - KGateway<br/><b>Traffic Policies:</b><br/>• ⏱️ Rate Limiting<br/>• ⏰ Timeout<br/>• 🔌 Circuit Breaker"]
+    
+    AI["🤖 AI Gateway<br/><b>Intelligence Layer:</b><br/>• 🎯 Model Routing<br/>• 💰 Cost Tracking<br/>• 📝 Prompt Management<br/>• 💾 Response Caching"]
+    
+    LLM["☁️ LLM Providers<br/><small>OpenAI<br/>Anthropic<br/>Cohere, etc.</small>"]
+    
+    Client -->|HTTP Request| Gateway
+    Gateway -->|Validated Request| AI
+    AI -->|API Call| LLM
+    LLM -.->|Response| AI
+    AI -.->|Cached/Tracked| Gateway
+    Gateway -.->|Response| Client
+    
+    style Client fill:#9c27b0,stroke:#7b1fa2,stroke-width:3px,color:#fff
+    style Gateway fill:#1976d2,stroke:#0d47a1,stroke-width:3px,color:#fff
+    style AI fill:#2e7d32,stroke:#1b5e20,stroke-width:3px,color:#fff
+    style LLM fill:#d84315,stroke:#bf360c,stroke-width:3px,color:#fff
 ```
 
 **Example: AI Service with KGateway Policies:**
@@ -2587,6 +2642,7 @@ spec:
 ## Resources & Next Steps
 
 ### Documentation
+
 - [Gateway API Specification](https://gateway-api.sigs.k8s.io/)
 - [GAMMA Initiative](https://gateway-api.sigs.k8s.io/mesh/)
 - [Istio Ambient Mesh](https://istio.io/latest/docs/ambient/)
@@ -2596,6 +2652,7 @@ spec:
 
 
 ### Community
+
 - Gateway API Slack: `#sig-network-gateway-api`
 - Istio Ambient Slack: `#ambient`
 
