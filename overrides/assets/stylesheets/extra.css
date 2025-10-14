@@ -31,3 +31,22 @@
     font-size: 24px;
     cursor: pointer;
 }
+
+/* Override Mermaid timeline colors */
+.mermaid .timeline .section0 rect,
+.mermaid .timeline .section1 rect,
+.mermaid .timeline .section2 rect,
+.mermaid .timeline .section3 rect {
+  fill: #1976d2 !important;  /* Blue background */
+}
+
+.mermaid .timeline text {
+  fill: #ffffff !important;  /* White text */
+}
+
+.mermaid .timeline .section0 text,
+.mermaid .timeline .section1 text,
+.mermaid .timeline .section2 text,
+.mermaid .timeline .section3 text {
+  fill: #ffffff !important;
+}
