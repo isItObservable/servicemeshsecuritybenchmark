@@ -23,7 +23,7 @@ apiVersion: policy.linkerd.io/v1beta3
 kind: Server
 metadata:
   name: details-server
-  namespace: default
+  namespace: booking
   labels:
     app: details
 spec:

@@ -1,69 +1,64 @@
-apiVersion: policy.linkerd.io/v1beta2
+---
+# HTTPRoute with productpage as parentRef
+# Controls outbound traffic FROM productpage TO reviews
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: productpage-to-reviews
   namespace: booking
 spec:
-  # ParentRef is the consumer service (productpage)
   parentRefs:
-    - group: core
+    - group: ""
       kind: Service
-      name: productpage
+      name: productpage  # Source service (traffic originates here)
       port: 9080
-  # Rules for routing to reviews
+  hostnames:
+    - reviews.booking.svc.cluster.local
+    - reviews
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
-      # Native timeout
+      # Native timeout in HTTPRoute
       timeouts:
         request: 2s
         backendRequest: 1500ms
-      # ExtensionRef to Linkerd policies
+      # Retry configuration (native Gateway API)
+      retry:
+        codes:
+          - 500
+          - 502
+          - 503
+        attempts: 3
+      # ExtensionRef to Istio policies (attached via waypoint)
       filters:
-        # Reference to Server (defines the target)
-        - type: ExtensionRef
-          extensionRef:
-            group: policy.linkerd.io
-            kind: Server
-            name: reviews-server
-        # Reference to ServiceProfile (circuit breaker & timeout)
-        - type: ExtensionRef
-          extensionRef:
-            group: linkerd.io
-            kind: ServiceProfile
-            name: reviews-profile
-        # Reference to Rate Limit Policy
         - type: ExtensionRef
           extensionRef:
             group: policy.linkerd.io
             kind: HTTPLocalRateLimitPolicy
-            name: reviews-ratelimit
+            name: reviews-rate-limit
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: ServiceProfile
+            name: reviews-profile
+
       backendRefs:
-        - group: core
-          kind: Service
-          name: reviews
+        - name: reviews  # Destination service
           port: 9080
 ---
-# ============================================
-# HTTPRoute: productpage -> details
-# Using Service as parentRef (GAMMA pattern)
-# With extensionRef to Server and ServiceProfile
-# ============================================
-apiVersion: policy.linkerd.io/v1beta2
+# HTTPRoute with productpage as parentRef
+# Controls outbound traffic FROM productpage TO details
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: productpage-to-details
   namespace: booking
 spec:
-  # ParentRef is the consumer service (productpage)
-  parentRefs:
-    - group: core
-      kind: Service
-      name: productpage
-      port: 9080
-  # Rules for routing to details
+  hostnames:
+    - details.booking.svc.cluster.local
+    - details
   rules:
     - matches:
         - path:
@@ -73,28 +68,25 @@ spec:
       timeouts:
         request: 1s
         backendRequest: 800ms
-      # ExtensionRef to Linkerd policies
+      # Retry configuration
+      retry:
+        codes:
+          - 500
+          - 502
+          - 503
+        attempts: 3
+      # ExtensionRef to Istio policies
       filters:
-        # Reference to Server
-        - type: ExtensionRef
-          extensionRef:
-            group: policy.linkerd.io
-            kind: Server
-            name: details-server
-        # Reference to ServiceProfile
-        - type: ExtensionRef
-          extensionRef:
-            group: linkerd.io
-            kind: ServiceProfile
-            name: details-profile
-        # Reference to Rate Limit Policy
         - type: ExtensionRef
           extensionRef:
             group: policy.linkerd.io
             kind: HTTPLocalRateLimitPolicy
-            name: details-ratelimit
+            name: details-rate-limit
+        - type: ExtensionRef
+          extensionRef:
+            group: policy.linkerd.io
+            kind: ServiceProfile
+            name: details-profile
       backendRefs:
-        - group: core
-          kind: Service
-          name: details
+        - name: details  # Destination service
           port: 9080

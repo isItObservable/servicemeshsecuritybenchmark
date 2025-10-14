@@ -253,11 +253,3 @@ spec:
                     host: ${MY_POD_IP}
                     port: 8888
                     without_units: true
-        traces:
-          processors:
-            - batch:
-                exporter:
-                  otlp:
-                    protocol: grpc
-                    endpoint: http://localhost:4317
-

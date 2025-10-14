@@ -6,6 +6,7 @@ metadata:
 spec:
   parentRefs:
     - name: bookinfo-gateway
+      namespace: kgateway-system
   rules:
     - matches:
         - path:
