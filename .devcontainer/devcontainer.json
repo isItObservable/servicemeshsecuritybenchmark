@@ -22,17 +22,10 @@
 
 	// Set the remote user
 	"remoteUser": "vscode",
-
+	"forwardPorts": [30080],
 	"portsAttributes": {
-		"30080": {
-			"label": "Gateway HTTP",
-			"protocol": "http",
-			"onAutoForward": "notify",
-			"visibility": "public"
-		},
 
-	"portsAttributes": {
-		"30080": { "label": "Gateway" }
+		"30080": { "label": "Gateway HTTP" }
 	},
 
 	// Install kind and run your setup scripts
