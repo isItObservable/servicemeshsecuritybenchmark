@@ -8,12 +8,12 @@ spec:
   gatewayClassName: kgateway
   infrastructure:
     parametersRef:
-      name: custom-gw-params
+      name: fixed-nodeport-params
       group: gateway.kgateway.dev
       kind: GatewayParameters
   listeners:
     - name: http
-      port: 8008
+      port: 80
       protocol: HTTP
       allowedRoutes:
         namespaces:

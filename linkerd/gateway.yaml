@@ -2,19 +2,13 @@ apiVersion: gateway.kgateway.dev/v1alpha1
 kind: GatewayParameters
 metadata:
   name: fixed-nodeport-params
-  namespace: kgateway-system
+  namespace: booking
 spec:
   kube:
     service:
       type: NodePort
-      ports:
-        - name: http
-          port: 80
-          targetPort: 8080
-          nodePort: 30080  # ← Fixed port for HTTP
-          protocol: TCP
 ---
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: bookinfo-gateway
@@ -23,6 +17,11 @@ metadata:
     gateway.kgateway.dev/gateway-parameters-name: fixed-nodeport-params
 spec:
   gatewayClassName: kgateway
+  infrastructure:
+    parametersRef:
+      name: fixed-nodeport-params
+      group: gateway.kgateway.dev
+      kind: GatewayParameters
   listeners:
     - name: http
       port: 80

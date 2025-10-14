@@ -1,7 +1,7 @@
 apiVersion: gateway.kgateway.dev/v1alpha1
 kind: GatewayParameters
 metadata:
-  name: custom-gw-params
+  name: fixed-nodeport-params
   namespace: kgateway-system
 spec:
   kube:
