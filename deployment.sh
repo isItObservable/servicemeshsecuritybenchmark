@@ -278,12 +278,14 @@ else
        kubectl label namespace booking istio.io/use-waypoint=bookinfo-waypoint
        kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
        kubectl apply -f istio/referencegrant.yaml
-       GATEWAY_SVC=$(kubectl get svc -n booking -l gateway.networking.k8s.io/gateway-name=bookinfo-gateway -o jsonpath='{.items[0].metadata.name}')
-       #
-       echo "Patching service: ${GATEWAY_SVC} to use the standard nodeport"
-       #
-       # # Patch with fixed NodePorts
-       kubectl patch svc ${GATEWAY_SVC} -n booking --type='json' -p='[{"op": "add", "path": "/spec/ports/0/nodePort", "value": 30080}]'
+
+       echo "🔧 Applying patch..."
+       SVC_JSON=$(kubectl get svc bookinfo-gateway-istio -n booking -o json)
+       HTTP_IDX=$(echo "$SVC_JSON" | jq '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+       PATCH_OPS='['
+       PATCH_OPS="${PATCH_OPS}{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}"
+       kubectl patch svc bookinfo-gateway-istio -n booking --type='json' -p="${PATCH_OPS}"
+
      else
         if [  "$TYPE" = 'istio' ]; then
           echo " istio"
@@ -291,9 +293,12 @@ else
           kubectl label namespace booking istio-injection=enabled
           kubectl apply -f opentelemetry/openTelemetry-manifest_statefulset_istio.yaml
           kubectl apply -f istio/referencegrant.yaml
-          echo "Patching service: ${GATEWAY_SVC} to use the standard nodeport"
-          # # Patch with fixed NodePorts
-          kubectl patch svc ${GATEWAY_SVC} -n booking --type='json' -p='[{"op": "add", "path": "/spec/ports/0/nodePort", "value": 30080}]'
+          echo "🔧 Applying patch..."
+          SVC_JSON=$(kubectl get svc bookinfo-gateway-istio -n booking -o json)
+          HTTP_IDX=$(echo "$SVC_JSON" | jq '.spec.ports | to_entries | .[] | select(.value.name == "http") | .key')
+          PATCH_OPS='['
+          PATCH_OPS="${PATCH_OPS}{\"op\": \"replace\", \"path\": \"/spec/ports/${HTTP_IDX}/nodePort\", \"value\": 30080}"
+          kubectl patch svc bookinfo-gateway-istio -n booking --type='json' -p="${PATCH_OPS}"
 
         else
           if [  "$TYPE" = 'ambient-kgateway' ]; then

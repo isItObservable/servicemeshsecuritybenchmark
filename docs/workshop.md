@@ -1208,7 +1208,7 @@ EOF
 
 
 
-## Part 3: Understanding Ambient Mesh Architecture (15 minutes)
+## Part 3: Understanding Ambient Mesh Architecture
 
 ### The Problem with Sidecars
 
@@ -1824,7 +1824,727 @@ curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
 - ✅ **Model routing**: AI proxy handles model selection
 - ✅ **Cost tracking**: AI proxy tracks token usage
 
+# Part 5: Enabling Observability
 
+
+
+In this section, you'll learn how to enable observability features in each service mesh, including metrics, tracing, and access logs.
+
+## Overview
+
+Observability is crucial for understanding service behavior, debugging issues, and monitoring performance. Each service mesh provides different approaches to enabling observability features:
+
+- **Metrics**: OpenTelemetry or Prometheus-compatible metrics for monitoring
+- **Tracing**: Distributed tracing with OpenTelemetry
+- **Access Logs**: Logs or Opentelemtry Format
+
+## Prerequisites
+
+Before starting, ensure you have:
+- One or more service meshes installed from previous sections
+- OpenTelemetry Demo application deployed
+- Access to the Kubernetes cluster
+
+---
+
+## 5.1 Enable Metrics Collection
+
+=== "Linkerd"
+
+    Linkerd automatically exports Prometheus metrics. 
+    Traces needs to be enabled by using the Jaeger extension where we can :
+    - enable Opentelemetry Support
+    - define our Opentelemetry collector endopint
+    
+    **Traces:**
+    This cluster already has the jaeger insalled , but if you would like to install 
+    ```bash
+    helm install linkerd-jaeger -n linkerd -f linkerd/jaeger-value.yaml linkerd-edge/linkerd-jaeger
+    ```
+    where jaeger-value.yaml has:
+     ```yaml
+    jaeger:
+        enabled: false
+    collector:
+        enabled: false
+    webhook:
+        collectorTraceProtocol: opentelemetry
+        collectorSvcAddr: otel-collector.default.svc.cluster.local:4317
+        collectorSvcAccount: otelcontribcol
+    ```
+    **Metrics:**
+    Every linkerd proxy is exposing prometheus metrics by default on the port 4191
+    We can easily configure our collector to scrape those metrics by adding the following scrape config:
+    ```yaml    
+     - job_name: 'linkerd-proxy'
+       kubernetes_sd_configs:
+        - role: pod
+       relabel_configs:
+        - source_labels:
+            - __meta_kubernetes_pod_container_name
+            - __meta_kubernetes_pod_container_port_name
+            - __meta_kubernetes_pod_label_linkerd_io_control_plane_ns
+          action: keep
+          regex: ^{{default .Values.proxyContainerName "linkerd-proxy" .Values.proxyContainerName}};linkerd-admin;{{.Values.linkerdNamespace}}$
+        - source_labels: [ __meta_kubernetes_namespace ]
+          action: replace
+          target_label: namespace
+        - source_labels: [ __meta_kubernetes_pod_name ]
+          action: replace
+          target_label: pod
+        # special case k8s' "job" label, to not interfere with prometheus' "job"
+        # label
+        # __meta_kubernetes_pod_label_linkerd_io_proxy_job=foo =>
+        # k8s_job=foo
+        - source_labels: [ __meta_kubernetes_pod_label_linkerd_io_proxy_job ]
+          action: replace
+          target_label: k8s_job
+        # drop __meta_kubernetes_pod_label_linkerd_io_proxy_job
+        - action: labeldrop
+          regex: __meta_kubernetes_pod_label_linkerd_io_proxy_job
+        # __meta_kubernetes_pod_label_linkerd_io_proxy_deployment=foo =>
+        # deployment=foo
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_linkerd_io_proxy_(.+)
+        # drop all labels that we just made copies of in the previous labelmap
+        - action: labeldrop
+          regex: __meta_kubernetes_pod_label_linkerd_io_proxy_(.+)
+        # __meta_kubernetes_pod_label_linkerd_io_foo=bar =>
+        # foo=bar
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_linkerd_io_(.+)
+        # Copy all pod labels to tmp labels
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+          replacement: __tmp_pod_label_$1
+        # Take `linkerd_io_` prefixed labels and copy them without the prefix
+        - action: labelmap
+          regex: __tmp_pod_label_linkerd_io_(.+)
+          replacement: __tmp_pod_label_$1
+        # Drop the `linkerd_io_` originals
+        - action: labeldrop
+          regex: __tmp_pod_label_linkerd_io_(.+)
+        # Copy tmp labels into real labels
+        - action: labelmap
+          regex: __tmp_pod_label_(.+)
+    ```
+
+    Linkerd aslo expose prometheus metrics on the control plane. 
+    Here is the right scrape config:
+    ```yaml 
+    ```
+
+=== "Istio (Sidecar)"
+
+    Istio integrates with Prometheus for metrics collection:
+
+    ```bash
+    # Install Prometheus addon
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
+    
+    # Install Grafana for visualization
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
+    
+    # Install Kiali for service mesh dashboard
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/kiali.yaml
+    
+    # Verify installation
+    kubectl get pods -n istio-system
+    ```
+
+    **Access Dashboards:**
+    ```bash
+    # Prometheus
+    kubectl port-forward -n istio-system svc/prometheus 9090:9090
+    
+    # Grafana
+    kubectl port-forward -n istio-system svc/grafana 3000:3000
+    
+    # Kiali
+    kubectl port-forward -n istio-system svc/kiali 20001:20001
+    ```
+
+    **Enable Metrics on Namespace:**
+    ```bash
+    # Metrics are automatically collected for meshed namespaces
+    kubectl get pods -n otel-demo -o jsonpath='{.items[*].spec.containers[*].name}' | grep istio-proxy
+    ```
+
+=== "Istio (Ambient)"
+
+    Ambient mode uses ztunnel for L4 metrics and waypoints for L7 metrics:
+
+    ```bash
+    # Install observability addons
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
+    
+    # Verify ztunnel is collecting L4 metrics
+    kubectl logs -n istio-system -l app=ztunnel | grep metrics
+    ```
+
+    **View Ambient-specific Metrics:**
+    ```bash
+    # Access Prometheus
+    kubectl port-forward -n istio-system svc/prometheus 9090:9090
+    
+    # Query L4 metrics from ztunnel
+    # In Prometheus, query: istio_tcp_connections_opened_total
+    
+    # Query L7 metrics from waypoint (if deployed)
+    # istio_requests_total{source_workload="waypoint"}
+    ```
+
+    **Deploy Waypoint for L7 Metrics:**
+    ```bash
+    # Create waypoint for namespace
+    kubectl label namespace otel-demo istio.io/use-waypoint=waypoint
+    
+    istioctl x waypoint apply -n otel-demo --name waypoint
+    ```
+
+=== "Kuma"
+
+    Kuma integrates with Prometheus using MeshMetric policy:
+
+    ```bash
+    # Install Prometheus via Helm
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm install prometheus prometheus-community/kube-prometheus-stack \
+      --namespace monitoring --create-namespace
+    ```
+
+    **Configure Prometheus to Scrape Kuma Metrics:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: prometheus-config
+      namespace kuma-system
+    data:
+      prometheus.yml: |
+        scrape_configs:
+        - job_name: 'kuma-dataplanes'
+          kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+              - otel-demo
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_kuma_io_sidecar_injected]
+            action: keep
+            regex: true
+    EOF
+    ```
+
+    **Enable Metrics via MeshMetric:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshMetric
+    metadata:
+      name: prometheus-metrics
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      targetRef:
+        kind: Mesh
+      default:
+        backends:
+        - type: Prometheus
+          prometheus:
+            port: 5670
+            path: /metrics
+            tls:
+              mode: Disabled
+    EOF
+    ```
+
+=== "Ambient + kgateway"
+
+    kgateway with Ambient mesh uses Istio's observability stack:
+
+    ```bash
+    # Install Prometheus and Grafana
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/prometheus.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/grafana.yaml
+    
+    # kgateway automatically exports metrics to Prometheus
+    # Metrics endpoint: :9091/metrics on gateway pods
+    ```
+
+    **View kgateway Metrics:**
+    ```bash
+    # Get gateway pod
+    GATEWAY_POD=$(kubectl get pods -n default -l gateway.networking.k8s.io/gateway-name=api-gateway -o jsonpath='{.items[0].metadata.name}')
+    
+    # Port-forward to metrics endpoint
+    kubectl port-forward -n default ${GATEWAY_POD} 9091:9091
+    
+    # Curl metrics
+    curl http://localhost:9091/metrics | grep envoy_
+    ```
+
+---
+
+## 5.2 Enable Distributed Tracing
+
+=== "Linkerd"
+
+    Linkerd supports OpenTelemetry tracing:
+
+    ```bash
+    # Install Jaeger for trace collection
+    kubectl create namespace tracing
+    kubectl apply -n tracing -f https://raw.githubusercontent.com/linkerd/linkerd-examples/main/jaeger/jaeger.yaml
+    ```
+
+    **Configure Linkerd to Send Traces:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: linkerd-config-overrides
+      namespace: linkerd
+    data:
+      values: |
+        proxyInit:
+          tracing:
+            enabled: true
+            collector: jaeger-collector.tracing.svc.cluster.local:14268
+    EOF
+    ```
+
+    **Update Linkerd Configuration:**
+    ```bash
+    # Upgrade Linkerd with tracing enabled
+    linkerd upgrade --addon-config linkerd-config-overrides | kubectl apply -f -
+    
+    # Restart pods to pick up new config
+    kubectl rollout restart deployment -n otel-demo
+    ```
+
+    **Access Jaeger UI:**
+    ```bash
+    kubectl port-forward -n tracing svc/jaeger 16686:16686
+    # Open http://localhost:16686
+    ```
+
+=== "Istio (Sidecar)"
+
+    Istio has built-in support for distributed tracing:
+
+    ```bash
+    # Install Jaeger
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
+    ```
+
+    **Enable Tracing via Telemetry API:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: mesh-default
+      namespace: istio-system
+    spec:
+      tracing:
+      - providers:
+        - name: jaeger
+        randomSamplingPercentage: 100.0
+    EOF
+    ```
+
+    **Configure Trace Provider:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: install.istio.io/v1alpha1
+    kind: IstioOperator
+    metadata:
+      name: istio-config
+      namespace: istio-system
+    spec:
+      meshConfig:
+        enableTracing: true
+        defaultConfig:
+          tracing:
+            sampling: 100.0
+            zipkin:
+              address: jaeger-collector.istio-system.svc.cluster.local:9411
+    EOF
+    ```
+
+    **Access Jaeger UI:**
+    ```bash
+    kubectl port-forward -n istio-system svc/jaeger 16686:16686
+    # Open http://localhost:16686
+    ```
+
+=== "Istio (Ambient)"
+
+    Ambient mode supports tracing for L7 traffic through waypoints:
+
+    ```bash
+    # Install Jaeger
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
+    ```
+
+    **Enable Tracing for Ambient:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: waypoint-tracing
+      namespace: otel-demo
+    spec:
+      selector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: waypoint
+      tracing:
+      - providers:
+        - name: jaeger
+        randomSamplingPercentage: 100.0
+    EOF
+    ```
+
+    **Note:** L4 traffic (ztunnel) doesn't generate traces. Deploy waypoint for L7 tracing:
+    ```bash
+    istioctl x waypoint apply -n otel-demo --name waypoint
+    kubectl label namespace otel-demo istio.io/use-waypoint=waypoint
+    ```
+
+=== "Kuma"
+
+    Kuma supports tracing via MeshTrace policy:
+
+    ```bash
+    # Install Jaeger
+    kubectl create namespace tracing
+    kubectl apply -n tracing -f https://raw.githubusercontent.com/kumahq/kuma-demo/master/kubernetes/kuma-jaeger.yaml
+    ```
+
+    **Enable Tracing via MeshTrace:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshTrace
+    metadata:
+      name: default-trace
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      targetRef:
+        kind: Mesh
+      default:
+        backends:
+        - type: Zipkin
+          zipkin:
+            url: http://jaeger-collector.tracing.svc.cluster.local:9411/api/v2/spans
+        sampling:
+          overall: 1.0  # 100% sampling
+    EOF
+    ```
+
+    **Access Jaeger UI:**
+    ```bash
+    kubectl port-forward -n tracing svc/jaeger-query 16686:16686
+    # Open http://localhost:16686
+    ```
+
+=== "Ambient + kgateway"
+
+    kgateway uses Istio's tracing configuration:
+
+    ```bash
+    # Install Jaeger
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.24/samples/addons/jaeger.yaml
+    ```
+
+    **Enable Tracing for Gateway:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: gateway-tracing
+      namespace: default
+    spec:
+      selector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: api-gateway
+      tracing:
+      - providers:
+        - name: jaeger
+        randomSamplingPercentage: 100.0
+        customTags:
+          gateway:
+            literal:
+              value: "kgateway"
+    EOF
+    ```
+
+---
+
+## 5.3 Enable Access Logs
+
+=== "Linkerd"
+
+    Linkerd proxy automatically logs to stdout:
+
+    ```bash
+    # View access logs for a specific pod
+    kubectl logs -n otel-demo deploy/frontend -c linkerd-proxy
+    
+    # Follow logs
+    kubectl logs -n otel-demo deploy/frontend -c linkerd-proxy -f
+    
+    # Enable verbose logging
+    kubectl set env -n otel-demo deploy/frontend \
+      -c linkerd-proxy LINKERD2_PROXY_LOG=info,linkerd=debug
+    ```
+
+    **Configure Log Format:**
+    ```bash
+    # Edit linkerd-config
+    kubectl edit cm/linkerd-config -n linkerd
+    
+    # Add under proxyInit:
+    #   accessLog: |-
+    #     format: '{"method":"%{REQUEST_METHOD}e","path":"%{REQUEST_PATH}e","status":%{RESPONSE_CODE}e}'
+    ```
+
+=== "Istio (Sidecar)"
+
+    Enable access logs via Telemetry API:
+
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: mesh-access-logs
+      namespace: istio-system
+    spec:
+      accessLogging:
+      - providers:
+        - name: envoy
+        filter:
+          expression: response.code >= 400
+    EOF
+    ```
+
+    **Custom Log Format:**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: custom-access-logs
+      namespace: otel-demo
+    spec:
+      accessLogging:
+      - providers:
+        - name: envoy
+        format:
+          text: |
+            [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%"
+            %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT%
+            %DURATION% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%"
+            "%REQ(X-REQUEST-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%"
+    EOF
+    ```
+
+    **View Logs:**
+    ```bash
+    kubectl logs -n otel-demo deploy/frontend -c istio-proxy
+    ```
+
+=== "Istio (Ambient)"
+
+    Enable access logs for ztunnel and waypoint:
+
+    **Ztunnel Logs (L4):**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: ztunnel-logs
+      namespace: istio-system
+    spec:
+      selector:
+        matchLabels:
+          app: ztunnel
+      accessLogging:
+      - providers:
+        - name: envoy
+    EOF
+    ```
+
+    **Waypoint Logs (L7):**
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: waypoint-logs
+      namespace: otel-demo
+    spec:
+      selector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: waypoint
+      accessLogging:
+      - providers:
+        - name: envoy
+    EOF
+    ```
+
+=== "Kuma"
+
+    Enable access logs via MeshAccessLog policy:
+
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: kuma.io/v1alpha1
+    kind: MeshAccessLog
+    metadata:
+      name: default-access-log
+      namespace: kuma-system
+      labels:
+        kuma.io/mesh: default
+    spec:
+      targetRef:
+        kind: Mesh
+      to:
+      - targetRef:
+          kind: Mesh
+        default:
+          backends:
+          - type: File
+            file:
+              path: /dev/stdout
+              format:
+                plain: '[%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE%'
+    EOF
+    ```
+
+    **View Logs:**
+    ```bash
+    kubectl logs -n otel-demo deploy/frontend -c kuma-sidecar
+    ```
+
+=== "Ambient + kgateway"
+
+    kgateway uses Envoy access logs:
+
+    ```yaml
+    kubectl apply -f - <<EOF
+    apiVersion: telemetry.istio.io/v1
+    kind: Telemetry
+    metadata:
+      name: gateway-access-logs
+      namespace: default
+    spec:
+      selector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: api-gateway
+      accessLogging:
+      - providers:
+        - name: envoy
+        format:
+          json:
+            method: "%REQ(:METHOD)%"
+            path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+            protocol: "%PROTOCOL%"
+            response_code: "%RESPONSE_CODE%"
+            duration: "%DURATION%"
+            upstream_host: "%UPSTREAM_HOST%"
+    EOF
+    ```
+
+---
+
+## 5.4 Verify Observability
+
+Generate some traffic and verify observability features:
+
+```bash
+# Generate traffic
+for i in {1..100}; do
+  curl -s http://$(kubectl get svc frontend -n otel-demo -o jsonpath='{.status.loadBalancer.ingress[0].ip}') > /dev/null
+  echo "Request $i sent"
+  sleep 0.1
+done
+```
+
+**Check Metrics:**
+- Access Prometheus/Grafana dashboards
+- Query for request rates, latencies, error rates
+- Look for mesh-specific metrics (e.g., `istio_requests_total`, `linkerd_request_total`)
+
+**Check Traces:**
+- Open Jaeger UI
+- Search for traces from `frontend` service
+- Verify end-to-end trace spans across services
+- Check for proper context propagation
+
+**Check Logs:**
+- View access logs from various pods
+- Verify log format includes necessary fields
+- Check for errors or anomalies
+
+---
+
+## Summary
+
+You've successfully enabled observability across different service mesh implementations:
+
+✅ **Metrics**: Prometheus integration for monitoring  
+✅ **Tracing**: Distributed tracing with Jaeger  
+✅ **Access Logs**: Request-level logging for debugging
+
+**Key Takeaways:**
+- Each mesh has different approaches to observability
+- Linkerd: Built-in metrics, add-on for tracing
+- Istio: Telemetry API for unified configuration
+- Kuma: Policy-based configuration (MeshMetric, MeshTrace, MeshAccessLog)
+- All meshes integrate well with standard observability tools (Prometheus, Jaeger, Grafana)
+
+**Next Steps:**
+- Explore advanced metrics and alerting
+- Set up long-term storage for metrics and traces
+- Create custom dashboards in Grafana
+- Integrate with your existing observability stack
+
+---
+
+## Troubleshooting
+
+**Metrics not showing up:**
+- Verify Prometheus is scraping the correct endpoints
+- Check service mesh proxy logs for errors
+- Ensure proper labels/annotations on pods
+
+**Traces not appearing:**
+- Verify trace collector is reachable
+- Check sampling rate (set to 100% for testing)
+- Ensure proper trace context propagation (check headers)
+
+**Access logs not visible:**
+- Verify Telemetry/Policy is applied correctly
+- Check if logs are enabled on the proxy
+- Look in the correct container (sidecar/proxy)
+
+**For Ambient mode:**
+- Remember: L4 metrics only from ztunnel
+- L7 metrics/traces require waypoint deployment
+- Check both ztunnel and waypoint configurations
+- 
 ## Part 5: Complete Architecture & Best Practices (5 minutes)
 
 ### The Complete Stack
