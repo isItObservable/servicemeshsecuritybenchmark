@@ -1446,9 +1446,11 @@
 <h3 id="verify-your-environment">Verify Your Environment<a class="headerlink" href="#verify-your-environment" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Check pods are running</span>
 kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>booking
-
+kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>-n<span class="w"> </span>booking
 <span class="c1"># Expected: productpage, reviews-v1/v2/v3, details-v1, ratings-v1</span>
 <span class="c1"># All should show 2/2 or 1/1 depending on mesh type</span>
+<span class="c1"># you should have one gateway in booking for most of the mesh excetp linkerd and kgateway. </span>
+<span class="c1"># in that case the gateway will be in kgateway-system</span>
 </code></pre></div>
 <h3 id="the-gamma-pattern-service-to-service-routing">The GAMMA Pattern: Service-to-Service Routing<a class="headerlink" href="#the-gamma-pattern-service-to-service-routing" title="Permanent link">#</a></h3>
 <p><strong>Traditional Gateway API (Ingress):</strong>
@@ -1462,6 +1464,10 @@ kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> <
 <span class="nt">parentRefs</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage</span>
 <span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span><span class="w">  </span><span class="c1"># Source service!</span>
+</code></pre></div>
+The environment already has one route define:
+<div class="highlight"><pre><span></span><code><span class="c1"># Check pods are running</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>bookingroute<span class="w"> </span>-n<span class="w"> </span>booking<span class="w"> </span>-o<span class="w"> </span>yaml
 </code></pre></div></p>
 <h3 id="exercise-1-create-your-first-service-to-service-route">Exercise 1: Create Your First Service-to-Service Route<a class="headerlink" href="#exercise-1-create-your-first-service-to-service-route" title="Permanent link">#</a></h3>
 <p><strong>Task:</strong> Route traffic from productpage to reviews</p>
