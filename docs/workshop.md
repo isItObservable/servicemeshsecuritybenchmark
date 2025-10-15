@@ -25,6 +25,26 @@ kubectl get gateway -n booking
 # in that case the gateway will be in kgateway-system
 ```
 
+### Understanding the Bookinfo Application
+
+
+```mermaid
+flowchart TD
+    productpage["productpage<br/>(Python - Frontend)"]
+    
+    productpage --> reviews["reviews<br/>(Java - 3 versions)"]
+    productpage --> ratings["ratings<br/>(Ruby)"]
+    productpage --> details["details<br/>(Ruby - Book info)"]
+    
+    classDef frontend fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    classDef backend fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff
+    classDef ruby fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class productpage frontend
+    class reviews backend
+    class ratings,details ruby
+```
+
 ### The GAMMA Pattern: Service-to-Service Routing
 
 **Traditional Gateway API (Ingress):**
@@ -393,7 +413,7 @@ spec:
 ```
 
 **How it works:**
-## **With Kubernetes Colors:**
+
 
 ```mermaid
 flowchart LR
@@ -792,26 +812,6 @@ timeline
 
 
 ## Part 1: Gateway API Fundamentals 
-
-### Understanding the Bookinfo Application
-
-
-```mermaid
-flowchart TD
-    productpage["productpage<br/>(Python - Frontend)"]
-    
-    productpage --> reviews["reviews<br/>(Java - 3 versions)"]
-    productpage --> ratings["ratings<br/>(Ruby)"]
-    productpage --> details["details<br/>(Ruby - Book info)"]
-    
-    classDef frontend fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
-    classDef backend fill:#40c057,stroke:#fff,stroke-width:2px,color:#fff
-    classDef ruby fill:#fd7e14,stroke:#fff,stroke-width:2px,color:#fff
-    
-    class productpage frontend
-    class reviews backend
-    class ratings,details ruby
-```
 
 ### Pattern 2: Circuit Breaker 
 
@@ -1467,33 +1467,11 @@ flowchart LR
 | **HTTPRoute parentRef** | Service | Gateway |
 | **Resource Efficiency** | ⭐⭐ | ⭐⭐⭐⭐⭐ |
 
-### Identity Preservation
-
-**Important:** Even though waypoint makes the L7 request, the original client identity is preserved!
-
-```yaml
-# This still works in Ambient!
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-spec:
-  selector:
-    matchLabels:
-      app: reviews
-  rules:
-    - from:
-        - source:
-            principals:
-              # This is productpage's identity, not waypoint's!
-              - "cluster.local/ns/booking/sa/bookinfo-productpage"
-```
-
----
-
 ## Part 4: KGateway Value & AI Integration 
 
 ### Why KGateway?
 
-KGateway (Solo.io Gloo Gateway) extends Istio with enterprise features:
+KGateway ( previously Solo.io Gloo Gateway) extends Ambient with missing ServiceMesh Policy:
 
 1. **Unified Policy Management**: TrafficPolicy instead of multiple CRDs
 2. **Request/Response Transformation**: Modify traffic on-the-fly
@@ -1547,44 +1525,6 @@ spec:
     type: ROUND_ROBIN
 ```
 
-
-### Using extensionRef with TrafficPolicy
-
-**Update HTTPRoute to reference KGateway policies:**
-
-```bash
-kubectl apply -f - <<EOF
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: reviews-route
-  namespace: booking
-spec:
-  parentRefs:
-    - name: reviews-waypoint  # Ambient pattern
-  hostnames:
-    - reviews.booking.svc.cluster.local
-  rules:
-    - timeouts:
-        request: 2s
-      filters:
-        # Reference KGateway TrafficPolicy
-        - type: ExtensionRef
-          extensionRef:
-            group: gateway.kgateway.dev
-            kind: TrafficPolicy
-            name: reviews-policy
-        # Can still reference Istio policies
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: DestinationRule
-            name: reviews-circuit-breaker
-      backendRefs:
-        - name: reviews
-          port: 9080
-EOF
-```
 
 ### Complete TrafficPolicy Example
 
@@ -1721,38 +1661,6 @@ spec:
     request: 2s  # More strict than namespace default
 ```
 
-### Request/Response Transformation
-
-Use KGateway's policy attachment with HTTPRoute filters for header manipulation:
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: reviews-route
-spec:
-  parentRefs:
-    - name: reviews-waypoint
-  rules:
-    - filters:
-        # Add request headers
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-source-service
-                value: productpage
-              - name: x-mesh-type
-                value: ambient
-        # Add response headers
-        - type: ResponseHeaderModifier
-          responseHeaderModifier:
-            add:
-              - name: x-processed-by
-                value: kgateway
-      backendRefs:
-        - name: reviews
-          port: 9080
-```
 
 
 ### AI Gateway: Future of KGateway
