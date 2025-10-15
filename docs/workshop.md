@@ -18,9 +18,11 @@ Learn how to leverage Gateway API for service-to-service communication and imple
 ```bash
 # Check pods are running
 kubectl get pods -n booking
-
+kubectl get gateway -n booking
 # Expected: productpage, reviews-v1/v2/v3, details-v1, ratings-v1
 # All should show 2/2 or 1/1 depending on mesh type
+# you should have one gateway in booking for most of the mesh excetp linkerd and kgateway. 
+# in that case the gateway will be in kgateway-system
 ```
 
 ### The GAMMA Pattern: Service-to-Service Routing
@@ -39,6 +41,11 @@ parentRefs:
 parentRefs:
   - name: productpage
     kind: Service  # Source service!
+```
+The environment already has one route define:
+```bash
+# Check pods are running
+kubectl get httproute bookingroute -n booking -o yaml
 ```
 
 ### Exercise 1: Create Your First Service-to-Service Route

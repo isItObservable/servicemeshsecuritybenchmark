@@ -9,7 +9,7 @@ This Workshop requires 2 API tokens:
 You have been invited to a Dynatrace tenant.
 
 All the relevant applications are displayed on your welcome screen:
-<img src="/images/home_dt.png" width="100%" alt="welcome" />
+<img src="..//images/home_dt.png" width="100%" alt="welcome" />
 
 --8<-- "snippets/api-token.md"
 
