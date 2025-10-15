@@ -1,4 +1,4 @@
-# Service Mesh Workshop: Gateway API, Ambient Architecture & AI-Enhanced Gateways
+# Service Mesh Workshop: API Gateway and value of Kgateway
 
 
 **Level:** Intermediate  
