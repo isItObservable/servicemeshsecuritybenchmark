@@ -9,7 +9,7 @@ Learn how to leverage Gateway API for service-to-service communication and imple
 1. Gateway API HTTPRoutes (GAMMA pattern)
 2. Rate limiting, circuit breakers, and timeouts
 3. Ambient mesh architecture and benefits
-4. KGateway for advanced features and AI capabilities
+4. Kgateway for advanced features and AI capabilities
 
 
 
@@ -524,12 +524,12 @@ spec:
 
 ### How Different Meshes Use Policy Attachment
 
-| Mesh | Primary Pattern | extensionRef Support |
-|------|----------------|---------------------|
-| **KGateway** | targetRef | ✅ Yes (experimental) |
-| **Istio** | Selectors (labels) | ⚠️ Limited |
-| **Kuma** | targetRef | ✅ Yes |
-| **Linkerd** | Selectors | ⚠️ Limited |
+| Mesh         | Primary Pattern | extensionRef Support |
+|--------------|----------------|---------------------|
+| **Kgateway** | targetRef | ✅ Yes (experimental) |
+| **Istio**    | Selectors (labels) | ⚠️ Limited |
+| **Kuma**     | targetRef | ✅ Yes |
+| **Linkerd**  | Selectors | ⚠️ Limited |
 
 ### Practical Example: Both Patterns
 
@@ -782,7 +782,7 @@ timeline
     2023 : targetRef Pattern Emerges
          : Simpler than extensionRef
          : Hierarchical policies (namespace → service → route)
-         : Adopted by KGateway & Kuma
+         : Adopted by Kgateway & Kuma
          : Growing community consensus
     
     2024 : Hybrid Approach
@@ -1467,30 +1467,30 @@ flowchart LR
 | **HTTPRoute parentRef** | Service | Gateway |
 | **Resource Efficiency** | ⭐⭐ | ⭐⭐⭐⭐⭐ |
 
-## Part 4: KGateway Value & AI Integration 
+## Part 4: Kgateway Value & AI Integration 
 
-### Why KGateway?
+### Why Kgateway?
 
-KGateway ( previously Solo.io Gloo Gateway) extends Ambient with missing ServiceMesh Policy:
+Kgateway ( previously Solo.io Gloo Gateway) extends Ambient with missing ServiceMesh Policy:
 
 1. **Unified Policy Management**: TrafficPolicy instead of multiple CRDs
 2. **Request/Response Transformation**: Modify traffic on-the-fly
 3. **Advanced Rate Limiting**: More flexible than basic token bucket
 4. **AI Gateway Features**: LLM routing, prompt management, cost tracking
 
-### KGateway TrafficPolicy: Policy Attachment
+### Kgateway TrafficPolicy: Policy Attachment
 
-**KGateway** (from kgateway.dev) uses the Gateway API policy attachment pattern.
+**Kgateway** (from kgateway.dev) uses the Gateway API policy attachment pattern.
 
 **Instead of multiple resources:**
 ```yaml
-# Without KGateway: 3 separate resources
+# Without Kgateway: 3 separate resources
 - DestinationRule (circuit breaker)
 - VirtualService (timeout)
 - EnvoyFilter (rate limiting) only with Istio Sidecar
 ```
 
-**With KGateway: Policy Attachment:**
+**With Kgateway: Policy Attachment:**
 ```yaml
 apiVersion: gateway.kgateway.dev/v1alpha1
 kind: TrafficPolicy
@@ -1604,9 +1604,9 @@ spec:
     type: ROUND_ROBIN
 ```
 
-### Policy Hierarchy with KGateway
+### Policy Hierarchy with Kgateway
 
-KGateway uses a hierarchical policy model:
+Kgateway uses a hierarchical policy model:
 
 ```mermaid
 flowchart TB
@@ -1663,15 +1663,15 @@ spec:
 
 
 
-### AI Gateway: Future of KGateway
+### AI Gateway: Future of Kgateway
 
-**Note:** AI Gateway features are emerging in the Gateway API ecosystem. KGateway focuses on the core Gateway API spec.
+**Note:** AI Gateway features are emerging in the Gateway API ecosystem. Kgateway focuses on the core Gateway API spec.
 
 For AI/LLM routing, you would:
 
 1. **Use HTTPRoute for basic routing**
 2. **Use external AI proxy** (like LiteLLM, Portkey)
-3. **Combine with KGateway policies** for rate limiting and observability
+3. **Combine with Kgateway policies** for rate limiting and observability
 
 **Architecture Pattern:**
 
@@ -1679,7 +1679,7 @@ For AI/LLM routing, you would:
 flowchart LR
     Client["👤 Client<br/><small>Application</small>"]
     
-    Gateway["🌐 HTTPRoute - KGateway<br/><b>Traffic Policies:</b><br/>• ⏱️ Rate Limiting<br/>• ⏰ Timeout<br/>• 🔌 Circuit Breaker"]
+    Gateway["🌐 HTTPRoute - Kgateway<br/><b>Traffic Policies:</b><br/>• ⏱️ Rate Limiting<br/>• ⏰ Timeout<br/>• 🔌 Circuit Breaker"]
     
     AI["🤖 AI Gateway<br/><b>Intelligence Layer:</b><br/>• 🎯 Model Routing<br/>• 💰 Cost Tracking<br/>• 📝 Prompt Management<br/>• 💾 Response Caching"]
     
@@ -1698,7 +1698,7 @@ flowchart LR
     style LLM fill:#d84315,stroke:#bf360c,stroke-width:3px,color:#fff
 ```
 
-**Example: AI Service with KGateway Policies:**
+**Example: AI Service with Kgateway Policies:**
 
 ```yaml
 # HTTPRoute to AI service
@@ -1827,7 +1827,7 @@ spec:
 **Client Usage:**
 
 ```bash
-# Call AI service through KGateway
+# Call AI service through Kgateway
 curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
   -H "Content-Type: application/json" \
   -d '{
@@ -1838,9 +1838,9 @@ curl -X POST http://ai-gateway.kgateway-system.svc.cluster.local/azure-openai \
   }'
 ```
 
-**Benefits of KGateway + AI Proxy:**
+**Benefits of Kgateway + AI Proxy:**
 
-- ✅ **Rate limiting**: Control AI costs with KGateway TrafficPolicy
+- ✅ **Rate limiting**: Control AI costs with Kgateway TrafficPolicy
 - ✅ **Timeout management**: Long timeouts for LLM responses
 - ✅ **Circuit breaker**: Fail fast on LLM provider issues
 - ✅ **Retry logic**: Handle transient failures
@@ -2561,7 +2561,7 @@ spec:
 - [Gateway API Specification](https://gateway-api.sigs.k8s.io/)
 - [GAMMA Initiative](https://gateway-api.sigs.k8s.io/mesh/)
 - [Istio Ambient Mesh](https://istio.io/latest/docs/ambient/)
-- [KGateway Documentation](https://docs.solo.io/gateway/)
+- [Kgateway Documentation](https://docs.solo.io/gateway/)
 - [AI Gateway Guide](https://docs.solo.io/gateway/latest/ai/)
 
 
@@ -2570,7 +2570,7 @@ spec:
 
 - Gateway API Slack: `#sig-network-gateway-api`
 - Istio Ambient Slack: `#ambient`
-
+- Kgateway Slack:  `#kgateway`
 
 ## Workshop Feedback
 
