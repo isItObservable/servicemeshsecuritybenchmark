@@ -76,7 +76,7 @@ if [  "$OLD" = 'kuma' ]; then
    kubectl delete -f kuma/MeshMetric.yaml
    kubectl delete -f kuma/MeshAccesslog.yaml
    kubectl delete -f kuma/meshtrace.yaml
-   kubect delete -f  kuma/gatewayclass.yaml
+   kubectl delete -f  kuma/gatewayclass.yaml
    kubectl delete -f kuma/Mesh.yaml
    kubectl delete -f kuma/kuma_gateway.yaml
    kubectl delete -f kuma/referencegrant.yaml
@@ -93,7 +93,7 @@ else
       kubectl delete -f opentelemetry/openTelemetry-manifest_statefulset_linkerd.yaml
       kubectl delete -f linkerd/referencegrant.yaml
       helm uninstall kgateway -n kgateway-system
-      helm uninstall kgateway-crds -n kgateway-syste
+      helm uninstall kgateway-crds -n kgateway-system
       helm uninstall linkerd-jaeger -n  linkerd
       helm uninstall linkerd-control-plane -n linkerd
       helm uninstall linkerd-crds -n linkerd
@@ -216,11 +216,11 @@ else
        -f linkerd/jaeger-value.yaml \
        linkerd-edge/linkerd-jaeger
      # Install kgateway
-     helm upgrade -i --create-namespace --namespace kgateway-system --version v2.1.0-main \
+     helm install --create-namespace --namespace kgateway-system --version v2.1.0-main \
      kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
      --set controller.image.pullPolicy=Always
 
-     helm upgrade -i --namespace kgateway-system --version v2.1.0-main \
+     helm install --namespace kgateway-system --version v2.1.0-main \
           kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
           --set controller.image.pullPolicy=Always --set agentgateway.enabled=true --set waypoint.enabled=false
     kubectl apply -f linkerd/gateway.yaml
@@ -240,11 +240,11 @@ else
 
        echo "installing kgatewa"
        # Install kgateway
-       helm upgrade -i --create-namespace --namespace kgateway-system --version v2.1.0-main \
+       helm install --create-namespace --namespace kgateway-system --version v2.1.0-main \
        kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
        --set controller.image.pullPolicy=Always
 
-       helm upgrade -i --namespace kgateway-system --version v2.1.0-main \
+       helm install --namespace kgateway-system --version v2.1.0-main \
        kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
        --set controller.image.pullPolicy=Always --set agentgateway.enabled=true --set waypoint.enabled=true
 

@@ -28,11 +28,11 @@ spec:
         - name: product-catalog
           port: 8080
       filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: DestinationRule
-            name: product-catalog-circuit-breaker
+    #    - type: ExtensionRef
+     #     extensionRef:
+      #      group: networking.istio.io
+       #     kind: DestinationRule
+        #    name: product-catalog-circuit-breaker
         - type: ExtensionRef
           extensionRef:
             group: gateway.kgateway.dev
@@ -59,11 +59,11 @@ spec:
         - name: product-catalog
           port: 8080
       filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: networking.istio.io
-            kind: DestinationRule
-            name: product-catalog-circuit-breaker
+       # - type: ExtensionRef
+        #  extensionRef:
+         #   group: networking.istio.io
+          #  kind: DestinationRule
+           # name: product-catalog-circuit-breaker
      #   - type: ExtensionRef
       #    extensionRef:
        #     group: gateway.kgateway.dev

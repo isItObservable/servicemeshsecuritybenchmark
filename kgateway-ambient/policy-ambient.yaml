@@ -17,101 +17,44 @@ spec:
   trafficPolicy:
     connectionPool:
       tcp:
-        maxConnections: 100
+        maxConnections: 1000
       http:
-        http1MaxPendingRequests: 50
-        http2MaxRequests: 100
-        maxRequestsPerConnection: 2
+        http1MaxPendingRequests: 1000
+        http2MaxRequests: 1000
     outlierDetection:
       consecutive5xxErrors: 5
-      interval: 30s
+      interval: 60s
       baseEjectionTime: 30s
-      maxEjectionPercent: 50
+      maxEjectionPercent: 10
       minHealthPercent: 50
     loadBalancer:
       simple: LEAST_REQUEST
 
 ---
 # DestinationRule for Checkout Service - Circuit Breaker
-apiVersion: networking.istio.io/v1beta1
-kind: DestinationRule
-metadata:
-  name: checkout-circuit-breaker
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: circuit-breaker
-spec:
-  host: checkout.otel-demo.svc.cluster.local
-  trafficPolicy:
-    connectionPool:
-      tcp:
-        maxConnections: 50
-      http:
-        http1MaxPendingRequests: 25
-        http2MaxRequests: 50
-        maxRequestsPerConnection: 2
-    outlierDetection:
-      consecutive5xxErrors: 3
-      interval: 20s
-      baseEjectionTime: 60s
-      maxEjectionPercent: 50
-      minHealthPercent: 50
-    loadBalancer:
-      simple: LEAST_REQUEST
+#apiVersion: networking.istio.io/v1beta1
+#kind: DestinationRule
+#metadata:
+#  name: checkout-circuit-breaker
+ ## namespace: otel-demo
+ # labels:
+ #   app.kubernetes.io/part-of: opentelemetry-demo
+ #   policy-type: circuit-breaker
+#spec:
+#  host: checkout.otel-demo.svc.cluster.local
+#  trafficPolicy:
+#    connectionPool:
+ #     tcp:
+  #      maxConnections: 1000
+   #   http:
+   #     http1MaxPendingRequests: 1000
+   #     http2MaxRequests: 1000
+  #  outlierDetection:
+  #    consecutive5xxErrors: 10
+  #    interval: 60s
+  #    baseEjectionTime: 10s
+  #    maxEjectionPercent: 10
+  #    minHealthPercent: 50
+  #  loadBalancer:
+  #    simple: LEAST_REQUEST
 
----
-# VirtualService for Frontend to Product Catalog - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-product-catalog-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: resiliency
-spec:
-  hosts:
-    - product-catalog.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            opentelemetry.io/name: frontend
-      route:
-        - destination:
-            host: product-catalog.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 5s
-      retries:
-        attempts: 3
-        perTryTimeout: 2s
-        retryOn: 5xx,reset,connect-failure,refused-stream
-
----
-# VirtualService for Frontend to Checkout - Timeout & Retry
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frontend-to-checkout-vs
-  namespace: otel-demo
-  labels:
-    app.kubernetes.io/part-of: opentelemetry-demo
-    policy-type: resiliency
-spec:
-  hosts:
-    - checkout.otel-demo.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            opentelemetry.io/name: frontend
-      route:
-        - destination:
-            host: checkout.otel-demo.svc.cluster.local
-            port:
-              number: 8080
-      timeout: 10s
-      retries:
-        attempts: 2
-        perTryTimeout: 5s
-        retryOn: 5xx,reset,connect-failure,refused-stream

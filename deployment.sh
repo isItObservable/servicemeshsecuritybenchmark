@@ -131,11 +131,11 @@ else
       linkerd-edge/linkerd-jaeger
 
      # Install kgateway
-     helm upgrade -i --create-namespace --namespace kgateway-system --version v2.1.0-main \
+     helm install  --create-namespace --namespace kgateway-system --version v2.1.0-main \
      kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
      --set controller.image.pullPolicy=Always
 
-     helm upgrade -i --namespace kgateway-system --version v2.1.0-main \
+     helm install  --namespace kgateway-system --version v2.1.0-main \
      kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
      --set controller.image.pullPolicy=Always --set agentgateway.enabled=true --set waypoint.enabled=true
 
